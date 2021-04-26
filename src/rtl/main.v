@@ -16,11 +16,11 @@ module main (
   wire pclk;
   wire clkMouse;
 
-clk_viz_0 my_clk_viz_0 (
+clk_wiz_0 my_clk_wiz_0 (
   .clk(clk),
   .reset(rst),
   .clk100MHz(clkMouse),
-  .clk40MHz(pclk),
+  .clk65MHz(pclk),
   .locked(locked)
 );
 
@@ -31,12 +31,12 @@ clk_viz_0 my_clk_viz_0 (
     .reset_out(locked_reset)
   );
 
-  wire [10:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back;
+  wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back;
   wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back;
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back;
   wire [11:0] rgb_out_back;
-  wire [11:0] xpos_mouseCtl_out, ypos_mouseCtl_out;
-  wire mouse_left_mouseCtl_out;
+  wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
+  wire mouse_left_out_mouseCtl, mouse_left_out_buff;
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
 
 
@@ -86,19 +86,32 @@ clk_viz_0 my_clk_viz_0 (
     .setmax_y(0),
     .value(0),
   //outputs
-    .xpos(xpos_mouseCtl_out),
-    .ypos(ypos_mouseCtl_out),
+    .xpos(xpos_out_mouseCtl),
+    .ypos(ypos_out_mouseCtl),
     .zpos(),
-    .left(mouse_left_mouseCtl_out),
+    .left(mouse_left_out_mouseCtl),
     .middle(),
     .right(),
     .new_event()
   );
-
+    
+    mouse_buffor my_mouse_buffor(
+        // inputs
+      .pclk(pclk),
+      .rst(locked_reset),
+      .xpos_in(xpos_out_mouseCtl),
+      .ypos_in(ypos_out_mouseCtl),
+      .mouse_left_in(mouse_left_out_mouseCtl), 
+    // outputs
+      .mouse_left_out(mouse_left_out_buff),
+      .xpos_out(xpos_out_buff),
+      .ypos_out(ypos_out_buff)
+    );
+    
     MouseDisplay My_MouseDisplay (
   //inputs
-    .xpos(xpos_mouseCtl_out),
-    .ypos(ypos_mouseCtl_out),
+    .xpos(xpos_out_buff),
+    .ypos(ypos_out_buff),
     .pixel_clk(pclk),
     .hcount(hcount_out_back),
     .vcount(vcount_out_back),

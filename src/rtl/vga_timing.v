@@ -11,20 +11,20 @@
 // using Verilog-2001 syntax.
 
 module vga_timing (
-  output reg [10:0] vcount,
+  output reg [11:0] vcount,
   output reg vsync,
   output reg vblnk,
-  output reg [10:0] hcount,
+  output reg [11:0] hcount,
   output reg hsync,
   output reg hblnk,
   input wire pclk,
   input wire rst
   );
   
-reg [10:0] vcount_nxt;
+reg [11:0] vcount_nxt;
 reg vsync_nxt;
 reg vblnk_nxt;
-reg [10:0] hcount_nxt;
+reg [11:0] hcount_nxt;
 reg hsync_nxt;
 reg hblnk_nxt;
   
@@ -32,7 +32,19 @@ reg hblnk_nxt;
   // Video timing controller set for 800x600@60fps
   // using a 40 MHz pixel clock per VESA spec.
 
-
+// Chcemy 1024x768
+localparam HOR_TOTAL_TIME = 1343;
+localparam HOR_SYNC_START = 1047;
+localparam HOR_BLANC_START = 1023;
+localparam VER_TOTAL_TIME = 805;
+localparam VER_SYNC_START = 770;
+localparam VER_BLANC_START = 767;
+// Te warto�ci nie zosta�y pomniejszone, poniewa� to jest czas trwania
+localparam HOR_SYNC_TIME = 136;
+localparam HOR_BLANC_TIME = 320;
+localparam VER_SYNC_TIME = 6;
+localparam VER_BLANC_TIME = 38;
+/*
 // Te warto�ci s� mniejsze o 1 poniewa� liczymy od 0
 localparam HOR_TOTAL_TIME = 1055;
 localparam HOR_SYNC_START = 839;
@@ -45,7 +57,7 @@ localparam HOR_SYNC_TIME = 128;
 localparam HOR_BLANC_TIME = 256;
 localparam VER_SYNC_TIME = 4;
 localparam VER_BLANC_TIME = 28;
-
+*/
 //Przypisanie nast��pnych warto�ci
 always@ (posedge pclk) begin
   if (rst) begin

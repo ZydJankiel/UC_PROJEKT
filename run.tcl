@@ -35,19 +35,20 @@ if {[lindex $argv 0] == "program"} {
 
 read_xdc {
     src/constraints/main.xdc
-    src/constraints/clk_viz_0.xdc
-    src/constraints/clk_viz_0_board.xdc
-    src/constraints/clk_viz_0_ooc.xdc
-    src/constraints/clk_viz_0_late.xdc
+    src/constraints/clk_wiz_0.xdc
+    src/constraints/clk_wiz_0_board.xdc
+    src/constraints/clk_wiz_0_ooc.xdc
+    src/constraints/clk_wiz_0_late.xdc
 }
 
 read_verilog {
     src/rtl/main.v
-    src/rtl/clk_viz_0.v
-    src/rtl/clk_viz_0_clk_wiz.v
+    src/rtl/clk_wiz_0.v
+    src/rtl/clk_wiz_0_clk_wiz.v
     src/rtl/clk_locked_menager.v
     src/rtl/vga_timing.v
     src/rtl/draw_background.v
+    src/rtl/mouse_buffor.v
 }
 
 read_vhdl {

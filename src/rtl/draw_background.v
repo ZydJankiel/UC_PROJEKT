@@ -1,26 +1,26 @@
 `timescale 1 ns / 1 ps
 
 module draw_background (
-  input wire [10:0] vcount_in,
+  input wire [11:0] vcount_in,
   input wire vsync_in,
   input wire vblnk_in,
-  input wire [10:0] hcount_in,
+  input wire [11:0] hcount_in,
   input wire hsync_in,
   input wire hblnk_in,
   input wire pclk,
   input wire rst,
 
-  output reg [10:0] vcount_out,
+  output reg [11:0] vcount_out,
   output reg vsync_out,
   output reg vblnk_out,
-  output reg [10:0] hcount_out,
+  output reg [11:0] hcount_out,
   output reg hsync_out,
   output reg hblnk_out,
   output reg [11:0] rgb_out
   
   );
 reg [11:0] rgb_nxt;
-reg [10:0] vcount_nxt, hcount_nxt;
+reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
       
   always @(posedge pclk) begin

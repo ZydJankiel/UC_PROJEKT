@@ -102,8 +102,8 @@ port (
    xpos     : in std_logic_vector(11 downto 0);
    ypos     : in std_logic_vector(11 downto 0);
 
-   hcount   : in std_logic_vector(10 downto 0);
-   vcount   : in std_logic_vector(10 downto 0);
+   hcount   : in std_logic_vector(11 downto 0);
+   vcount   : in std_logic_vector(11 downto 0);
    blank    : in std_logic; -- if VGA blank is used
 
    red_in   : in std_logic_vector(3 downto 0); -- if VGA signal pass-through is used
