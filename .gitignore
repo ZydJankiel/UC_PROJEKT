@@ -1,0 +1,7 @@
+doc
+vivado
+backup
+*.log
+*.jou
+*.str
+

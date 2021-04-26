@@ -1,0 +1,120 @@
+`timescale 1 ns / 1 ps
+
+module main (
+  inout ps2_clk,
+  inout ps2_data, 
+  input wire clk,
+  input wire rst,
+  output wire vs,
+  output wire hs,
+  output wire [3:0] r,
+  output wire [3:0] g,
+  output wire [3:0] b
+  );
+
+  wire locked;
+  wire pclk;
+  wire clkMouse;
+
+clk_viz_0 my_clk_viz_0 (
+  .clk(clk),
+  .reset(rst),
+  .clk100MHz(clkMouse),
+  .clk40MHz(pclk),
+  .locked(locked)
+);
+
+  wire locked_reset;
+  clk_locked_menager my_clk_locked_menager(
+    .pclk(pclk),
+    .locked_in(locked),
+    .reset_out(locked_reset)
+  );
+
+  wire [10:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back;
+  wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back;
+  wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back;
+  wire [11:0] rgb_out_back;
+  wire [11:0] xpos_mouseCtl_out, ypos_mouseCtl_out;
+  wire mouse_left_mouseCtl_out;
+  wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
+
+
+  vga_timing my_timing (
+  //inputs 
+    .pclk(pclk),
+    .rst(locked_reset),
+  //outputs
+    .vcount(vcount_out_timing),
+    .vsync(vsync_out_timing),
+    .vblnk(vblnk_out_timing),
+    .hcount(hcount_out_timing),
+    .hsync(hsync_out_timing),
+    .hblnk(hblnk_out_timing)
+  );
+  
+  draw_background my_background (
+  //inputs
+   .vcount_in(vcount_out_timing),
+   .vsync_in(vsync_out_timing),
+   .vblnk_in(vblnk_out_timing),
+   .hcount_in(hcount_out_timing),
+   .hsync_in(hsync_out_timing),
+   .hblnk_in(hblnk_out_timing),
+   .pclk(pclk),
+   .rst(locked_reset),
+  //outputs  
+   .hcount_out(hcount_out_back),
+   .vcount_out(vcount_out_back),
+   .hblnk_out(hblnk_out_back),
+   .vblnk_out(vblnk_out_back),
+   .hsync_out(hsync_out_back),
+   .vsync_out(vsync_out_back),
+   .rgb_out(rgb_out_back)
+  );
+
+  MouseCtl My_MouseCtl(
+  //inouts
+    .ps2_clk(ps2_clk),
+    .ps2_data(ps2_data),
+  //inputs
+    .rst(locked_reset),
+    .clk(clkMouse),
+    .setx(0),
+    .sety(0),
+    .setmax_x(0),
+    .setmax_y(0),
+    .value(0),
+  //outputs
+    .xpos(xpos_mouseCtl_out),
+    .ypos(ypos_mouseCtl_out),
+    .zpos(),
+    .left(mouse_left_mouseCtl_out),
+    .middle(),
+    .right(),
+    .new_event()
+  );
+
+    MouseDisplay My_MouseDisplay (
+  //inputs
+    .xpos(xpos_mouseCtl_out),
+    .ypos(ypos_mouseCtl_out),
+    .pixel_clk(pclk),
+    .hcount(hcount_out_back),
+    .vcount(vcount_out_back),
+    .blank(hblnk_out_back || vblnk_out_back), 
+    .red_in(rgb_out_back[11:8]),
+    .green_in(rgb_out_back[7:4]),
+    .blue_in(rgb_out_back[3:0]),
+  //outputs
+    .red_out(red_out_mouse),
+    .green_out(green_out_mouse),
+    .blue_out(blue_out_mouse),
+    .enable_mouse_display_out()
+ );
+  
+assign hs = hsync_out_back;
+assign vs = vsync_out_back;
+assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
+
+endmodule
