@@ -32,27 +32,41 @@ reg hblnk_nxt;
   // Video timing controller set for 800x600@60fps
   // using a 40 MHz pixel clock per VESA spec.
 
-// Chcemy 1024x768
+// 1280x1024
+localparam HOR_TOTAL_TIME = 1687;
+localparam HOR_SYNC_START = 1327;
+localparam HOR_BLANC_START = 1279;
+localparam VER_TOTAL_TIME = 1065;
+localparam VER_SYNC_START = 1024;
+localparam VER_BLANC_START = 1023;
+
+localparam HOR_SYNC_TIME = 112;
+localparam HOR_BLANC_TIME = 408;
+localparam VER_SYNC_TIME = 3;
+localparam VER_BLANC_TIME = 42;
+
+/* 1024x768
 localparam HOR_TOTAL_TIME = 1343;
 localparam HOR_SYNC_START = 1047;
 localparam HOR_BLANC_START = 1023;
 localparam VER_TOTAL_TIME = 805;
 localparam VER_SYNC_START = 770;
 localparam VER_BLANC_START = 767;
-// Te wartoï¿½ci nie zostaï¿½y pomniejszone, poniewaï¿½ to jest czas trwania
+
 localparam HOR_SYNC_TIME = 136;
 localparam HOR_BLANC_TIME = 320;
 localparam VER_SYNC_TIME = 6;
 localparam VER_BLANC_TIME = 38;
-/*
-// Te wartoï¿½ci sï¿½ mniejsze o 1 poniewaï¿½ liczymy od 0
+*/
+/* 800x600
+// Te wartoœci sê mniejsze o 1 poniewa¿ liczymy od 0
 localparam HOR_TOTAL_TIME = 1055;
 localparam HOR_SYNC_START = 839;
 localparam HOR_BLANC_START = 799;
 localparam VER_TOTAL_TIME = 627;
 localparam VER_SYNC_START = 600;
 localparam VER_BLANC_START = 599;
-// Te wartoï¿½ci nie zostaï¿½y pomniejszone, poniewaï¿½ to jest czas trwania
+// Te nie s¹ pomniejszone o 1 bo to czas trwania
 localparam HOR_SYNC_TIME = 128;
 localparam HOR_BLANC_TIME = 256;
 localparam VER_SYNC_TIME = 4;

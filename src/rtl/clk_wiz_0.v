@@ -56,8 +56,8 @@
 //  Output     Output      Phase    Duty Cycle   Pk-to-Pk     Phase
 //   Clock     Freq (MHz)  (degrees)    (%)     Jitter (ps)  Error (ps)
 //----------------------------------------------------------------------------
-// clk100MHz___100.000______0.000______50.0______130.067_____99.281
-// clk65MHz____65.000______0.000______50.0______142.278_____99.281
+// clk100MHz___100.000______0.000______50.0______116.394_____87.466
+// clk108MHz___107.955______0.000______50.0______114.767_____87.466
 //
 //----------------------------------------------------------------------------
 // Input Clock   Freq (MHz)    Input Jitter (UI)
@@ -72,7 +72,7 @@ module clk_wiz_0
  (
   // Clock out ports
   output        clk100MHz,
-  output        clk65MHz,
+  output        clk108MHz,
   // Status and control signals
   input         reset,
   output        locked,
@@ -84,7 +84,7 @@ module clk_wiz_0
   (
   // Clock out ports  
   .clk100MHz(clk100MHz),
-  .clk65MHz(clk65MHz),
+  .clk108MHz(clk108MHz),
   // Status and control signals               
   .reset(reset), 
   .locked(locked),

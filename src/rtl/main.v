@@ -20,7 +20,7 @@ clk_wiz_0 my_clk_wiz_0 (
   .clk(clk),
   .reset(rst),
   .clk100MHz(clkMouse),
-  .clk65MHz(pclk),
+  .clk108MHz(pclk),
   .locked(locked)
 );
 
@@ -73,7 +73,7 @@ clk_wiz_0 my_clk_wiz_0 (
    .rgb_out(rgb_out_back)
   );
 
-  MouseCtl My_MouseCtl(
+  MouseCtl my_MouseCtl(
   //inouts
     .ps2_clk(ps2_clk),
     .ps2_data(ps2_data),
