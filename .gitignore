@@ -2,6 +2,7 @@
 doc
 vivado
 backup
+src/sim/*
 *.log
 *.jou
 *.str

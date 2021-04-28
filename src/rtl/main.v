@@ -72,13 +72,20 @@ clk_wiz_0 my_clk_wiz_0 (
    .vsync_out(vsync_out_back),
    .rgb_out(rgb_out_back)
   );
+  wire reset_buff;
+  delay #(.WIDTH(1),.CLK_DEL(1)) my_delay(
+    .clk(clkMouse),
+    .rst(0),
+    .din(locked_reset),
+    .dout(reset_buff)
+  );
 
   MouseCtl My_MouseCtl(
   //inouts
     .ps2_clk(ps2_clk),
     .ps2_data(ps2_data),
   //inputs
-    .rst(locked_reset),
+    .rst(reset_buff),
     .clk(clkMouse),
     .setx(0),
     .sety(0),
@@ -94,7 +101,24 @@ clk_wiz_0 my_clk_wiz_0 (
     .right(),
     .new_event()
   );
-    
+  
+  wire [11:0] xpos_out_buff1, ypos_out_buff1;
+  wire mouse_left_out_buff1;
+  
+    delay #(.WIDTH(25),.CLK_DEL(1)) my_mouse_buffor1(
+    .clk(clkMouse),
+    .rst(0),
+    .din({xpos_out_mouseCtl,ypos_out_mouseCtl,mouse_left_out_mouseCtl}),
+    .dout({xpos_out_buff1,ypos_out_buff1,mouse_left_out_buff1})
+  );
+  
+  delay #(.WIDTH(25),.CLK_DEL(2)) my_mouse_buffor2(
+    .clk(pclk),
+    .rst(0),
+    .din({xpos_out_buff1,ypos_out_buff1,mouse_left_out_buff1}),
+    .dout({xpos_out_buff,ypos_out_buff,mouse_left_out_buff})
+  );
+  /*  
     mouse_buffor my_mouse_buffor(
         // inputs
       .pclk(pclk),
@@ -106,7 +130,7 @@ clk_wiz_0 my_clk_wiz_0 (
       .mouse_left_out(mouse_left_out_buff),
       .xpos_out(xpos_out_buff),
       .ypos_out(ypos_out_buff)
-    );
+    );*/
     
     MouseDisplay My_MouseDisplay (
   //inputs
