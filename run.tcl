@@ -49,6 +49,7 @@ read_verilog {
     src/rtl/vga_timing.v
     src/rtl/draw_background.v
     src/rtl/mouse_buffor.v
+    src/rtl/delay.v
 }
 
 read_vhdl {
