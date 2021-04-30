@@ -19,7 +19,7 @@ module main (
 clk_wiz_0 my_clk_wiz_0 (
   .clk(clk),
   .reset(rst),
-  .clk100MHz(clkMouse),
+  .clk130MHz(clkMouse),
   .clk65MHz(pclk),
   .locked(locked)
 );
@@ -95,7 +95,7 @@ clk_wiz_0 my_clk_wiz_0 (
     .new_event()
   );
     
-    mouse_buffor my_mouse_buffor(
+ /*   mouse_buffor my_mouse_buffor(
         // inputs
       .pclk(pclk),
       .rst(locked_reset),
@@ -107,11 +107,11 @@ clk_wiz_0 my_clk_wiz_0 (
       .xpos_out(xpos_out_buff),
       .ypos_out(ypos_out_buff)
     );
-    
+    */
     MouseDisplay My_MouseDisplay (
   //inputs
-    .xpos(xpos_out_buff),
-    .ypos(ypos_out_buff),
+    .xpos(xpos_out_mouseCtl),
+    .ypos(ypos_out_mouseCtl),
     .pixel_clk(pclk),
     .hcount(hcount_out_back),
     .vcount(vcount_out_back),

@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------
 -- ps2interface.vhd
 ------------------------------------------------------------------------
--- Author : Ulrich Zoltán
+-- Author : Ulrich Zoltï¿½n
 --          Copyright 2006 Digilent, Inc.
 ------------------------------------------------------------------------
 -- This file contains the implementation of a generic bidirectional
@@ -100,6 +100,7 @@
 -- to generate the 100us delay a 14 bit counter is used that has the
 -- upper limit for counting 10000. The interface is designed to run
 -- at 100MHz. Thus, 10000x10ns = 100us.
+---         PWJ komentarz: Zmienilem limit countera by zegar myszy ustawic na 130MHz
 
 -----------------------------------------------------------------------
 -- If using the interface at different frequency than 100MHz, adjusting
@@ -188,7 +189,7 @@ architecture Behavioral of Ps2Interface is
 
 -- upper limit for 100us delay counter.
 -- 10000 * 10ns = 100us
-constant DELAY_100US : std_logic_vector(13 downto 0):= "10011100010000";
+constant DELAY_100US : std_logic_vector(13 downto 0):= "11001011001000";
                                                  -- 10000 clock periods
 -- upper limit for 20us delay counter.
 -- 2000 * 10ns = 20us
