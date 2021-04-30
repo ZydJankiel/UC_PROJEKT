@@ -67,7 +67,7 @@ reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 
         */
 
-        else rgb_nxt = 12'h0_0_0;    
+        else rgb_nxt = 12'hF_F_F;    
       end
       hsync_nxt = hsync_in;
       vsync_nxt = vsync_in;
