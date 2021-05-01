@@ -30,15 +30,18 @@ clk_wiz_0 my_clk_wiz_0 (
     .locked_in(locked),
     .reset_out(locked_reset)
   );
-
-  wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back;
-  wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back;
-  wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back;
   wire [11:0] rgb_out_back;
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
-  wire mouse_left_out_mouseCtl, mouse_left_out_buff;
+  wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back;
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
+  reg [1:0] setmax, setmax_x, setmax_y;
+  
+  wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back;
+  wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back;
 
+  wire mouse_left_out_mouseCtl, mouse_left_out_buff;
+   
+  reg [9:0] set_max_value;
 
   vga_timing my_timing (
   //inputs 
@@ -82,9 +85,9 @@ clk_wiz_0 my_clk_wiz_0 (
     .clk(clkMouse),
     .setx(0),
     .sety(0),
-    .setmax_x(0),
-    .setmax_y(0),
-    .value(0),
+    .setmax_x(setmax_x),
+    .setmax_y(setmax_y),
+    .value(set_max_value),
   //outputs
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
@@ -129,5 +132,20 @@ clk_wiz_0 my_clk_wiz_0 (
 assign hs = hsync_out_back;
 assign vs = vsync_out_back;
 assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
+
+
+//THIS DOES NOT WORK - MO
+always @* begin
+    if (setmax == 0) begin
+        set_max_value = 767;
+        setmax_y = 1;
+        end
+    else if(setmax >= 10 && setmax <= 20) begin
+        set_max_value = 1023;
+        setmax_x = 1;
+        end
+    else if (setmax < 21)
+        setmax = setmax + 1;       
+end
 
 endmodule

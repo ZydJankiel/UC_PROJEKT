@@ -51,11 +51,11 @@ reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
         // Active display, top edge, make a yellow line.
         if (vcount_in == 0) rgb_nxt = 12'hf_f_0;
         // Active display, bottom edge, make a red line.
-        else if (vcount_in == 599) rgb_nxt = 12'hf_0_0;
+        else if (vcount_in == 767) rgb_nxt = 12'hf_0_0;
         // Active display, left edge, make a green line.
         else if (hcount_in == 0) rgb_nxt = 12'h0_f_0;
         // Active display, right edge, make a blue line.
-        else if (hcount_in == 799) rgb_nxt = 12'h0_0_f;
+        else if (hcount_in == 1023) rgb_nxt = 12'h0_0_f;
         
         /*
 
@@ -66,8 +66,12 @@ reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
            (hcount_in >= 150 && hcount_in < 200 && vcount_in >= 200 && vcount_in < 250) ) rgb_nxt = 12'hf_f_f;
 
         */
-
-        else rgb_nxt = 12'hF_F_F;    
+        //white
+        //else rgb_nxt = 12'hf_f_f;  
+        
+        //black
+        else rgb_nxt = 12'h0_0_0;  
+        
       end
       hsync_nxt = hsync_in;
       vsync_nxt = vsync_in;
