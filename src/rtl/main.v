@@ -5,6 +5,8 @@ module main (
   inout ps2_data, 
   input wire clk,
   input wire rst,
+  input wire test_button,
+  
   output wire vs,
   output wire hs,
   output wire [3:0] r,
@@ -103,6 +105,7 @@ clk_wiz_0 my_clk_wiz_0 (
     //inputs
     .clk(pclk),
     .rst(locked_reset),
+    .game_on(test_button),
     //outputs
     .setmax_x(setmax_x_constr),
     .setmax_y(setmax_y_constr),

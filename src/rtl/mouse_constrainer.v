@@ -25,47 +25,63 @@ module mouse_constrainer(
     output reg setmax_x,
     output reg setmax_y,
     
-    input clk,
-    input rst
+    input wire game_on,
+    input wire clk,
+    input wire rst
     );
 
 reg [11:0] value_nxt = 0;
 reg [11:0] counter = 0, counter_nxt = 0;
 reg setmax_x_nxt, setmax_y_nxt;
-    
+reg [2:0] state,state_nxt;
+
+localparam IDLE = 1'b0,
+           GAME_MODE = 1'b1;
+
 always @(posedge clk) begin
     if(rst) begin
+        state <= IDLE;
         value <= 0;
         setmax_x <= 0;
         setmax_y <= 0;
         end
     else begin
+        state <= state_nxt;
         value <= value_nxt;
         setmax_x <= setmax_x_nxt;
         setmax_y <= setmax_y_nxt;
         counter <= counter_nxt;
         end
-
 end
     
-// this is very poorly scalable - if u want to add possibility to change constraints mid-game 
-// then it should be done on state machine
 always @* begin
-    value_nxt = 0;
-    setmax_x_nxt = 0;
-    setmax_y_nxt = 0;
-    counter_nxt = counter + 1;
-    if (counter == 0) begin
-        value_nxt = 762;            //762 is perfect to still see the crusor
-        setmax_y_nxt = 1;
-        end
-    else if(counter == 10) begin
-        value_nxt = 1018;           // 1018 is perfect to still see the crusor
-        setmax_x_nxt = 1;
-        end
-    else if (counter == 1023 )begin
-        counter_nxt = 0;
-        end      
+    case(state)
+        IDLE:
+            begin
+              setmax_x_nxt = 0;
+              setmax_y_nxt = 0;
+              value_nxt = 0;
+              counter_nxt = 0;
+              state_nxt = game_on ? GAME_MODE : IDLE;
+            end
+            
+          GAME_MODE:
+            begin
+              if (counter == 0) begin
+                setmax_y_nxt = 0;
+                setmax_x_nxt = 1;
+                value_nxt = 800;
+                counter_nxt = 1;
+              end
+              else begin
+                setmax_y_nxt = 1;
+                setmax_x_nxt = 0;
+                value_nxt = 600;
+                counter_nxt = 0;
+            end
+            state_nxt = counter_nxt == 0 ? IDLE : GAME_MODE;
+        end  
+    endcase
 end
 
 endmodule
