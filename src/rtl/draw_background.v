@@ -22,6 +22,8 @@ module draw_background (
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
+
+localparam BORDER = 10;
       
   always @(posedge pclk) begin
     if (rst) begin
@@ -57,15 +59,15 @@ reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
         // Active display, right edge, make a blue line.
         else if (hcount_in == 1023) rgb_nxt = 12'h0_0_f;
         
-        /*
+        
 
-         // TU będzie obszar gry  
-         else if ((hcount_in >= 100 && hcount_in < 150 && vcount_in >= 100 && vcount_in < 500) || 
-           (hcount_in >= 200 && hcount_in < 250 && vcount_in >= 100 && vcount_in < 250) || 
-           (hcount_in >= 150 && hcount_in < 200 && vcount_in >= 100 && vcount_in < 150) || 
-           (hcount_in >= 150 && hcount_in < 200 && vcount_in >= 200 && vcount_in < 250) ) rgb_nxt = 12'hf_f_f;
+            // GAME BOUNDARY
+         else if ((hcount_in >= 361 - BORDER && hcount_in < 361 && vcount_in >= 367 - BORDER && vcount_in < 667 + BORDER) || 
+           (hcount_in >= 361 && hcount_in < 661 && vcount_in >= 367 - BORDER && vcount_in < 367 ) || 
+           (hcount_in >= 361 && hcount_in < 661 && vcount_in >= 667 && vcount_in < 667 + BORDER) || 
+           (hcount_in >= 661  && hcount_in < 661 + BORDER && vcount_in >= 367 - BORDER && vcount_in < 667 + BORDER) ) rgb_nxt = 12'hf_f_f;
 
-        */
+        
         //white
         //else rgb_nxt = 12'hf_f_f;  
         

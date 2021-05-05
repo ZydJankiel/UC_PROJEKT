@@ -60,7 +60,7 @@ clk_wiz_0 my_clk_wiz_0 (
     .hblnk(hblnk_out_timing)
   );
   
-  draw_background my_background (
+  draw_background my_game_background (
   //inputs
    .vcount_in(vcount_out_timing),
    .vsync_in(vsync_out_timing),
