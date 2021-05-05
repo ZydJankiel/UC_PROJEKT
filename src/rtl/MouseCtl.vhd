@@ -602,28 +602,6 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
       end if;
    end process set_max_y;
 
-   -- PWJ : Set minimum value of x
---   set_min_x: process(clk,rst)
---   begin
---      if(rising_edge(clk)) then
---         if(rst = '1') then
---            x_min <= DEFAULT_MIN_X;
---         elsif(setmin_x = '1') then
---            x_min <= value;
---         end if;
---      end if;
---   end process set_min_x;
---   -- PWJ : Set minimum value of y
---   set_min_y: process(clk,rst)
---   begin
---      if(rising_edge(clk)) then
---         if(rst = '1') then
---            y_min <= DEFAULT_MIN_Y;
---         elsif(setmin_y = '1') then
---            y_min <= value;
---         end if;
---      end if;
---   end process set_min_y;
 
    -- Synchronous one process fsm to handle the communication
    -- with the mouse.

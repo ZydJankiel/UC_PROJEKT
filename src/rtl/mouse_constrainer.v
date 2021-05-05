@@ -38,17 +38,9 @@ reg [11:0] counter = 0, counter_nxt = 0;
 reg setmax_x_nxt, setmax_y_nxt, setmin_x_nxt, setmin_y_nxt;
 reg [2:0] state,state_nxt;
 
-<<<<<<< HEAD
-localparam IDLE = 3'b000,
-           SETMAX_X = 3'b001,
-           SETMAX_Y = 3'b010,
-           SETMIN_X = 3'b011,
-           SETMIN_Y = 3'b100;
-=======
 localparam IDLE = 2'b00,
            GAME_MODE = 2'b01,
            MENU_MODE = 2'b10;
->>>>>>> mouse_constrainer_state
 
 always @(posedge clk) begin
     if(rst) begin
@@ -73,66 +65,8 @@ end
 always @* begin
     setmax_x_nxt = 0;
     setmax_y_nxt = 0;
-<<<<<<< HEAD
     setmin_x_nxt = 0;
     setmin_y_nxt = 0;
-    counter_nxt = 0;
-    case(state)
-        IDLE:
-            begin
-                value_nxt = 0;
-                state_nxt = game_on ? SETMAX_X : IDLE;
-            end
-        SETMAX_X:
-            begin
-                setmax_x_nxt = 1;
-                value_nxt = 800; 
-                state_nxt = SETMAX_Y;
-            end
-        SETMAX_Y:
-            begin
-                setmax_y_nxt = 1;
-                value_nxt = 600; 
-                state_nxt = SETMIN_X;                
-            end
-        SETMIN_X:
-            begin
-                setmin_x_nxt = 1;
-                value_nxt = 400; 
-                state_nxt = SETMIN_Y;                 
-            end
-        SETMIN_Y:
-            begin
-                setmin_y_nxt = 1;
-                value_nxt = 200; 
-                state_nxt = IDLE;                      
-            end
-        /*    
-          GAME_MODE:
-              begin
-                  if (counter == 0) begin
-                      setmax_x_nxt = 1;
-                      value_nxt = 800;
-                      counter_nxt = 1;
-                  end
-                  else if (counter == 1) begin
-                      setmax_y_nxt = 1;
-                      value_nxt = 600;
-                      counter_nxt = 2;
-                  end
-                  else if (counter == 2) begin
-                      setmin_x_nxt = 1;
-                      value_nxt = 400;
-                      counter_nxt = 3;
-                  end
-                  else begin
-                      setmin_y_nxt = 1;
-                      value_nxt = 200;
-                      counter_nxt = 0;
-                  end
-                  state_nxt = counter_nxt == 0 ? IDLE : GAME_MODE; 
-              end */
-=======
     value_nxt = 0;
     counter_nxt = 0;
     state_nxt = IDLE;
@@ -155,11 +89,22 @@ always @* begin
             if (counter == 0) begin
                 setmax_x_nxt = 1;
                 value_nxt = 800;
-                counter_nxt = 1;
+                counter_nxt = counter +1;
             end
-            else begin
+            else if (counter == 1)begin
                 setmax_y_nxt = 1;
                 value_nxt = 600;
+                counter_nxt = counter +1;
+            end
+            else if (counter == 2)begin
+                setmin_x_nxt = 1;
+                value_nxt = 200;
+                counter_nxt = counter +1;
+            end
+            else begin
+                setmin_y_nxt = 1;
+                value_nxt = 200;
+                counter_nxt = 0;
             end
               state_nxt = counter_nxt == 0 ? IDLE : GAME_MODE;
         end  
@@ -168,16 +113,26 @@ always @* begin
             if (counter == 0) begin
                 setmax_x_nxt = 1;
                 value_nxt = 1019;
-                counter_nxt = 1;
+                counter_nxt = counter + 1;
             end
-            else begin
+            else if (counter == 1) begin
                 setmax_y_nxt = 1;
                 value_nxt = 763;
+                counter_nxt = counter +1;
+            end
+            else if (counter == 2)begin
+                setmin_x_nxt = 1;
+                value_nxt = 0;
+                counter_nxt = counter +1;
+            end
+            else begin
+                setmin_y_nxt = 1;
+                value_nxt = 0;
+                counter_nxt = 0;
             end
             state_nxt = counter_nxt == 0 ? IDLE : MENU_MODE;
         end
         
->>>>>>> mouse_constrainer_state
     endcase
 end
 
