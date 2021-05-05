@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------
 -- mouse_controller.vhd
 ------------------------------------------------------------------------
--- Author : Ulrich Zoltán
+-- Author : Ulrich Zoltï¿½n
 --          Copyright 2006 Digilent, Inc.
 ------------------------------------------------------------------------
 -- This file contains a controller for a ps/2 compatible mouse device.
@@ -199,6 +199,8 @@ use UNISIM.VComponents.all;
 	   sety        : in std_logic;
 	   setmax_x    : in std_logic;
 	   setmax_y    : in std_logic;
+	   setmin_x    : in std_logic; -- PWJ : Added input for setting x_min
+	   setmin_y    : in std_logic; -- PWJ : Added input for setting y_min
 	   ps2_clk     : inout std_logic;
 	   ps2_data    : inout std_logic
 	);
@@ -253,10 +255,16 @@ constant SAMPLE_RATE      : std_logic_vector(7 downto 0) := x"28";
 
 -- default maximum value for the horizontal mouse position
 constant DEFAULT_MAX_X : std_logic_vector(11 downto 0) := x"3FF";
-                                                      -- 1279
+                                                      -- 1023
 -- default maximum value for the vertical mouse position
 constant DEFAULT_MAX_Y : std_logic_vector(11 downto 0) := x"2FF";
-                                                      -- 1023
+                                                      -- 727
+-- default minimum value for the horizontal mouse position
+constant DEFAULT_MIN_X : std_logic_vector(11 downto 0) := x"000"; -- PWJ : Added DEFAULT_MIN_X value
+                                                      -- 0
+-- default minimum value for the vertical mouse position
+constant DEFAULT_MIN_Y : std_logic_vector(11 downto 0) := x"000"; -- PWJ : Added DEFAULT_MIN_Y value
+                                                      -- 0
 
 -- Mouse check tick constants
 constant CHECK_PERIOD_CLOCKS   : integer := ((CHECK_PERIOD_MS*1000000)/(1000000000/SYSCLK_FREQUENCY_HZ));
@@ -299,6 +307,9 @@ signal x_new,y_new: std_logic := '0';
 -- maximum value for x and y position registers(x_pos,y_pos)
 signal x_max: std_logic_vector(11 downto 0) := DEFAULT_MAX_X;
 signal y_max: std_logic_vector(11 downto 0) := DEFAULT_MAX_Y;
+
+signal x_min: std_logic_vector(11 downto 0) := DEFAULT_MIN_X; -- PWJ : Added x_min signal
+signal y_min: std_logic_vector(11 downto 0) := DEFAULT_MIN_Y; -- PWJ : Added y_min signal
 
 -- active when left,middle,right mouse button is down
 signal left_down,middle_down,right_down: std_logic := '0';
@@ -486,6 +497,12 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
                else
                   x_pos <= x_inter;
                end if;
+               
+              if(x_inter < ('1' & x_min)) then
+                  x_pos <= x_min;
+              else
+                  x_pos <= x_inter;
+              end if;
             end if;
          end if;
       end if;
@@ -550,6 +567,12 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
                else
                   y_pos <= y_inter;
                end if;
+               
+               if(y_inter < (y_min)) then
+                  y_pos <= y_min;
+               else
+                  y_pos <= y_inter;
+               end if;
             end if;
          end if;
       end if;
@@ -562,8 +585,11 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
       if(rising_edge(clk)) then
          if(rst = '1') then
             x_max <= DEFAULT_MAX_X;
+            x_min <= DEFAULT_MIN_X;
          elsif(setmax_x = '1') then
             x_max <= value;
+         elsif(setmin_x = '1') then
+            x_min <= value;
          end if;
       end if;
    end process set_max_x;
@@ -575,11 +601,37 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
       if(rising_edge(clk)) then
          if(rst = '1') then
             y_max <= DEFAULT_MAX_Y;
+            y_min <= DEFAULT_MIN_Y;
          elsif(setmax_y = '1') then
             y_max <= value;
+         elsif(setmin_y = '1') then
+            y_min <= value;
          end if;
       end if;
    end process set_max_y;
+
+   -- PWJ : Set minimum value of x
+--   set_min_x: process(clk,rst)
+--   begin
+--      if(rising_edge(clk)) then
+--         if(rst = '1') then
+--            x_min <= DEFAULT_MIN_X;
+--         elsif(setmin_x = '1') then
+--            x_min <= value;
+--         end if;
+--      end if;
+--   end process set_min_x;
+--   -- PWJ : Set minimum value of y
+--   set_min_y: process(clk,rst)
+--   begin
+--      if(rising_edge(clk)) then
+--         if(rst = '1') then
+--            y_min <= DEFAULT_MIN_Y;
+--         elsif(setmin_y = '1') then
+--            y_min <= value;
+--         end if;
+--      end if;
+--   end process set_min_y;
 
    -- Synchronous one process fsm to handle the communication
    -- with the mouse.

@@ -43,7 +43,7 @@ clk_wiz_0 my_clk_wiz_0 (
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back;
 
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
-  wire setmax_x_constr, setmax_y_constr;   
+  wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;   
 
 
   vga_timing my_timing (
@@ -90,6 +90,8 @@ clk_wiz_0 my_clk_wiz_0 (
     .sety(0),
     .setmax_x(setmax_x_constr),
     .setmax_y(setmax_y_constr),
+    .setmin_x(setmin_x_constr),
+    .setmin_y(setmin_y_constr),
     .value(value_constr),
   //outputs
     .xpos(xpos_out_mouseCtl),
@@ -109,6 +111,8 @@ clk_wiz_0 my_clk_wiz_0 (
     //outputs
     .setmax_x(setmax_x_constr),
     .setmax_y(setmax_y_constr),
+    .setmin_x(setmin_x_constr),
+    .setmin_y(setmin_y_constr),
     .value(value_constr)
     );
  /*   mouse_buffor my_mouse_buffor(
