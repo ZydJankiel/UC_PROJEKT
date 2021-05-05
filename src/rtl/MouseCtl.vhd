@@ -474,6 +474,8 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
                -- a negative number when moving left
                if(x_inter(11) = '1') then
                   x_pos <= (others => '0');
+               elsif(x_inter < (x_min)) then
+                  x_pos <= x_min;
                else
                   x_pos <= x_inter;
                end if;
@@ -494,8 +496,6 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
                -- new x position is x_max.
                if(x_inter > ('0' & x_max)) then
                   x_pos <= x_max;
-               elsif(x_inter < (x_min)) then
-                  x_pos <= x_min;
                else
                   x_pos <= x_inter;
                end if;
@@ -540,6 +540,8 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
                -- a negative number when moving upward
                if(y_inter(11) = '1') then
                   y_pos <= (others => '0');
+               elsif(y_inter < (y_min)) then
+                  y_pos <= y_min;
                else
                   y_pos <= y_inter;
                end if;
@@ -560,8 +562,6 @@ timeout  <= '1' when timeout_cnt = (TIMEOUT_PERIOD_CLOCKS - 1) else '0';
                -- new y position is y_max.
                if(y_inter > (y_max)) then
                   y_pos <= y_max;
-               elsif(y_inter < (y_min)) then
-                  y_pos <= y_min;
                else
                   y_pos <= y_inter;
                end if;
