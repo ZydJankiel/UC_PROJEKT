@@ -25,6 +25,7 @@ module mouse_constrainer(
     output reg setmax_x,
     output reg setmax_y,
     
+    input wire menu_on,
     input wire game_on,
     input wire clk,
     input wire rst
@@ -35,8 +36,9 @@ reg [11:0] counter = 0, counter_nxt = 0;
 reg setmax_x_nxt, setmax_y_nxt;
 reg [2:0] state,state_nxt;
 
-localparam IDLE = 1'b0,
-           GAME_MODE = 1'b1;
+localparam IDLE = 2'b00,
+           GAME_MODE = 2'b01,
+           MENU_MODE = 2'b10;
 
 always @(posedge clk) begin
     if(rst) begin
@@ -55,32 +57,52 @@ always @(posedge clk) begin
 end
     
 always @* begin
+    setmax_x_nxt = 0;
+    setmax_y_nxt = 0;
+    value_nxt = 0;
+    counter_nxt = 0;
+    state_nxt = IDLE;
     case(state)
-        IDLE:
-            begin
-              setmax_x_nxt = 0;
-              setmax_y_nxt = 0;
-              value_nxt = 0;
-              counter_nxt = 0;
-              state_nxt = game_on ? GAME_MODE : IDLE;
-            end
+        IDLE: begin
+            if (game_on == 1) begin
+                state_nxt = GAME_MODE;
+                end
+            else if (menu_on == 1) begin
+                state_nxt = MENU_MODE;
+                end
+            else begin
+                state_nxt = IDLE;
+                end
+              //state_nxt = menu_on ? MENU_MODE : IDLE; //CZEMU DODANIE TEJ LINIJKI PSUJE WSZYSTKIE PRZYCISKI??????/
+              //FOR FUTURE USES NEVER USE LINE ABOVE TO CHECK STATES OF BUTTONS - FOR SOME REASON DISABLES ALL BUTTONS
+        end
             
-          GAME_MODE:
-            begin
-              if (counter == 0) begin
-                setmax_y_nxt = 0;
+        GAME_MODE: begin
+            if (counter == 0) begin
                 setmax_x_nxt = 1;
                 value_nxt = 800;
                 counter_nxt = 1;
-              end
-              else begin
-                setmax_y_nxt = 1;
-                setmax_x_nxt = 0;
-                value_nxt = 600;
-                counter_nxt = 0;
             end
-            state_nxt = counter_nxt == 0 ? IDLE : GAME_MODE;
+            else begin
+                setmax_y_nxt = 1;
+                value_nxt = 600;
+            end
+              state_nxt = counter_nxt == 0 ? IDLE : GAME_MODE;
         end  
+        
+        MENU_MODE : begin
+            if (counter == 0) begin
+                setmax_x_nxt = 1;
+                value_nxt = 1019;
+                counter_nxt = 1;
+            end
+            else begin
+                setmax_y_nxt = 1;
+                value_nxt = 763;
+            end
+            state_nxt = counter_nxt == 0 ? IDLE : MENU_MODE;
+        end
+        
     endcase
 end
 
