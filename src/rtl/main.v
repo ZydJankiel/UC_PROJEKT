@@ -15,6 +15,11 @@ module main (
   output wire [3:0] b
   );
 
+localparam  TOP_V_LINE     = 367,
+            BOTTOM_V_LINE  = 667,
+            LEFT_H_LINE    = 361,
+            RIGHT_H_LINE   = 661;
+            
   wire locked;
   wire pclk;
   wire clkMouse;
@@ -39,7 +44,6 @@ clk_wiz_0 my_clk_wiz_0 (
   wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back;
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
   
-  
   wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back;
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back;
 
@@ -60,7 +64,11 @@ clk_wiz_0 my_clk_wiz_0 (
     .hblnk(hblnk_out_timing)
   );
   
-  draw_background my_game_background (
+  draw_background #(.TOP_V_LINE(TOP_V_LINE), 
+                    .BOTTOM_V_LINE(BOTTOM_V_LINE), 
+                    .LEFT_H_LINE(LEFT_H_LINE), 
+                    .RIGHT_H_LINE(RIGHT_H_LINE),
+                    .BORDER(10)) my_game_background (
   //inputs
    .vcount_in(vcount_out_timing),
    .vsync_in(vsync_out_timing),
@@ -104,7 +112,10 @@ clk_wiz_0 my_clk_wiz_0 (
     .new_event()
   );
   
-  mouse_constrainer my_mouse_constrainer (
+  mouse_constrainer #(.MIN_Y(TOP_V_LINE), 
+                      .MAX_Y(BOTTOM_V_LINE), 
+                      .MIN_X(LEFT_H_LINE), 
+                      .MAX_X(RIGHT_H_LINE)) my_mouse_constrainer (
     //inputs
     .clk(pclk),
     .rst(locked_reset),

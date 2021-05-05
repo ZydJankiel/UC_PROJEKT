@@ -1,6 +1,14 @@
 `timescale 1 ns / 1 ps
 
-module draw_background (
+module draw_background 
+    #( parameter
+    TOP_V_LINE     = 367,
+    BOTTOM_V_LINE  = 667,
+    LEFT_H_LINE    = 361,
+    RIGHT_H_LINE   = 661,
+    BORDER = 10
+  )
+  (
   input wire [11:0] vcount_in,
   input wire vsync_in,
   input wire vblnk_in,
@@ -22,8 +30,6 @@ module draw_background (
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
-
-localparam BORDER = 10;
       
   always @(posedge pclk) begin
     if (rst) begin
@@ -62,10 +68,10 @@ localparam BORDER = 10;
         
 
             // GAME BOUNDARY
-         else if ((hcount_in >= 361 - BORDER && hcount_in < 361 && vcount_in >= 367 - BORDER && vcount_in < 667 + BORDER) || 
-           (hcount_in >= 361 && hcount_in < 661 && vcount_in >= 367 - BORDER && vcount_in < 367 ) || 
-           (hcount_in >= 361 && hcount_in < 661 && vcount_in >= 667 && vcount_in < 667 + BORDER) || 
-           (hcount_in >= 661  && hcount_in < 661 + BORDER && vcount_in >= 367 - BORDER && vcount_in < 667 + BORDER) ) rgb_nxt = 12'hf_f_f;
+         else if ((hcount_in >= LEFT_H_LINE - BORDER && hcount_in < LEFT_H_LINE && vcount_in >= TOP_V_LINE - BORDER && vcount_in < BOTTOM_V_LINE + BORDER) || 
+           (hcount_in >= LEFT_H_LINE && hcount_in < RIGHT_H_LINE && vcount_in >= TOP_V_LINE - BORDER && vcount_in < TOP_V_LINE ) || 
+           (hcount_in >= LEFT_H_LINE && hcount_in < RIGHT_H_LINE && vcount_in >= BOTTOM_V_LINE && vcount_in < BOTTOM_V_LINE + BORDER) || 
+           (hcount_in >= RIGHT_H_LINE  && hcount_in < RIGHT_H_LINE + BORDER && vcount_in >= TOP_V_LINE - BORDER && vcount_in < BOTTOM_V_LINE + BORDER) ) rgb_nxt = 12'hf_f_f;
 
         
         //white

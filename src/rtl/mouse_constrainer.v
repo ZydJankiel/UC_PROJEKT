@@ -20,7 +20,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 // implemented by MO
-module mouse_constrainer(
+module mouse_constrainer
+    #(  MIN_Y     = 367,
+        MAX_Y  = 667,
+        MIN_X    = 361,
+        MAX_X   = 661
+     )
+    (
     output reg [11:0] value,
     output reg setmax_x,
     output reg setmax_y,
@@ -88,22 +94,22 @@ always @* begin
         GAME_MODE: begin
             if (counter == 0) begin
                 setmax_x_nxt = 1;
-                value_nxt = 800;
+                value_nxt = MAX_X - 16;
                 counter_nxt = counter +1;
             end
             else if (counter == 1)begin
                 setmax_y_nxt = 1;
-                value_nxt = 600;
+                value_nxt = MAX_Y - 16;
                 counter_nxt = counter +1;
             end
             else if (counter == 2)begin
                 setmin_x_nxt = 1;
-                value_nxt = 200;
+                value_nxt = MIN_X;
                 counter_nxt = counter +1;
             end
             else begin
                 setmin_y_nxt = 1;
-                value_nxt = 200;
+                value_nxt = MIN_Y;
                 counter_nxt = 0;
             end
               state_nxt = counter_nxt == 0 ? IDLE : GAME_MODE;
