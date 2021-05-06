@@ -78,6 +78,8 @@ clk_wiz_0 my_clk_wiz_0 (
    .hblnk_in(hblnk_out_timing),
    .pclk(pclk),
    .rst(locked_reset),
+   .game_on(game_button),
+   .menu_on(menu_button),
   //outputs  
    .hcount_out(hcount_out_back),
    .vcount_out(vcount_out_back),
