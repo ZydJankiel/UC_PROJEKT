@@ -74,7 +74,45 @@ localparam MENU_MODE = 1'b0,
                 else if (hcount_in == 0) rgb_nxt = 12'h0_f_0;
                 // Active display, right edge, make a blue line.
                 else if (hcount_in == 1023) rgb_nxt = 12'h0_0_f;
-                else rgb_nxt = 12'h8_8_8;
+                // M
+                else if ((hcount_in > 170 && hcount_in <= 210 && vcount_in > 90 && vcount_in <= 250) ||
+                (hcount_in > 170 && hcount_in <= 370 && vcount_in > 50 && vcount_in <= 90) ||
+                (hcount_in > 250 && hcount_in <= 290 && vcount_in > 90 && vcount_in <= 250) ||
+                (hcount_in > 330 && hcount_in <= 370 && vcount_in > 90 && vcount_in <= 250))  rgb_nxt = 12'hf_f_f;
+                //E
+                else if ((hcount_in > 420 && hcount_in <= 460 && vcount_in > 50 && vcount_in <= 250) ||
+                (hcount_in > 460 && hcount_in <= 500 && vcount_in > 50 && vcount_in <= 90) ||
+                (hcount_in > 460 && hcount_in <= 500 && vcount_in > 130 && vcount_in <= 170) ||
+                (hcount_in > 460 && hcount_in <= 500 && vcount_in > 210 && vcount_in <= 250))  rgb_nxt = 12'hf_f_f;
+                //N
+                else if ((hcount_in > 550 && hcount_in <= 590 && vcount_in > 90 && vcount_in <= 250) ||
+                (hcount_in > 550 && hcount_in <= 670 && vcount_in > 50 && vcount_in <= 90) ||
+                (hcount_in > 630 && hcount_in <= 670 && vcount_in > 90 && vcount_in <= 250))  rgb_nxt = 12'hf_f_f;
+                //U
+                else if ((hcount_in > 720 && hcount_in <= 760 && vcount_in > 50 && vcount_in <= 210) ||
+                (hcount_in > 720 && hcount_in <= 840 && vcount_in > 210 && vcount_in <= 250) ||
+                (hcount_in > 800 && hcount_in <= 840 && vcount_in > 50 && vcount_in <= 210)) rgb_nxt = 12'hf_f_f;
+      
+                // P
+                else if ((hcount_in > 400 && hcount_in <= 420 && vcount_in > 400 && vcount_in <= 480) ||
+                (hcount_in > 420 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 410) ||
+                (hcount_in > 440 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 440) ||
+                (hcount_in > 420 && hcount_in <= 450 && vcount_in > 430 && vcount_in <= 440))  rgb_nxt = 12'hf_f_f;
+                //L
+                else if ((hcount_in > 480 && hcount_in <= 500 && vcount_in > 400 && vcount_in <= 480) ||
+                (hcount_in > 500 && hcount_in <= 530 && vcount_in > 460 && vcount_in <= 480)) rgb_nxt = 12'hf_f_f;
+                //A
+                else if ((hcount_in > 560 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 420) ||
+                (hcount_in > 560 && hcount_in <= 580 && vcount_in > 400 && vcount_in <= 480) ||
+                (hcount_in > 590 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 480) ||
+                (hcount_in > 580 && hcount_in <= 590 && vcount_in > 440 && vcount_in <= 460))  rgb_nxt = 12'hf_f_f;
+                //Y
+                else if ((hcount_in > 640 && hcount_in <= 660 && vcount_in > 400 && vcount_in <= 420) ||
+                (hcount_in > 670 && hcount_in <= 690 && vcount_in > 400 && vcount_in <= 420) ||
+                (hcount_in > 640 && hcount_in <= 690 && vcount_in > 420 && vcount_in <= 440) ||
+                (hcount_in > 655 && hcount_in <= 675 && vcount_in > 440 && vcount_in <= 480)) rgb_nxt = 12'hf_f_f;
+                               
+                else rgb_nxt = 12'h0_0_0;
              end
              state_nxt = game_on ? GAME_MODE : MENU_MODE;
         end
