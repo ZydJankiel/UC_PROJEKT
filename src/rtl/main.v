@@ -80,6 +80,8 @@ clk_wiz_0 my_clk_wiz_0 (
    .rst(locked_reset),
    .game_on(game_button),
    .menu_on(menu_button),
+   .xpos(xpos_out_mouseCtl),
+   .ypos(ypos_out_mouseCtl),
   //outputs  
    .hcount_out(hcount_out_back),
    .vcount_out(vcount_out_back),

@@ -19,6 +19,8 @@ module draw_background
   input wire rst,
   input wire game_on,
   input wire menu_on,
+  input wire [11:0] xpos,
+  input wire [11:0] ypos,
 
   output reg [11:0] vcount_out,
   output reg vsync_out,
@@ -97,21 +99,25 @@ localparam MENU_MODE = 1'b0,
                 else if ((hcount_in > 400 && hcount_in <= 420 && vcount_in > 400 && vcount_in <= 480) ||
                 (hcount_in > 420 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 410) ||
                 (hcount_in > 440 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 440) ||
-                (hcount_in > 420 && hcount_in <= 450 && vcount_in > 430 && vcount_in <= 440))  rgb_nxt = 12'hf_f_f;
+                (hcount_in > 420 && hcount_in <= 450 && vcount_in > 430 && vcount_in <= 440) ||
                 //L
-                else if ((hcount_in > 480 && hcount_in <= 500 && vcount_in > 400 && vcount_in <= 480) ||
-                (hcount_in > 500 && hcount_in <= 530 && vcount_in > 460 && vcount_in <= 480)) rgb_nxt = 12'hf_f_f;
+                (hcount_in > 480 && hcount_in <= 500 && vcount_in > 400 && vcount_in <= 480) ||
+                (hcount_in > 500 && hcount_in <= 530 && vcount_in > 460 && vcount_in <= 480) ||
                 //A
-                else if ((hcount_in > 560 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 420) ||
+                (hcount_in > 560 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 420) ||
                 (hcount_in > 560 && hcount_in <= 580 && vcount_in > 400 && vcount_in <= 480) ||
                 (hcount_in > 590 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 480) ||
-                (hcount_in > 580 && hcount_in <= 590 && vcount_in > 440 && vcount_in <= 460))  rgb_nxt = 12'hf_f_f;
+                (hcount_in > 580 && hcount_in <= 590 && vcount_in > 440 && vcount_in <= 460) ||
                 //Y
-                else if ((hcount_in > 640 && hcount_in <= 660 && vcount_in > 400 && vcount_in <= 420) ||
+                (hcount_in > 640 && hcount_in <= 660 && vcount_in > 400 && vcount_in <= 420) ||
                 (hcount_in > 670 && hcount_in <= 690 && vcount_in > 400 && vcount_in <= 420) ||
                 (hcount_in > 640 && hcount_in <= 690 && vcount_in > 420 && vcount_in <= 440) ||
-                (hcount_in > 655 && hcount_in <= 675 && vcount_in > 440 && vcount_in <= 480)) rgb_nxt = 12'hf_f_f;
-                               
+                (hcount_in > 655 && hcount_in <= 675 && vcount_in > 440 && vcount_in <= 480)) begin
+                    if (xpos > 384 && xpos <= 690 && ypos > 384 && ypos <= 480)
+                        rgb_nxt = 12'h0_f_0;
+                    else
+                        rgb_nxt = 12'hf_f_f;
+                end
                 else rgb_nxt = 12'h0_0_0;
              end
              state_nxt = game_on ? GAME_MODE : MENU_MODE;
