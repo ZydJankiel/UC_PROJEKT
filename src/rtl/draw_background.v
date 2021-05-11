@@ -1,5 +1,10 @@
 `timescale 1 ns / 1 ps
-
+/*
+ * PWJ: Added state machine for switching between menu background and game background.
+ * Placing mouse on PLAY text in MENU_MODE will change its color to green, and pressing
+ * left mouse button will change state to GAME_MODE. Pressing btnL button on board will chnge mode back to menu.
+ * All of the letters are beeing drawn with big if elseif chunk of code.
+ */
 module draw_background 
     #( parameter
     TOP_V_LINE     = 367,
@@ -21,6 +26,7 @@ module draw_background
   input wire menu_on,
   input wire [11:0] xpos,
   input wire [11:0] ypos,
+  input wire mouse_left,
 
   output reg [11:0] vcount_out,
   output reg vsync_out,
@@ -28,13 +34,14 @@ module draw_background
   output reg [11:0] hcount_out,
   output reg hsync_out,
   output reg hblnk_out,
-  output reg [11:0] rgb_out
+  output reg [11:0] rgb_out,
+  output reg mouse_mode
   
   );
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
-reg state, state_nxt;
+reg state, state_nxt, mouse_mode_nxt;
 
 localparam MENU_MODE = 1'b0,
            GAME_MODE = 1'b1;
@@ -48,7 +55,8 @@ localparam MENU_MODE = 1'b0,
       vblnk_out <= 0;
       hcount_out <= 0;
       vcount_out <= 0;
-      rgb_out <= 0;    
+      rgb_out <= 0;
+      mouse_mode <= MENU_MODE;    
     end
     else begin
       state <= state_nxt;
@@ -59,12 +67,15 @@ localparam MENU_MODE = 1'b0,
       hcount_out <= hcount_nxt;
       vcount_out <= vcount_nxt;
       rgb_out <= rgb_nxt;
+      mouse_mode <= mouse_mode_nxt;
     end
   end
   
   always @* begin
     case (state)
         MENU_MODE: begin
+            state_nxt = game_on ? GAME_MODE : MENU_MODE;
+            mouse_mode_nxt = MENU_MODE;
                // During blanking, make it it black.
             if (vblnk_in || hblnk_in) rgb_nxt = 12'h0_0_0; 
             else begin
@@ -113,16 +124,20 @@ localparam MENU_MODE = 1'b0,
                 (hcount_in > 670 && hcount_in <= 690 && vcount_in > 400 && vcount_in <= 420) ||
                 (hcount_in > 640 && hcount_in <= 690 && vcount_in > 420 && vcount_in <= 440) ||
                 (hcount_in > 655 && hcount_in <= 675 && vcount_in > 440 && vcount_in <= 480)) begin
-                    if (xpos > 384 && xpos <= 690 && ypos > 384 && ypos <= 480)
+                    if (xpos > 384 && xpos <= 690 && ypos > 384 && ypos <= 480) begin
                         rgb_nxt = 12'h0_f_0;
+                        if (mouse_left)
+                            state_nxt = GAME_MODE;
+                    end
                     else
                         rgb_nxt = 12'hf_f_f;
                 end
                 else rgb_nxt = 12'h0_0_0;
              end
-             state_nxt = game_on ? GAME_MODE : MENU_MODE;
+             
         end
         GAME_MODE: begin
+            mouse_mode_nxt = GAME_MODE;
                            // During blanking, make it it black.
             if (vblnk_in || hblnk_in) rgb_nxt = 12'h0_0_0; 
             else begin

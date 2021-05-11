@@ -48,7 +48,7 @@ clk_wiz_0 my_clk_wiz_0 (
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back;
 
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
-  wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;   
+  wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, mouse_mode_out_back;   
 
 
   vga_timing my_timing (
@@ -82,6 +82,7 @@ clk_wiz_0 my_clk_wiz_0 (
    .menu_on(menu_button),
    .xpos(xpos_out_mouseCtl),
    .ypos(ypos_out_mouseCtl),
+   .mouse_left(mouse_left_out_mouseCtl),
   //outputs  
    .hcount_out(hcount_out_back),
    .vcount_out(vcount_out_back),
@@ -89,7 +90,8 @@ clk_wiz_0 my_clk_wiz_0 (
    .vblnk_out(vblnk_out_back),
    .hsync_out(hsync_out_back),
    .vsync_out(vsync_out_back),
-   .rgb_out(rgb_out_back)
+   .rgb_out(rgb_out_back),
+   .mouse_mode(mouse_mode_out_back)
   );
 
   MouseCtl My_MouseCtl(
@@ -123,8 +125,7 @@ clk_wiz_0 my_clk_wiz_0 (
     //inputs
     .clk(pclk),
     .rst(locked_reset),
-    .game_on(game_button),
-    .menu_on(menu_button),
+    .mouse_mode(mouse_mode_out_back),
     //outputs
     .setmax_x(setmax_x_constr),
     .setmax_y(setmax_y_constr),

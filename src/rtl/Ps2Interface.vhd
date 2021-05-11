@@ -4,6 +4,11 @@
 -- Author : Ulrich Zolt�n
 --          Copyright 2006 Digilent, Inc.
 ------------------------------------------------------------------------
+-- This module was downloaded from our UEC2 course on UPEL platform.
+-- https://upel2.cel.agh.edu.pl/weaiib/pluginfile.php/86334/mod_assign/introattachment/0/MouseCtl.vhd?forcedownload=1
+-- or
+-- https://github.com/Digilent/Basys-3-GPIO
+------------------------------------------------------------------------
 -- This file contains the implementation of a generic bidirectional
 -- ps/2 interface.
 ------------------------------------------------------------------------

@@ -4,6 +4,13 @@
 -- Author : Ulrich Zolt�n
 --          Copyright 2006 Digilent, Inc.
 ------------------------------------------------------------------------
+-- Modifications : PWJ
+-- This module was downloaded from our UEC2 course on UPEL platform, and has been modified 
+-- for pourpose of this game.
+-- https://upel2.cel.agh.edu.pl/weaiib/pluginfile.php/86334/mod_assign/introattachment/0/MouseCtl.vhd?forcedownload=1
+-- or
+-- https://github.com/Digilent/Basys-3-GPIO
+------------------------------------------------------------------------
 -- This file contains a controller for a ps/2 compatible mouse device.
 -- This controller uses the ps2interface module.
 ------------------------------------------------------------------------

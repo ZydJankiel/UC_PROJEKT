@@ -4,6 +4,13 @@
 -- Author : Ulrich Zoltán
 --          Copyright 2006 Digilent, Inc.
 ------------------------------------------------------------------------
+-- Modifications : MO
+-- This module was downloaded from our UEC2 course on UPEL platform, and has been modified 
+-- for pourpose of this game.
+-- https://upel2.cel.agh.edu.pl/weaiib/pluginfile.php/86334/mod_assign/introattachment/0/MouseCtl.vhd?forcedownload=1
+-- or
+-- https://github.com/Digilent/Basys-3-GPIO
+-----------------------------------------------------------------------
 -- Software version : Xilinx ISE 7.1.04i
 --                    WebPack
 -- Device	        : 3s200ft256-4
