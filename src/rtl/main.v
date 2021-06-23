@@ -7,6 +7,7 @@ module main (
   input wire rst,
   input wire game_button,
   input wire menu_button,
+  input wire player_hit_test,
   
   output wire vs,
   output wire hs,
@@ -50,7 +51,10 @@ clk_wiz_0 my_clk_wiz_0 (
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, mouse_mode_out_back;   
 
-
+  wire [11:0] rgb_out_hp;  
+  wire [11:0] vcount_out_hp, hcount_out_hp ;
+  wire vsync_out_hp, hsync_out_hp, vblnk_out_hp, hblnk_out_hp;
+  
   vga_timing my_timing (
   //inputs 
     .pclk(pclk),
@@ -68,7 +72,7 @@ clk_wiz_0 my_clk_wiz_0 (
                     .BOTTOM_V_LINE(BOTTOM_V_LINE), 
                     .LEFT_H_LINE(LEFT_H_LINE), 
                     .RIGHT_H_LINE(RIGHT_H_LINE),
-                    .BORDER(10)) my_game_background (
+                    .BORDER(7)) my_game_background (
   //inputs
    .vcount_in(vcount_out_timing),
    .vsync_in(vsync_out_timing),
@@ -94,6 +98,39 @@ clk_wiz_0 my_clk_wiz_0 (
    .mouse_mode(mouse_mode_out_back)
   );
 
+hp_control #(.TOP_V_LINE(TOP_V_LINE), 
+                    .BOTTOM_V_LINE(BOTTOM_V_LINE), 
+                    .LEFT_H_LINE(LEFT_H_LINE), 
+                    .RIGHT_H_LINE(RIGHT_H_LINE),
+                    .BORDER(3))
+    player_hp_control 
+    (
+    //inputs
+    .vcount_in_hp(vcount_out_back),
+    .vsync_in_hp(vsync_out_back),
+    .vblnk_in_hp(vblnk_out_back),
+    .hcount_in_hp(hcount_out_back),
+    .hsync_in_hp(hsync_out_back),
+    .hblnk_in_hp(hblnk_out_back),
+    .rgb_in_hp(rgb_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on_hp(mouse_mode_out_back),
+    .player_hit(player_hit_test),
+ 
+    //outputs
+    .vcount_out_hp(vcount_out_hp),
+    .vsync_out_hp(vsync_out_hp),
+    .vblnk_out_hp(vblnk_out_hp),
+    .hcount_out_hp(hcount_out_hp),
+    .hsync_out_hp(hsync_out_hp),
+    .hblnk_out_hp(hblnk_out_hp),
+    .rgb_out_hp(rgb_out_hp),
+    .game_over()
+);
+
+//MOUSE MODULES//  
+
   MouseCtl My_MouseCtl(
   //inouts
     .ps2_clk(ps2_clk),
@@ -117,6 +154,8 @@ clk_wiz_0 my_clk_wiz_0 (
     .right(),
     .new_event()
   );
+  
+
   
   mouse_constrainer #(.MIN_Y(TOP_V_LINE), 
                       .MAX_Y(BOTTOM_V_LINE), 
@@ -151,12 +190,12 @@ clk_wiz_0 my_clk_wiz_0 (
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .pixel_clk(pclk),
-    .hcount(hcount_out_back),
-    .vcount(vcount_out_back),
-    .blank(hblnk_out_back || vblnk_out_back), 
-    .red_in(rgb_out_back[11:8]),
-    .green_in(rgb_out_back[7:4]),
-    .blue_in(rgb_out_back[3:0]),
+    .hcount(hcount_out_hp),
+    .vcount(vcount_out_hp),
+    .blank(hblnk_out_hp || vblnk_out_hp), 
+    .red_in(rgb_out_hp[11:8]),
+    .green_in(rgb_out_hp[7:4]),
+    .blue_in(rgb_out_hp[3:0]),
   //outputs
     .red_out(red_out_mouse),
     .green_out(green_out_mouse),
@@ -164,8 +203,8 @@ clk_wiz_0 my_clk_wiz_0 (
     .enable_mouse_display_out()
  );
   
-assign hs = hsync_out_back;
-assign vs = vsync_out_back;
+assign hs = hsync_out_hp;
+assign vs = vsync_out_hp;
 assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
 
 

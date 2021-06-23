@@ -56,8 +56,9 @@ set_property PACKAGE_PIN T18 [get_ports game_button]
 	set_property IOSTANDARD LVCMOS33 [get_ports game_button]
 set_property PACKAGE_PIN W19 [get_ports menu_button]						
     set_property IOSTANDARD LVCMOS33 [get_ports menu_button]
-
-
+set_property PACKAGE_PIN T17 [get_ports player_hit_test]						
+    set_property IOSTANDARD LVCMOS33 [get_ports player_hit_test]
+        
 set_property PACKAGE_PIN C17 [get_ports {ps2_clk}]
 set_property IOSTANDARD LVCMOS33 [get_ports {ps2_clk}]
 set_property PULLUP true [get_ports ps2_clk]

@@ -51,6 +51,7 @@ read_verilog {
     src/rtl/mouse_buffor.v
     src/rtl/delay.v
     src/rtl/mouse_constrainer.v
+    src/rtl/hp_control.v
 }
 
 read_vhdl {
