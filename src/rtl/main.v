@@ -15,8 +15,8 @@ module main (
   output wire [3:0] b
   );
 
-localparam  TOP_V_LINE     = 367,
-            BOTTOM_V_LINE  = 667,
+localparam  TOP_V_LINE     = 317,
+            BOTTOM_V_LINE  = 617,
             LEFT_H_LINE    = 361,
             RIGHT_H_LINE   = 661;
             

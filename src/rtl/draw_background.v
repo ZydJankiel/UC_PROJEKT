@@ -45,6 +45,12 @@ reg state, state_nxt, mouse_mode_nxt;
 
 localparam MENU_MODE = 1'b0,
            GAME_MODE = 1'b1;
+
+localparam TOP_HP = BOTTOM_V_LINE + BORDER + 60,
+           BOTTOM_HP = BOTTOM_V_LINE + BORDER + 110,
+           LEFT_HP = LEFT_H_LINE,
+           RIGHT_HP = RIGHT_H_LINE;
+           
       
   always @(posedge pclk) begin
     if (rst) begin
@@ -154,6 +160,11 @@ localparam MENU_MODE = 1'b0,
                 (hcount_in >= LEFT_H_LINE && hcount_in < RIGHT_H_LINE && vcount_in >= TOP_V_LINE - BORDER && vcount_in < TOP_V_LINE ) || 
                 (hcount_in >= LEFT_H_LINE && hcount_in < RIGHT_H_LINE && vcount_in >= BOTTOM_V_LINE && vcount_in < BOTTOM_V_LINE + BORDER) || 
                 (hcount_in >= RIGHT_H_LINE  && hcount_in < RIGHT_H_LINE + BORDER && vcount_in >= TOP_V_LINE - BORDER && vcount_in < BOTTOM_V_LINE + BORDER) ) rgb_nxt = 12'hf_f_f;
+                // HP BAR
+                else if ((hcount_in >= LEFT_HP - BORDER && hcount_in < LEFT_HP && vcount_in >= TOP_HP - BORDER && vcount_in < BOTTOM_HP + BORDER ) ||
+                (hcount_in >= LEFT_HP && hcount_in < RIGHT_HP && vcount_in >= TOP_HP - BORDER && vcount_in < TOP_HP ) || 
+                (hcount_in >= LEFT_HP && hcount_in < RIGHT_HP&& vcount_in >= BOTTOM_HP && vcount_in < BOTTOM_HP + BORDER) || 
+                (hcount_in >= RIGHT_HP  && hcount_in < RIGHT_HP + BORDER && vcount_in >= TOP_HP - BORDER && vcount_in < BOTTOM_HP + BORDER) ) rgb_nxt = 12'hf_f_f;
                 
                 else rgb_nxt = 12'h0_0_0;
             end
