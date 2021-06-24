@@ -98,6 +98,14 @@ clk_wiz_0 my_clk_wiz_0 (
    .mouse_mode(mouse_mode_out_back)
   );
 
+wire pulse;
+monostable my_monostable(
+    .clk(pclk),
+    .reset(rst),
+    .trigger(player_hit_test),
+    .pulse(pulse)
+);
+
 hp_control #(.TOP_V_LINE(TOP_V_LINE), 
                     .BOTTOM_V_LINE(BOTTOM_V_LINE), 
                     .LEFT_H_LINE(LEFT_H_LINE), 
@@ -116,7 +124,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .pclk(pclk),
     .rst(locked_reset),
     .game_on_hp(mouse_mode_out_back),
-    .player_hit(player_hit_test),
+    .player_hit(pulse),
  
     //outputs
     .vcount_out_hp(vcount_out_hp),

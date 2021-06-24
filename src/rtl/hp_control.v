@@ -66,7 +66,7 @@ localparam GAME = 1'b1,
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
-reg [3:0] curr_dmg, curr_dmg_nxt;
+reg [2:0] curr_dmg, curr_dmg_nxt;
 reg game_over_nxt;
 reg state, state_nxt;
 

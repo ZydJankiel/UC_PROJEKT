@@ -52,6 +52,7 @@ read_verilog {
     src/rtl/delay.v
     src/rtl/mouse_constrainer.v
     src/rtl/hp_control.v
+    src/rtl/test_module_impulse_generator.v
 }
 
 read_vhdl {
