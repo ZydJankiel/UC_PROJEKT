@@ -1,11 +1,12 @@
 `timescale 1 ns / 1 ps
 /*
- * PWJ: Added module
+ * PWJ: Added module for drawing obstacle. This module sends x and y coordinates to
+ * module responsible for checking colision with mouse pointer.
  */
 module draw_obstacles
     #( parameter
-    TOP_V_LINE     = 367,
-    BOTTOM_V_LINE  = 667,
+    TOP_V_LINE     = 317,
+    BOTTOM_V_LINE  = 617,
     LEFT_H_LINE    = 361,
     RIGHT_H_LINE   = 661,
     BORDER = 10
@@ -30,15 +31,18 @@ module draw_obstacles
   output reg [11:0] hcount_out,
   output reg hsync_out,
   output reg hblnk_out,
-  output reg [11:0] rgb_out
+  output reg [11:0] rgb_out,
+  output reg [11:0] obstacle_x,
+  output reg [11:0] obstacle_y
   );
+  
 reg [11:0] rgb_nxt;
-reg [11:0] vcount_nxt, hcount_nxt;
+reg [11:0] vcount_nxt, hcount_nxt, obstacle_x_nxt, obstacle_y_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 reg state, state_nxt;
 
-localparam IDLE = 2'b00,
-           DRAW = 2'b01;
+localparam IDLE = 0,
+           DRAW = 1;
 
   always @(posedge pclk) begin
       if (rst) begin
@@ -50,6 +54,8 @@ localparam IDLE = 2'b00,
           hcount_out <= 0;
           vcount_out <= 0;
           rgb_out <= 0; 
+          obstacle_x <= 0;
+          obstacle_y <= 0;
       end
       else begin
           state <= state_nxt;
@@ -60,6 +66,8 @@ localparam IDLE = 2'b00,
           hcount_out <= hcount_nxt;
           vcount_out <= vcount_nxt;
           rgb_out <= rgb_nxt;
+          obstacle_x <= obstacle_x_nxt;
+          obstacle_y <= obstacle_y_nxt;
       end
   end
   
@@ -70,6 +78,8 @@ localparam IDLE = 2'b00,
       vblnk_nxt = vblnk_in;
       hcount_nxt = hcount_in;
       vcount_nxt = vcount_in;  
+      obstacle_x_nxt = 0;
+      obstacle_y_nxt = 0;
       case(state)
           IDLE: 
               begin
@@ -79,7 +89,11 @@ localparam IDLE = 2'b00,
           DRAW:
               begin
                   state_nxt = menu_on ? IDLE : DRAW;
-                  if (hcount_in <1000 && hcount_in >900 && vcount_in <500 && vcount_in >400) rgb_nxt = 12'h0_f_0; // test
+                  if (hcount_in <500 && hcount_in >400 && vcount_in <500 && vcount_in >400) begin 
+                      rgb_nxt = 12'hf_f_f;
+                      obstacle_x_nxt = hcount_in;
+                      obstacle_y_nxt = vcount_in;
+                  end
                   else rgb_nxt = rgb_in;
               end
       endcase

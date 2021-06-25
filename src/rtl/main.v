@@ -53,8 +53,9 @@ localparam  TOP_V_LINE     = 317,
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, mouse_mode_out_back;   
 
   wire [11:0] rgb_out_hp;  
-  wire [11:0] vcount_out_hp, hcount_out_hp ;
+  wire [11:0] vcount_out_hp, hcount_out_hp, obstacle_x_out,obstacle_y_out;
   wire vsync_out_hp, hsync_out_hp, vblnk_out_hp, hblnk_out_hp;
+  wire damage_out;
   
   vga_timing my_timing (
       //inputs 
@@ -69,64 +70,77 @@ localparam  TOP_V_LINE     = 317,
       .hblnk(hblnk_out_timing)
   );
   
-  draw_background #(.TOP_V_LINE(TOP_V_LINE), 
-                    .BOTTOM_V_LINE(BOTTOM_V_LINE), 
-                    .LEFT_H_LINE(LEFT_H_LINE), 
-                    .RIGHT_H_LINE(RIGHT_H_LINE),
-                    .BORDER(7)) my_game_background (
- //inputs
-      .vcount_in(vcount_out_timing),
-      .vsync_in(vsync_out_timing),
-      .vblnk_in(vblnk_out_timing),
-      .hcount_in(hcount_out_timing),
-      .hsync_in(hsync_out_timing),
-      .hblnk_in(hblnk_out_timing),
-      .pclk(pclk),
-      .rst(locked_reset),
-      .game_on(game_button),
-      .menu_on(menu_button),
-      .xpos(xpos_out_mouseCtl),
-      .ypos(ypos_out_mouseCtl),
-      .mouse_left(mouse_left_out_mouseCtl),
+draw_background #(.TOP_V_LINE(TOP_V_LINE), 
+                  .BOTTOM_V_LINE(BOTTOM_V_LINE), 
+                  .LEFT_H_LINE(LEFT_H_LINE), 
+                  .RIGHT_H_LINE(RIGHT_H_LINE),
+                  .BORDER(7)) my_game_background (
+//inputs
+    .vcount_in(vcount_out_timing),
+    .vsync_in(vsync_out_timing),
+    .vblnk_in(vblnk_out_timing),
+    .hcount_in(hcount_out_timing),
+    .hsync_in(hsync_out_timing),
+    .hblnk_in(hblnk_out_timing),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .xpos(xpos_out_mouseCtl),
+    .ypos(ypos_out_mouseCtl),
+    .mouse_left(mouse_left_out_mouseCtl),
  //outputs  
-      .hcount_out(hcount_out_back),
-      .vcount_out(vcount_out_back),
-      .hblnk_out(hblnk_out_back),
-      .vblnk_out(vblnk_out_back),
-      .hsync_out(hsync_out_back),
-      .vsync_out(vsync_out_back),
-      .rgb_out(rgb_out_back),
-      .mouse_mode(mouse_mode_out_back),
-      .play_selected(play_selected_back)
-  );
+    .hcount_out(hcount_out_back),
+    .vcount_out(vcount_out_back),
+    .hblnk_out(hblnk_out_back),
+    .vblnk_out(vblnk_out_back),
+    .hsync_out(hsync_out_back),
+    .vsync_out(vsync_out_back),
+    .rgb_out(rgb_out_back),
+    .mouse_mode(mouse_mode_out_back),
+    .play_selected(play_selected_back)
+);
 
-  draw_obstacles #(.TOP_V_LINE(TOP_V_LINE), 
-                    .BOTTOM_V_LINE(BOTTOM_V_LINE), 
-                    .LEFT_H_LINE(LEFT_H_LINE), 
-                    .RIGHT_H_LINE(RIGHT_H_LINE),
-                    .BORDER(10)) my_draw_obstacles(
-  //inputs
-      .vcount_in(vcount_out_back),
-      .vsync_in(vsync_out_back),
-      .vblnk_in(vblnk_out_back),
-      .hcount_in(hcount_out_back),
-      .hsync_in(hsync_out_back),
-      .hblnk_in(hblnk_out_back),
-      .pclk(pclk),
-      .rst(locked_reset),
-      .game_on(game_button),
-      .menu_on(menu_button),
-      .rgb_in(rgb_out_back),
-      .play_selected(play_selected_back),
+draw_obstacles #(.TOP_V_LINE(TOP_V_LINE), 
+                 .BOTTOM_V_LINE(BOTTOM_V_LINE), 
+                 .LEFT_H_LINE(LEFT_H_LINE), 
+                 .RIGHT_H_LINE(RIGHT_H_LINE),
+                 .BORDER(10)) my_draw_obstacles(
+//inputs
+    .vcount_in(vcount_out_back),
+    .vsync_in(vsync_out_back),
+    .vblnk_in(vblnk_out_back),
+    .hcount_in(hcount_out_back),
+    .hsync_in(hsync_out_back),
+    .hblnk_in(hblnk_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+    .obstacle_x(obstacle_x_out),
+    .obstacle_y(obstacle_y_out),
   //outputs  
-      .hcount_out(hcount_out_obs),
-      .vcount_out(vcount_out_obs),
-      .hblnk_out(hblnk_out_obs),
-      .vblnk_out(vblnk_out_obs),
-      .hsync_out(hsync_out_obs),
-      .vsync_out(vsync_out_obs),
-      .rgb_out(rgb_out_obs)
-  );
+    .hcount_out(hcount_out_obs),
+    .vcount_out(vcount_out_obs),
+    .hblnk_out(hblnk_out_obs),
+    .vblnk_out(vblnk_out_obs),
+    .hsync_out(hsync_out_obs),
+    .vsync_out(vsync_out_obs),
+    .rgb_out(rgb_out_obs)
+);
+
+colision_detector damage_checker(
+    .pclk(pclk),
+    .rst(rst),
+    .obstacle_x_in(obstacle_x_out),
+    .obstacle_y_in(obstacle_y_out),
+    .mouse_x_in(xpos_out_mouseCtl),
+    .mouse_y_in(ypos_out_mouseCtl),
+    .damage_out(damage_out)
+);
+
 
 wire pulse;
 monostable my_monostable(
@@ -154,7 +168,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .pclk(pclk),
     .rst(locked_reset),
     .game_on_hp(mouse_mode_out_back),
-    .player_hit(pulse),
+    .player_hit(pulse || damage_out),
  
     //outputs
     .vcount_out_hp(vcount_out_hp),

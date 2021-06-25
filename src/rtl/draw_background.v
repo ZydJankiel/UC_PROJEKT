@@ -4,12 +4,11 @@
  * Placing mouse on PLAY text in MENU_MODE will change its color to green, and pressing
  * left mouse button will change state to GAME_MODE. Pressing btnL button on board will chnge mode back to menu.
  * All of the letters are beeing drawn with big if elseif chunk of code.
- * Added HP frame.
  */
 module draw_background 
     #( parameter
-    TOP_V_LINE     = 367,
-    BOTTOM_V_LINE  = 667,
+    TOP_V_LINE     = 317,
+    BOTTOM_V_LINE  = 617,
     LEFT_H_LINE    = 361,
     RIGHT_H_LINE   = 661,
     BORDER = 10

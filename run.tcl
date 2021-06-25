@@ -54,6 +54,7 @@ read_verilog {
     src/rtl/mouse_constrainer.v
     src/rtl/hp_control.v
     src/rtl/test_module_impulse_generator.v
+    src/rtl/colision_detector.v
 }
 
 read_vhdl {
