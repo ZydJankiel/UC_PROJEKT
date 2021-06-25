@@ -27,15 +27,15 @@ module monostable (
 end
     
 always @* begin
+    count_nxt = 0;
+    pulse_nxt = 0;
+    state_nxt = IDLE;
     case(state)
         IDLE: begin
-            count_nxt = 0;
-            pulse_nxt = 0;
             state_nxt = trigger ? PULSE_STATE : IDLE;
         end
         PULSE_STATE: begin
             if (count == 1) begin
-                pulse_nxt = 0;
                 state_nxt = WAIT;
             end
             else begin
@@ -45,8 +45,6 @@ always @* begin
             count_nxt = count + 1;                   
         end
         WAIT: begin
-            pulse_nxt = 0;
-            count_nxt = 0;
             state_nxt = !trigger ? IDLE : WAIT;
         end
     endcase

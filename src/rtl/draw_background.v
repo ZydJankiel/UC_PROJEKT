@@ -4,6 +4,7 @@
  * Placing mouse on PLAY text in MENU_MODE will change its color to green, and pressing
  * left mouse button will change state to GAME_MODE. Pressing btnL button on board will chnge mode back to menu.
  * All of the letters are beeing drawn with big if elseif chunk of code.
+ * Added HP frame.
  */
 module draw_background 
     #( parameter
@@ -35,46 +36,53 @@ module draw_background
   output reg hsync_out,
   output reg hblnk_out,
   output reg [11:0] rgb_out,
+  output reg play_selected,
   output reg mouse_mode
   
   );
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
-reg state, state_nxt, mouse_mode_nxt;
+reg state, state_nxt, mouse_mode_nxt, play_selected_nxt;
 
 localparam MENU_MODE = 1'b0,
            GAME_MODE = 1'b1;
 
-
-           
-      
   always @(posedge pclk) begin
-    if (rst) begin
-      state <= MENU_MODE;
-      hsync_out <= 0;
-      vsync_out <= 0;
-      hblnk_out <= 0;
-      vblnk_out <= 0;
-      hcount_out <= 0;
-      vcount_out <= 0;
-      rgb_out <= 0;
-      mouse_mode <= MENU_MODE;    
-    end
-    else begin
-      state <= state_nxt;
-      hsync_out <= hsync_nxt;
-      vsync_out <= vsync_nxt;
-      hblnk_out <= hblnk_nxt;
-      vblnk_out <= vblnk_nxt;
-      hcount_out <= hcount_nxt;
-      vcount_out <= vcount_nxt;
-      rgb_out <= rgb_nxt;
-      mouse_mode <= mouse_mode_nxt;
-    end
+      if (rst) begin
+          state <= MENU_MODE;
+          hsync_out <= 0;
+          vsync_out <= 0;
+          hblnk_out <= 0;
+          vblnk_out <= 0;
+          hcount_out <= 0;
+          vcount_out <= 0;
+          rgb_out <= 0;
+          mouse_mode <= MENU_MODE; 
+          play_selected = 0;   
+      end
+      else begin
+          state <= state_nxt;
+          hsync_out <= hsync_nxt;
+          vsync_out <= vsync_nxt;
+          hblnk_out <= hblnk_nxt;
+          vblnk_out <= vblnk_nxt;
+          hcount_out <= hcount_nxt;
+          vcount_out <= vcount_nxt;
+          rgb_out <= rgb_nxt;
+          mouse_mode <= mouse_mode_nxt;
+          play_selected <= play_selected_nxt;
+      end
   end
   
   always @* begin
+    hsync_nxt = hsync_in;
+    vsync_nxt = vsync_in;
+    hblnk_nxt = hblnk_in;
+    vblnk_nxt = vblnk_in;
+    hcount_nxt = hcount_in;
+    vcount_nxt = vcount_in;  
+    play_selected_nxt = 0;  
     case (state)
         MENU_MODE: begin
             state_nxt = game_on ? GAME_MODE : MENU_MODE;
@@ -129,8 +137,10 @@ localparam MENU_MODE = 1'b0,
                 (hcount_in > 655 && hcount_in <= 675 && vcount_in > 440 && vcount_in <= 480)) begin
                     if (xpos > 384 && xpos <= 690 && ypos > 384 && ypos <= 480) begin
                         rgb_nxt = 12'h0_f_0;
-                        if (mouse_left)
+                        if (mouse_left) begin
                             state_nxt = GAME_MODE;
+                            play_selected_nxt = 1;
+                        end
                     end
                     else
                         rgb_nxt = 12'hf_f_f;
@@ -162,12 +172,6 @@ localparam MENU_MODE = 1'b0,
             state_nxt = menu_on ? MENU_MODE : GAME_MODE;
         end
     endcase     
-      hsync_nxt = hsync_in;
-      vsync_nxt = vsync_in;
-      hblnk_nxt = hblnk_in;
-      vblnk_nxt = vblnk_in;
-      hcount_nxt = hcount_in;
-      vcount_nxt = vcount_in;  
   end
 
 endmodule
