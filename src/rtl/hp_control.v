@@ -117,7 +117,7 @@ always@(*) begin
                 
             //dmg logic   
             if (player_hit)
-                curr_dmg_nxt = curr_dmg - 1;
+                curr_dmg_nxt = curr_dmg + 1;
             else 
                 curr_dmg_nxt = curr_dmg;
                 
