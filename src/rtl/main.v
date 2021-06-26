@@ -120,7 +120,11 @@ draw_obstacles #(.TOP_V_LINE(TOP_V_LINE),
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    //FOR TESTING
+    .play_selected(0),
+    //
+    //.play_selected(play_selected_back),
+    
     .obstacle_x(obstacle_x_out),
     .obstacle_y(obstacle_y_out),
   //outputs  
@@ -152,11 +156,11 @@ monostable my_monostable(
     .trigger(player_hit_test),
     .pulse(pulse)
 );
-
+wire [11:0] obstacle_mux_out;
 obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
     //inputs
-    .input_0(0),
-    .input_1({hblnk_out_obs, vblnk_out_obs, hsync_out_obs, vsync_out_obs, rgb_out_obs, hcount_out_obs, vcount_out_obs}),
+    .input_0(rgb_out_back),
+    .input_1(rgb_out_obs),
     .input_2(0),
     .input_3(0),
     .input_4(0),
@@ -174,7 +178,7 @@ obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
     .select(obstacle_mux_select_bg),
     
     //outputs
-    .obstacle_mux_out(0)
+    .obstacle_mux_out(obstacle_mux_out)
 );
 
 hp_control #(.TOP_V_LINE(TOP_V_LINE), 
@@ -191,7 +195,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .hcount_in_hp(hcount_out_obs),
     .hsync_in_hp(hsync_out_obs),
     .hblnk_in_hp(hblnk_out_obs),
-    .rgb_in_hp(rgb_out_obs),
+    .rgb_in_hp(obstacle_mux_out),
     .pclk(pclk),
     .rst(locked_reset),
     .game_on_hp(mouse_mode_out_back),
