@@ -19,34 +19,37 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 /*
-MO-created module of mux to select current obstacle to draw. Mux working in asynch mode 
-Based on 
-https://technobyte.org/verilog-multiplexer-4x1/
-From section : Verilog code for 4×1 multiplexer using behavioral modeling
+* MO-created module of mux to select current obstacle to draw. Mux working in asynch mode 
+* Based on 
+* https://technobyte.org/verilog-multiplexer-4x1/
+* From section : Verilog code for 4×1 multiplexer using behavioral modeling
+*
+* PWJ Adjusted bit lengths and changed input signals to {obstacle_x,obstacle_y,rgb}
+* Changed selecting to switch[3:0] for tests
 */
 
 // in and out size to be chosen correctly
 module obstacle_mux_16_to_1(
 
-    input wire [11:0] input_0,
-    input wire [11:0] input_1,
-    input wire [11:0] input_2,
-    input wire [11:0] input_3,
-    input wire [11:0] input_4,
-    input wire [11:0] input_5,
-    input wire [11:0] input_6,
-    input wire [11:0] input_7,
-    input wire [11:0] input_8,
-    input wire [11:0] input_9,
-    input wire [11:0] input_10,
-    input wire [11:0] input_11,
-    input wire [11:0] input_12,
-    input wire [11:0] input_13,
-    input wire [11:0] input_14,
-    input wire [11:0] input_15,
+    input wire [35:0] input_0,
+    input wire [35:0] input_1,
+    input wire [35:0] input_2,
+    input wire [35:0] input_3,
+    input wire [35:0] input_4,
+    input wire [35:0] input_5,
+    input wire [35:0] input_6,
+    input wire [35:0] input_7,
+    input wire [35:0] input_8,
+    input wire [35:0] input_9,
+    input wire [35:0] input_10,
+    input wire [35:0] input_11,
+    input wire [35:0] input_12,
+    input wire [35:0] input_13,
+    input wire [35:0] input_14,
+    input wire [35:0] input_15,
     input wire [3:0] select,
         
-    output reg [11:0] obstacle_mux_out
+    output reg [35:0] obstacle_mux_out
     );
 
 always @(input_0 or input_1 or input_2 or input_3 or input_4 or input_5 or input_6 or input_7 or input_8 or input_9

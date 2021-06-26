@@ -19,9 +19,9 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 /*
-MO - created module to control players HP, 
-despite having parameter to set maxHP/ maxDMG module is set work properlywith 5 states of HP 
-( each state is 60 pixels wide), for testing player_hit is connected to T17 button
+* MO - created module to control players HP, 
+* despite having parameter to set maxHP/ maxDMG module is set work properlywith 5 states of HP 
+* ( each state is 60 pixels wide), for testing player_hit is connected to T17 button
 */
 
 module hp_control #( parameter

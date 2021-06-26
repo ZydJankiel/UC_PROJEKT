@@ -5,11 +5,10 @@
  */
 module draw_obstacles
     #( parameter
-    TOP_V_LINE     = 317,
-    BOTTOM_V_LINE  = 617,
-    LEFT_H_LINE    = 361,
-    RIGHT_H_LINE   = 661,
-    BORDER = 10
+    TEST_TOP_LINE     = 0,
+    TEST_BOTTOM_LINE   = 0,
+    TEST_LEFT_LINE     = 0,
+    TEST_RIGHT_LINE   = 0
   )
   (
   input wire [11:0] vcount_in,
@@ -89,7 +88,7 @@ localparam IDLE = 0,
           DRAW:
               begin
                   state_nxt = menu_on ? IDLE : DRAW;
-                  if (hcount_in <500 && hcount_in >400 && vcount_in <500 && vcount_in >400) begin 
+                  if (hcount_in <TEST_RIGHT_LINE && hcount_in >TEST_LEFT_LINE && vcount_in < TEST_TOP_LINE && vcount_in >TEST_BOTTOM_LINE) begin 
                       rgb_nxt = 12'hf_f_f;
                       obstacle_x_nxt = hcount_in;
                       obstacle_y_nxt = vcount_in;

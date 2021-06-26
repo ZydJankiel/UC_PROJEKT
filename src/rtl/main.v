@@ -1,5 +1,5 @@
 `timescale 1 ns / 1 ps
-//// test
+
 module main (
   inout ps2_clk,
   inout ps2_data, 
@@ -8,6 +8,7 @@ module main (
   input wire game_button,
   input wire menu_button,
   input wire player_hit_test,
+  input wire [3:0] sw,
   
   output wire vs,
   output wire hs,
@@ -40,7 +41,7 @@ localparam  TOP_V_LINE     = 317,
       .reset_out(locked_reset)
   );
   
-  wire [11:0] rgb_out_back, rgb_out_obs;
+  wire [11:0] rgb_out_back, rgb0_out_obs, rgb1_out_obs;
   wire [11:0] value_constr;
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
   wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back,vcount_out_obs, hcount_out_obs;
@@ -54,9 +55,11 @@ localparam  TOP_V_LINE     = 317,
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, mouse_mode_out_back;   
 
   wire [11:0] rgb_out_hp;  
-  wire [11:0] vcount_out_hp, hcount_out_hp, obstacle_x_out,obstacle_y_out;
+  wire [11:0] vcount_out_hp, hcount_out_hp;
+  wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out,obstacle1_y_out;
   wire vsync_out_hp, hsync_out_hp, vblnk_out_hp, hblnk_out_hp;
   wire damage_out;
+  wire [35:0] mux_out;
   
   vga_timing my_timing (
       //inputs 
@@ -99,15 +102,14 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .vsync_out(vsync_out_back),
     .rgb_out(rgb_out_back),
     .mouse_mode(mouse_mode_out_back),
-    .play_selected(play_selected_back),
-    .obstacle_mux_select(obstacle_mux_select_bg)
+    .play_selected(play_selected_back)
+    //.obstacle_mux_select(obstacle_mux_select_bg)
 );
 
-draw_obstacles #(.TOP_V_LINE(TOP_V_LINE), 
-                 .BOTTOM_V_LINE(BOTTOM_V_LINE), 
-                 .LEFT_H_LINE(LEFT_H_LINE), 
-                 .RIGHT_H_LINE(RIGHT_H_LINE),
-                 .BORDER(10)) my_draw_obstacles(
+draw_obstacles #(.TEST_TOP_LINE(500), 
+                 .TEST_BOTTOM_LINE(400), 
+                 .TEST_LEFT_LINE(400), 
+                 .TEST_RIGHT_LINE(500)) my_draw_obstacles0(
 //inputs
     .vcount_in(vcount_out_back),
     .vsync_in(vsync_out_back),
@@ -120,34 +122,49 @@ draw_obstacles #(.TOP_V_LINE(TOP_V_LINE),
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    //FOR TESTING
-    .play_selected(0),
-    //
-    //.play_selected(play_selected_back),
-    
-    .obstacle_x(obstacle_x_out),
-    .obstacle_y(obstacle_y_out),
+    .play_selected(play_selected_back),
   //outputs  
+    .obstacle_x(obstacle0_x_out),
+    .obstacle_y(obstacle0_y_out),
     .hcount_out(hcount_out_obs),
     .vcount_out(vcount_out_obs),
     .hblnk_out(hblnk_out_obs),
     .vblnk_out(vblnk_out_obs),
     .hsync_out(hsync_out_obs),
     .vsync_out(vsync_out_obs),
-    .rgb_out(rgb_out_obs)
+    .rgb_out(rgb0_out_obs)
     
 );
 
-colision_detector damage_checker(
+draw_obstacles #(.TEST_TOP_LINE(600), 
+                 .TEST_BOTTOM_LINE(500), 
+                 .TEST_LEFT_LINE(520), 
+                 .TEST_RIGHT_LINE(620)) my_draw_obstacles1(
+//inputs
+    .vcount_in(vcount_out_back),
+    .vsync_in(vsync_out_back),
+    .vblnk_in(vblnk_out_back),
+    .hcount_in(hcount_out_back),
+    .hsync_in(hsync_out_back),
+    .hblnk_in(hblnk_out_back),
     .pclk(pclk),
-    .rst(rst),
-    .obstacle_x_in(obstacle_x_out),
-    .obstacle_y_in(obstacle_y_out),
-    .mouse_x_in(xpos_out_mouseCtl),
-    .mouse_y_in(ypos_out_mouseCtl),
-    .damage_out(damage_out)
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+  //outputs  
+    .obstacle_x(obstacle1_x_out),
+    .obstacle_y(obstacle1_y_out),
+    .hcount_out(0),
+    .vcount_out(0),
+    .hblnk_out(0),
+    .vblnk_out(0),
+    .hsync_out(0),
+    .vsync_out(0),
+    .rgb_out(rgb1_out_obs)
+    
 );
-
 
 wire pulse;
 monostable my_monostable(
@@ -156,11 +173,11 @@ monostable my_monostable(
     .trigger(player_hit_test),
     .pulse(pulse)
 );
-wire [11:0] obstacle_mux_out;
+
 obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
     //inputs
-    .input_0(rgb_out_back),
-    .input_1(rgb_out_obs),
+    .input_0({obstacle0_x_out,obstacle0_y_out,rgb0_out_obs}),
+    .input_1({obstacle1_x_out,obstacle1_y_out,rgb1_out_obs}),
     .input_2(0),
     .input_3(0),
     .input_4(0),
@@ -175,10 +192,20 @@ obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
     .input_13(0),
     .input_14(0),
     .input_15(0),
-    .select(obstacle_mux_select_bg),
+    .select(sw),
     
     //outputs
-    .obstacle_mux_out(obstacle_mux_out)
+    .obstacle_mux_out(mux_out)
+);
+
+colision_detector damage_checker(
+    .pclk(pclk),
+    .rst(rst),
+    .obstacle_x_in(mux_out[35:24]),
+    .obstacle_y_in(mux_out[23:12]),
+    .mouse_x_in(xpos_out_mouseCtl),
+    .mouse_y_in(ypos_out_mouseCtl),
+    .damage_out(damage_out)
 );
 
 hp_control #(.TOP_V_LINE(TOP_V_LINE), 
@@ -195,7 +222,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .hcount_in_hp(hcount_out_obs),
     .hsync_in_hp(hsync_out_obs),
     .hblnk_in_hp(hblnk_out_obs),
-    .rgb_in_hp(obstacle_mux_out),
+    .rgb_in_hp(mux_out[11:0]),
     .pclk(pclk),
     .rst(locked_reset),
     .game_on_hp(mouse_mode_out_back),
