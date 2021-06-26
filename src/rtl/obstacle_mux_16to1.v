@@ -49,7 +49,7 @@ module obstacle_mux_16_to_1(
     output reg [40:0] obstacle_mux_out
     );
 
-always @(input_1 or input_2 or input_3 or input_4 or input_5 or input_6 or input_7 or input_8 or input_9
+always @(input_0 or input_1 or input_2 or input_3 or input_4 or input_5 or input_6 or input_7 or input_8 or input_9
         or input_10 or input_11 or input_12 or input_13 or input_14 or input_15 or select) begin
         //case select of input
         case (select)

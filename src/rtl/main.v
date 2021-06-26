@@ -155,26 +155,26 @@ monostable my_monostable(
 
 obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
     //inputs
-    input_0(0),
-    input_1({hblnk_out_obs, vblnk_out_obs, hsync_out_obs, vsync_out_obs, rgb_out_obs, hcount_out_obs, vcount_out_obs}),
-    input_2(0),
-    input_3(0),
-    input_4(0),
-    input_5(0),
-    input_6(0),
-    input_7(0),
-    input_8(0),
-    input_9(0),
-    input_10(0),
-    input_11(0),
-    input_12(0),
-    input_13(0),
-    input_14(0),
-    input_15(0),
-    select(obstacle_mux_select_bg),
+    .input_0(0),
+    .input_1({hblnk_out_obs, vblnk_out_obs, hsync_out_obs, vsync_out_obs, rgb_out_obs, hcount_out_obs, vcount_out_obs}),
+    .input_2(0),
+    .input_3(0),
+    .input_4(0),
+    .input_5(0),
+    .input_6(0),
+    .input_7(0),
+    .input_8(0),
+    .input_9(0),
+    .input_10(0),
+    .input_11(0),
+    .input_12(0),
+    .input_13(0),
+    .input_14(0),
+    .input_15(0),
+    .select(obstacle_mux_select_bg),
     
     //outputs
-    obstacle_mux_out(0)
+    .obstacle_mux_out(0)
 );
 
 hp_control #(.TOP_V_LINE(TOP_V_LINE), 

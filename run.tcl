@@ -55,6 +55,7 @@ read_verilog {
     src/rtl/hp_control.v
     src/rtl/test_module_impulse_generator.v
     src/rtl/colision_detector.v
+    src/rtl/obstacle_mux_16to1.v
 }
 
 read_vhdl {
