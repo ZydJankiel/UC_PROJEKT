@@ -156,12 +156,12 @@ draw_obstacles #(.TEST_TOP_LINE(600),
   //outputs  
     .obstacle_x(obstacle1_x_out),
     .obstacle_y(obstacle1_y_out),
-    .hcount_out(0),
-    .vcount_out(0),
-    .hblnk_out(0),
-    .vblnk_out(0),
-    .hsync_out(0),
-    .vsync_out(0),
+    .hcount_out(),
+    .vcount_out(),
+    .hblnk_out(),
+    .vblnk_out(),
+    .hsync_out(),
+    .vsync_out(),
     .rgb_out(rgb1_out_obs)
     
 );
