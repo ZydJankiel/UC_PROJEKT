@@ -36,13 +36,20 @@ module draw_background
   output reg hblnk_out,
   output reg [11:0] rgb_out,
   output reg play_selected,
-  output reg mouse_mode
+  output reg mouse_mode,
   
+  //THIS IS ONLY FOR TESTING
+  output reg [3:0] obstacle_mux_select
+  //
   );
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 reg state, state_nxt, mouse_mode_nxt, play_selected_nxt;
+
+  //THIS IS ONLY FOR TESTING
+reg [3:0] obstacle_mux_select_nxt;
+  //
 
 localparam MENU_MODE = 1'b0,
            GAME_MODE = 1'b1;
@@ -58,7 +65,11 @@ localparam MENU_MODE = 1'b0,
           vcount_out <= 0;
           rgb_out <= 0;
           mouse_mode <= MENU_MODE; 
-          play_selected = 0;   
+          play_selected <= 0;  
+          
+          //THIS IS ONLY FOR TESTING
+          obstacle_mux_select <= 0;
+          // 
       end
       else begin
           state <= state_nxt;
@@ -71,6 +82,9 @@ localparam MENU_MODE = 1'b0,
           rgb_out <= rgb_nxt;
           mouse_mode <= mouse_mode_nxt;
           play_selected <= play_selected_nxt;
+          //THIS IS ONLY FOR TESTING
+          obstacle_mux_select <= obstacle_mux_select_nxt;
+          // 
       end
   end
   
@@ -82,6 +96,9 @@ localparam MENU_MODE = 1'b0,
     hcount_nxt = hcount_in;
     vcount_nxt = vcount_in;  
     play_selected_nxt = 0;  
+    //THIS IS ONLY FOR TESTING
+    obstacle_mux_select_nxt = 0;
+    //
     case (state)
         MENU_MODE: begin
             state_nxt = game_on ? GAME_MODE : MENU_MODE;
@@ -149,6 +166,9 @@ localparam MENU_MODE = 1'b0,
              
         end
         GAME_MODE: begin
+            //THIS IS ONLY FOR TESTING
+            obstacle_mux_select_nxt = 4'b0001;
+            //
             mouse_mode_nxt = GAME_MODE;
                            // During blanking, make it it black.
             if (vblnk_in || hblnk_in) rgb_nxt = 12'h0_0_0; 

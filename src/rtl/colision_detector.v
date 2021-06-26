@@ -2,6 +2,9 @@
 /*
 * PWJ Added function for detecting hit and sending information to HP module.
 * When player is hit he have 1 second of immortality to correct his mistake.
+
+MO - reduced invulnerability to 0,5 sec - it had potential to skip whole obstacles during 1 sec 
+and it is faster to test.
 */
 module colision_detector (
     input wire pclk,
@@ -20,7 +23,8 @@ module colision_detector (
     localparam CHECK_DAMAGE = 0,
                COUNT = 1;
 
-    localparam MAX_COUNT = 108000000;
+    //localparam MAX_COUNT = 108 000 000;
+    localparam MAX_COUNT = 54000000;
 
     always @(posedge pclk) begin
         if (rst) begin

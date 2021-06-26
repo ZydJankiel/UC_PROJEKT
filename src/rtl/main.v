@@ -45,6 +45,7 @@ localparam  TOP_V_LINE     = 317,
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
   wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back,vcount_out_obs, hcount_out_obs;
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
+  wire [3:0] obstacle_mux_select_bg;
   wire play_selected_back;
   wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_obs, hsync_out_obs;
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_obs, hblnk_out_obs;
@@ -98,7 +99,8 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .vsync_out(vsync_out_back),
     .rgb_out(rgb_out_back),
     .mouse_mode(mouse_mode_out_back),
-    .play_selected(play_selected_back)
+    .play_selected(play_selected_back),
+    .obstacle_mux_select(obstacle_mux_select_bg)
 );
 
 draw_obstacles #(.TOP_V_LINE(TOP_V_LINE), 
@@ -129,6 +131,7 @@ draw_obstacles #(.TOP_V_LINE(TOP_V_LINE),
     .hsync_out(hsync_out_obs),
     .vsync_out(vsync_out_obs),
     .rgb_out(rgb_out_obs)
+    
 );
 
 colision_detector damage_checker(
@@ -148,6 +151,30 @@ monostable my_monostable(
     .reset(rst),
     .trigger(player_hit_test),
     .pulse(pulse)
+);
+
+obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
+    //inputs
+    input_0(0),
+    input_1({hblnk_out_obs, vblnk_out_obs, hsync_out_obs, vsync_out_obs, rgb_out_obs, hcount_out_obs, vcount_out_obs}),
+    input_2(0),
+    input_3(0),
+    input_4(0),
+    input_5(0),
+    input_6(0),
+    input_7(0),
+    input_8(0),
+    input_9(0),
+    input_10(0),
+    input_11(0),
+    input_12(0),
+    input_13(0),
+    input_14(0),
+    input_15(0),
+    select(obstacle_mux_select_bg),
+    
+    //outputs
+    obstacle_mux_out(0)
 );
 
 hp_control #(.TOP_V_LINE(TOP_V_LINE), 
