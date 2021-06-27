@@ -58,6 +58,8 @@ set_property PACKAGE_PIN W19 [get_ports menu_button]
     set_property IOSTANDARD LVCMOS33 [get_ports menu_button]
 set_property PACKAGE_PIN T17 [get_ports player_hit_test]						
     set_property IOSTANDARD LVCMOS33 [get_ports player_hit_test]
+set_property PACKAGE_PIN U17 [get_ports game_over]						
+        set_property IOSTANDARD LVCMOS33 [get_ports game_over]
     
 ## Switches
 set_property PACKAGE_PIN V17 [get_ports {sw[0]}]                    

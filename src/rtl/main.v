@@ -8,6 +8,7 @@ module main (
   input wire game_button,
   input wire menu_button,
   input wire player_hit_test,
+  input wire game_over,
   input wire [3:0] sw,
   
   output wire vs,
@@ -52,13 +53,14 @@ localparam  TOP_V_LINE     = 317,
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_obs, hblnk_out_obs;
 
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
-  wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, mouse_mode_out_back;   
+  wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;
+  wire [1:0] mouse_mode_out_back;   
 
   wire [11:0] rgb_out_hp;  
   wire [11:0] vcount_out_hp, hcount_out_hp;
   wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out,obstacle1_y_out;
   wire vsync_out_hp, hsync_out_hp, vblnk_out_hp, hblnk_out_hp;
-  wire damage_out;
+  wire damage_out, game_over_hp;
   wire [35:0] mux_out;
   
   vga_timing my_timing (
@@ -90,6 +92,7 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .rst(locked_reset),
     .game_on(game_button),
     .menu_on(menu_button),
+    .game_over(game_over || game_over_hp),
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .mouse_left(mouse_left_out_mouseCtl),
@@ -225,7 +228,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .rgb_in_hp(mux_out[11:0]),
     .pclk(pclk),
     .rst(locked_reset),
-    .game_on_hp(mouse_mode_out_back),
+    .game_on_hp(play_selected_back),
     .player_hit(pulse || damage_out),
  
     //outputs
@@ -236,7 +239,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .hsync_out_hp(hsync_out_hp),
     .hblnk_out_hp(hblnk_out_hp),
     .rgb_out_hp(rgb_out_hp),
-    .game_over()
+    .game_over(game_over_hp)
 );
 
 //MOUSE MODULES//  

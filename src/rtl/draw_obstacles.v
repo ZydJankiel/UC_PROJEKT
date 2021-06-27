@@ -87,7 +87,7 @@ localparam IDLE = 0,
               end
           DRAW:
               begin
-                  state_nxt = menu_on ? IDLE : DRAW;
+                  state_nxt = (menu_on || !play_selected) ? IDLE : DRAW;
                   if (hcount_in <TEST_RIGHT_LINE && hcount_in >TEST_LEFT_LINE && vcount_in < TEST_TOP_LINE && vcount_in >TEST_BOTTOM_LINE) begin 
                       rgb_nxt = 12'hf_f_f;
                       obstacle_x_nxt = hcount_in;

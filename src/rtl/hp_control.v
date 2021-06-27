@@ -22,6 +22,9 @@
 * MO - created module to control players HP, 
 * despite having parameter to set maxHP/ maxDMG module is set work properlywith 5 states of HP 
 * ( each state is 60 pixels wide), for testing player_hit is connected to T17 button
+*
+* 27.06 changed dmg and state logic in state GAME to take into accoount behaviour after death, now 
+* health resets after death and after exiting to menu
 */
 
 module hp_control #( parameter
@@ -100,7 +103,7 @@ end
 always@(*) begin
     game_over_nxt = 0;
     rgb_nxt = rgb_in_hp;
-    curr_dmg_nxt = curr_dmg;
+    curr_dmg_nxt = 0;
     case (state) 
         OFF : begin
             if (game_on_hp) 
@@ -108,25 +111,25 @@ always@(*) begin
             else
                 state_nxt = OFF; 
             end
+
         GAME : begin
-            //state logic
-            if (game_on_hp) 
-                state_nxt = GAME;
-            else
-                state_nxt = OFF; 
-                
-            //dmg logic   
-            if (player_hit)
+            if (!game_on_hp) begin
+                state_nxt = OFF;
+                end
+             else if (curr_dmg == MAX_DMG_TAKEN) begin
+                 //You are dead, not big surprise
+                state_nxt = OFF;
+                game_over_nxt = 1;
+                end    
+             else if (player_hit) begin
                 curr_dmg_nxt = curr_dmg + 1;
-            else 
+                state_nxt = GAME; 
+                end  
+             else begin   
                 curr_dmg_nxt = curr_dmg;
-                
-            //You are dead, not big surprise
-            if (curr_dmg == MAX_DMG_TAKEN)
-                rgb_nxt = 12'hf_f_f;
-            else
-                rgb_nxt = rgb_in_hp;
-            
+                state_nxt = GAME;
+                end  
+      
             //drawing   
             // HP BAR FRAME
             if ((hcount_in_hp >= LEFT_HP - BORDER && hcount_in_hp < LEFT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER ) ||
