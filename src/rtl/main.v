@@ -41,27 +41,28 @@ localparam  TOP_V_LINE     = 317,
       .locked_in(locked),
       .reset_out(locked_reset)
   );
+  wire [35:0] mux_out;
   
-  wire [11:0] rgb_out_back, rgb_out_obs0, rgb_out_obs1;
+  wire [27:0] delayed_signals;  
+  
+  wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1;
   wire [11:0] value_constr;
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
-  wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back,vcount_out_obs, hcount_out_obs;
+  wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp;
+  wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out,obstacle1_y_out;
+  
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
   wire [3:0] obstacle_mux_select_bg;
+  
+  wire [1:0] mouse_mode_out_back; 
+  
   wire play_selected_back;
-  wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_obs, hsync_out_obs;
-  wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_obs, hblnk_out_obs;
-
+  wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
+  wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;
-  wire [1:0] mouse_mode_out_back;   
-
-  wire [11:0] rgb_out_hp;  
-  wire [11:0] vcount_out_hp, hcount_out_hp;
-  wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out,obstacle1_y_out;
-  wire vsync_out_hp, hsync_out_hp, vblnk_out_hp, hblnk_out_hp;
   wire damage_out, game_over_hp;
-  wire [35:0] mux_out;
+
   
   vga_timing my_timing (
       //inputs 
@@ -108,18 +109,17 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .play_selected(play_selected_back)
     //.obstacle_mux_select(obstacle_mux_select_bg)
 );
+delay #(.WIDTH(28), .CLK_DEL(1))  control_signals_delay(
+    .clk(pclk),
+    .rst(locked_reset),
+    .din({vcount_out_back, vsync_out_back, vblnk_out_back, hcount_out_back,  hsync_out_back, hblnk_out_back}),
+    .dout(delayed_signals)
+);
 
-obstacle0 #(.TEST_TOP_LINE(500), 
-                 .TEST_BOTTOM_LINE(400), 
-                 .TEST_LEFT_LINE(400), 
-                 .TEST_RIGHT_LINE(500)) moving_pillars_obstacle(
+obstacle0 moving_pillars_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
-    .vsync_in(vsync_out_back),
-    .vblnk_in(vblnk_out_back),
     .hcount_in(hcount_out_back),
-    .hsync_in(hsync_out_back),
-    .hblnk_in(hblnk_out_back),
     .pclk(pclk),
     .rst(locked_reset),
     .game_on(game_button),
@@ -129,12 +129,6 @@ obstacle0 #(.TEST_TOP_LINE(500),
   //outputs  
     .obstacle_x(obstacle0_x_out),
     .obstacle_y(obstacle0_y_out),
-    .hcount_out(hcount_out_obs),
-    .vcount_out(vcount_out_obs),
-    .hblnk_out(hblnk_out_obs),
-    .vblnk_out(vblnk_out_obs),
-    .hsync_out(hsync_out_obs),
-    .vsync_out(vsync_out_obs),
     .rgb_out(rgb_out_obs0)
     
 );
@@ -145,11 +139,7 @@ obstacle1 #(.TEST_TOP_LINE(600),
                  .TEST_RIGHT_LINE(620)) rectangle_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
-    .vsync_in(vsync_out_back),
-    .vblnk_in(vblnk_out_back),
     .hcount_in(hcount_out_back),
-    .hsync_in(hsync_out_back),
-    .hblnk_in(hblnk_out_back),
     .pclk(pclk),
     .rst(locked_reset),
     .game_on(game_button),
@@ -159,12 +149,6 @@ obstacle1 #(.TEST_TOP_LINE(600),
   //outputs  
     .obstacle_x(obstacle1_x_out),
     .obstacle_y(obstacle1_y_out),
-    .hcount_out(),
-    .vcount_out(),
-    .hblnk_out(),
-    .vblnk_out(),
-    .hsync_out(),
-    .vsync_out(),
     .rgb_out(rgb_out_obs1)
     
 );
@@ -219,12 +203,12 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     player_hp_control 
     (
     //inputs
-    .vcount_in_hp(vcount_out_obs),
-    .vsync_in_hp(vsync_out_obs),
-    .vblnk_in_hp(vblnk_out_obs),
-    .hcount_in_hp(hcount_out_obs),
-    .hsync_in_hp(hsync_out_obs),
-    .hblnk_in_hp(hblnk_out_obs),
+    .vcount_in_hp(delayed_signals[27:16]),
+    .vsync_in_hp(delayed_signals[15]),
+    .vblnk_in_hp(delayed_signals[14]),
+    .hcount_in_hp(delayed_signals[13:2]),
+    .hsync_in_hp(delayed_signals[1]),
+    .hblnk_in_hp(delayed_signals[0]),
     .rgb_in_hp(mux_out[11:0]),
     .pclk(pclk),
     .rst(locked_reset),

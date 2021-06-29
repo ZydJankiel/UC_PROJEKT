@@ -4,20 +4,9 @@
  * module responsible for checking colision with mouse pointer.
  * Added moving pillars.
  */
-module obstacle0
-    #( parameter
-    TEST_TOP_LINE     = 0,
-    TEST_BOTTOM_LINE   = 0,
-    TEST_LEFT_LINE     = 0,
-    TEST_RIGHT_LINE   = 0
-  )
-  (
+module obstacle0 (
   input wire [11:0] vcount_in,
-  input wire vsync_in,
-  input wire vblnk_in,
   input wire [11:0] hcount_in,
-  input wire hsync_in,
-  input wire hblnk_in,
   input wire pclk,
   input wire rst,
   input wire game_on,
@@ -25,20 +14,13 @@ module obstacle0
   input wire [11:0] rgb_in,
   input wire play_selected,
 
-  output reg [11:0] vcount_out,
-  output reg vsync_out,
-  output reg vblnk_out,
-  output reg [11:0] hcount_out,
-  output reg hsync_out,
-  output reg hblnk_out,
   output reg [11:0] rgb_out,
   output reg [11:0] obstacle_x,
   output reg [11:0] obstacle_y
   );
   
 reg [11:0] rgb_nxt;
-reg [11:0] vcount_nxt, hcount_nxt, obstacle_x_nxt, obstacle_y_nxt;
-reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
+reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [1:0] state, state_nxt;
 reg [32:0] count,count_nxt;
 reg [10:0] pillar_left = 1003 ,pillar_right = 1023 ,pillar_left_nxt, pillar_right_nxt;
@@ -61,12 +43,6 @@ localparam IDLE  = 2'b00,
   always @(posedge pclk) begin
       if (rst) begin
           state <= IDLE;
-          hsync_out <= 0;
-          vsync_out <= 0;
-          hblnk_out <= 0;
-          vblnk_out <= 0;
-          hcount_out <= 0;
-          vcount_out <= 0;
           rgb_out <= 0; 
           obstacle_x <= 0;
           obstacle_y <= 0;
@@ -79,12 +55,6 @@ localparam IDLE  = 2'b00,
       end
       else begin
           state <= state_nxt;
-          hsync_out <= hsync_nxt;
-          vsync_out <= vsync_nxt;
-          hblnk_out <= hblnk_nxt;
-          vblnk_out <= vblnk_nxt;
-          hcount_out <= hcount_nxt;
-          vcount_out <= vcount_nxt;
           rgb_out <= rgb_nxt;
           obstacle_x <= obstacle_x_nxt;
           obstacle_y <= obstacle_y_nxt;
@@ -98,12 +68,6 @@ localparam IDLE  = 2'b00,
   end
   
   always @* begin 
-      hsync_nxt = hsync_in;
-      vsync_nxt = vsync_in;
-      hblnk_nxt = hblnk_in;
-      vblnk_nxt = vblnk_in;
-      hcount_nxt = hcount_in;
-      vcount_nxt = vcount_in;  
       count_nxt = count;
       obstacle_x_nxt = 0;
       obstacle_y_nxt = 0;
@@ -135,7 +99,7 @@ localparam IDLE  = 2'b00,
                       pillar_top_nxt = PILLAR_TOP1;
                       pillar_bottom_nxt = PILLAR_BOTTOM1;
                   end
-                  if (hcount_in < pillar_right && hcount_in > pillar_left && vcount_in > pillar_top && vcount_in < pillar_bottom) begin 
+                  if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
                       rgb_nxt = 12'hf_f_f;
                       obstacle_x_nxt = hcount_in;
                       obstacle_y_nxt = vcount_in;
@@ -153,7 +117,7 @@ localparam IDLE  = 2'b00,
                       count_nxt = 0;
                   end
                   else begin
-                      if (hcount_in < pillar_right && hcount_in > pillar_left && vcount_in > pillar_top && vcount_in < pillar_bottom) begin 
+                      if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
                           rgb_nxt = 12'hf_f_f;
                           obstacle_x_nxt = hcount_in;
                           obstacle_y_nxt = vcount_in;
