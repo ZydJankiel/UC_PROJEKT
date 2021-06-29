@@ -42,7 +42,7 @@ localparam  TOP_V_LINE     = 317,
       .reset_out(locked_reset)
   );
   
-  wire [11:0] rgb_out_back, rgb0_out_obs, rgb1_out_obs;
+  wire [11:0] rgb_out_back, rgb_out_obs0, rgb_out_obs1;
   wire [11:0] value_constr;
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
   wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back,vcount_out_obs, hcount_out_obs;
@@ -109,10 +109,10 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     //.obstacle_mux_select(obstacle_mux_select_bg)
 );
 
-draw_obstacles #(.TEST_TOP_LINE(500), 
+obstacle0 #(.TEST_TOP_LINE(500), 
                  .TEST_BOTTOM_LINE(400), 
                  .TEST_LEFT_LINE(400), 
-                 .TEST_RIGHT_LINE(500)) my_draw_obstacles0(
+                 .TEST_RIGHT_LINE(500)) moving_pillars_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .vsync_in(vsync_out_back),
@@ -135,14 +135,14 @@ draw_obstacles #(.TEST_TOP_LINE(500),
     .vblnk_out(vblnk_out_obs),
     .hsync_out(hsync_out_obs),
     .vsync_out(vsync_out_obs),
-    .rgb_out(rgb0_out_obs)
+    .rgb_out(rgb_out_obs0)
     
 );
 
-draw_obstacles #(.TEST_TOP_LINE(600), 
+obstacle1 #(.TEST_TOP_LINE(600), 
                  .TEST_BOTTOM_LINE(500), 
                  .TEST_LEFT_LINE(520), 
-                 .TEST_RIGHT_LINE(620)) my_draw_obstacles1(
+                 .TEST_RIGHT_LINE(620)) rectangle_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .vsync_in(vsync_out_back),
@@ -165,7 +165,7 @@ draw_obstacles #(.TEST_TOP_LINE(600),
     .vblnk_out(),
     .hsync_out(),
     .vsync_out(),
-    .rgb_out(rgb1_out_obs)
+    .rgb_out(rgb_out_obs1)
     
 );
 
@@ -179,8 +179,8 @@ monostable my_monostable(
 
 obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
     //inputs
-    .input_0({obstacle0_x_out,obstacle0_y_out,rgb0_out_obs}),
-    .input_1({obstacle1_x_out,obstacle1_y_out,rgb1_out_obs}),
+    .input_0({obstacle0_x_out,obstacle0_y_out,rgb_out_obs0}),
+    .input_1({obstacle1_x_out,obstacle1_y_out,rgb_out_obs1}),
     .input_2(0),
     .input_3(0),
     .input_4(0),

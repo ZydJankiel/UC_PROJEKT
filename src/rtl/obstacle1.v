@@ -3,7 +3,7 @@
  * PWJ: Added module for drawing obstacle. This module sends x and y coordinates to
  * module responsible for checking colision with mouse pointer.
  */
-module draw_obstacles
+module obstacle1
     #( parameter
     TEST_TOP_LINE     = 0,
     TEST_BOTTOM_LINE   = 0,
