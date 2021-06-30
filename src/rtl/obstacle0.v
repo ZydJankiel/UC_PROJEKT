@@ -13,10 +13,12 @@ module obstacle0 (
   input wire menu_on,
   input wire [11:0] rgb_in,
   input wire play_selected,
+  input wire [11:0] rgb_pixel,
 
   output reg [11:0] rgb_out,
   output reg [11:0] obstacle_x,
-  output reg [11:0] obstacle_y
+  output reg [11:0] obstacle_y,
+  output reg [11:0] pixel_addr
   );
   
 reg [11:0] rgb_nxt;
@@ -26,6 +28,7 @@ reg [32:0] count,count_nxt;
 reg [10:0] pillar_left = 1003 ,pillar_right = 1023 ,pillar_left_nxt, pillar_right_nxt;
 reg flip,flip_nxt;
 reg [10:0] pillar_top, pillar_bottom, pillar_top_nxt, pillar_bottom_nxt;
+reg [10:0] addrx, addry;
 
 localparam PILLAR_TOP1 = 417 ,
            PILLAR_BOTTOM1 = 617,
@@ -34,6 +37,8 @@ localparam PILLAR_TOP1 = 417 ,
            
 localparam DX = 1;
 localparam MAX_TIME = 600;
+localparam RECT_WIDTH = 20;
+localparam RECT_HEIGHT = 200;
 
 
 localparam IDLE  = 2'b00,
@@ -99,12 +104,15 @@ localparam IDLE  = 2'b00,
                       pillar_top_nxt = PILLAR_TOP1;
                       pillar_bottom_nxt = PILLAR_BOTTOM1;
                   end
-                  if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
-                      rgb_nxt = 12'hf_f_f;
+                  if (hcount_in <= (pillar_left + RECT_WIDTH)  && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= (pillar_top + RECT_HEIGHT)) begin
+                      rgb_nxt = rgb_pixel;
                       obstacle_x_nxt = hcount_in;
                       obstacle_y_nxt = vcount_in;
                       pillar_right_nxt = pillar_right - DX;
                       pillar_left_nxt = pillar_left - DX;   
+                      addry = vcount_in - pillar_top;
+                      addrx = hcount_in - pillar_left;
+                      pixel_addr = {addry[5:0], addrx[5:0]}; 
                   end
                   else rgb_nxt = rgb_in;
                   state_nxt = (menu_on || !play_selected) ? IDLE : COUNT;
@@ -117,11 +125,14 @@ localparam IDLE  = 2'b00,
                       count_nxt = 0;
                   end
                   else begin
-                      if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
-                          rgb_nxt = 12'hf_f_f;
+                      if (hcount_in <= (pillar_left + RECT_WIDTH)  && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= (pillar_top + RECT_HEIGHT)) begin 
+                          rgb_nxt = rgb_pixel;
                           obstacle_x_nxt = hcount_in;
                           obstacle_y_nxt = vcount_in;
-                      end
+                          addry = vcount_in - pillar_top;
+                          addrx = hcount_in - pillar_left;
+                          pixel_addr = {addry[5:0], addrx[5:0]};
+                      end 
                       state_nxt = COUNT;
                       count_nxt = count + 1; 
                   end     

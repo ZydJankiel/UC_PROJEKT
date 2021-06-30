@@ -45,7 +45,7 @@ localparam  TOP_V_LINE     = 317,
   
   wire [27:0] delayed_signals;  
   
-  wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1;
+  wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1, rgb_address_rom, rgb_out_rom;
   wire [11:0] value_constr;
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
   wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp;
@@ -126,11 +126,20 @@ obstacle0 moving_pillars_obstacle(
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
+    .rgb_pixel(rgb_out_rom),
   //outputs  
     .obstacle_x(obstacle0_x_out),
     .obstacle_y(obstacle0_y_out),
-    .rgb_out(rgb_out_obs0)
-    
+    .rgb_out(rgb_out_obs0),
+    .pixel_addr(rgb_address_rom) 
+);
+
+image_rom pillar_image(
+  //inputs
+  .clk(pclk),
+  .address(rgb_address_rom),  
+//outputs
+  .rgb(rgb_out_rom)
 );
 
 obstacle1 #(.TEST_TOP_LINE(600), 
