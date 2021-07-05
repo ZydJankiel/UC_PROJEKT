@@ -186,8 +186,26 @@ localparam MENU_MODE = 2'b00,
         //to go to menu from game over screen press left mouse button anywhere on the screen,  
         //to play the game again press PLAY button on gameover screen
         GAME_OVER: begin
-            state_nxt = game_on ? GAME_MODE : GAME_OVER;
-            state_nxt = menu_on ? MENU_MODE : GAME_OVER;
+            //state_nxt = game_on ? GAME_MODE : GAME_OVER;
+            //state_nxt = menu_on ? MENU_MODE : GAME_OVER;
+            
+            if (game_on) 
+                state_nxt = GAME_MODE;
+            else if (menu_on)
+                    state_nxt = MENU_MODE;
+            else if (xpos >= TEXT_BOX_X_POS - 10 && xpos <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS -5 && ypos >= TEXT_BOX_Y_POS - 10 && ypos <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS) begin
+                if (mouse_left)
+                    state_nxt = GAME_MODE;
+                else
+                    state_nxt = GAME_OVER;
+                end    
+            else if (mouse_left)
+                state_nxt = MENU_MODE;
+            else
+                state_nxt = GAME_OVER; 
+                
+            rgb_nxt = 12'h1_9_2;    
+            /*
             //P
             if ((hcount_in > 400 && hcount_in <= 420 && vcount_in > 400 && vcount_in <= 480) ||
             (hcount_in > 420 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 410) ||
@@ -220,7 +238,8 @@ localparam MENU_MODE = 2'b00,
                 state_nxt = MENU_MODE;
                 rgb_nxt = 12'h1_9_2;
                 end
-            else rgb_nxt = 12'h1_9_2;           
+            else rgb_nxt = 12'h1_9_2;  
+            */         
         end
         
         default begin

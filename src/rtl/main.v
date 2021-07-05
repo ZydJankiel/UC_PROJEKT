@@ -256,7 +256,7 @@ draw_rect_char my_draw_rect_char(
   .char_pixels(font_rom_pixels),
   .mouse_xpos(xpos_out_mouseCtl),
   .mouse_ypos(ypos_out_mouseCtl),
-  .mouse_left(mouse_left_out_mouseCtl)
+  .game_on(play_selected_back)
   );
 
 char_rom_16x16 my_char_rom(

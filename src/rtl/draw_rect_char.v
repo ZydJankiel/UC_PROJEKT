@@ -43,7 +43,7 @@ module draw_rect_char(
     input wire [7:0] char_pixels,
     input wire [11:0] mouse_xpos,
     input wire [11:0] mouse_ypos,
-    input wire mouse_left
+    input wire game_on
     );
     
     reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;   
@@ -83,58 +83,42 @@ module draw_rect_char(
     end
     
     always @* begin
-    
-      vcount_nxt = vcount_in;
-      vblnk_nxt = vblnk_in;
-      vsync_nxt = vsync_in;
-      hcount_nxt = hcount_in;
-      hsync_nxt = hsync_in;
-      hblnk_nxt = hblnk_in;
-    
-        if (hblnk_out || vblnk_out) 
-          rgb_nxt = BG_BLACK; 
-        else if (vcount_in <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS && vcount_in >= TEXT_BOX_Y_POS && hcount_in <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS && hcount_in >= TEXT_BOX_X_POS) begin
-             if (char_pixels[9-(hcount_in%8)]) 
-                rgb_nxt = LETTER_COLOUR;
-             else begin
-                 if (mouse_xpos >= TEXT_BOX_X_POS - 10 && mouse_xpos <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS -5 && mouse_ypos >= TEXT_BOX_Y_POS - 10 && mouse_ypos <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS) begin
-                    rgb_nxt = MOUSE_OVER_COLOUR;
-                    end
-                else begin
-                    rgb_nxt = TEXT_BG_COLOUR; 
-                    end
-             end
-        end
-        else
-          rgb_nxt = rgb_in;
-    
-      vcount_rect = vcount_in -  TEXT_BOX_Y_POS;
-      hcount_rect = hcount_in -  TEXT_BOX_X_POS;
-      
-      char_xy = {vcount_rect[7:4], hcount_rect[6:3]};
-      char_line = vcount_rect[3:0];
-      end          
-
-/*
-always @* begin
-    hsync_nxt = hsync_in;
-    vsync_nxt = vsync_in;
-    hblnk_nxt = hblnk_in;
-    vblnk_nxt = vblnk_in;
-    hcount_nxt = hcount_in;
     vcount_nxt = vcount_in;
-    
-    if (vblnk_in || hblnk_in) 
-        rgb_out_nxt = 12'h0_0_0; 
-    else begin
-        if (char_pixels[8-(hcount_in%8)])
-            rgb_out_nxt = COLOUR;
-        else
-            rgb_out_nxt = rgb_in;
-        end
-    addr = {hcount_in[9:3], vcount_in[3:0]};
-    
-    
-end */
+    vblnk_nxt = vblnk_in;
+    vsync_nxt = vsync_in;
+    hcount_nxt = hcount_in;
+    hsync_nxt = hsync_in;
+    hblnk_nxt = hblnk_in;
+          
+     if (!game_on) begin   
+            if (hblnk_out || vblnk_out) 
+              rgb_nxt = BG_BLACK; 
+            else if (vcount_in <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS && vcount_in >= TEXT_BOX_Y_POS && hcount_in <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS && hcount_in >= TEXT_BOX_X_POS) begin
+                 if (char_pixels[9-(hcount_in%8)]) 
+                    rgb_nxt = LETTER_COLOUR;
+                 else begin
+                     if (mouse_xpos >= TEXT_BOX_X_POS - 10 && mouse_xpos <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS -5 && mouse_ypos >= TEXT_BOX_Y_POS - 10 && mouse_ypos <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS) begin
+                        rgb_nxt = MOUSE_OVER_COLOUR;
+                        end
+                    else begin
+                        rgb_nxt = TEXT_BG_COLOUR; 
+                        end
+                 end
+            end
+            else
+              rgb_nxt = rgb_in;
+            end
+    else  
+        rgb_nxt = rgb_in;
+                    
+    vcount_rect = vcount_in -  TEXT_BOX_Y_POS;
+    hcount_rect = hcount_in -  TEXT_BOX_X_POS;
+          
+    char_xy = {vcount_rect[7:4], hcount_rect[6:3]};
+    char_line = vcount_rect[3:0];
+             
+      
+end
+
      
 endmodule
