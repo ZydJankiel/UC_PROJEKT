@@ -51,7 +51,11 @@ reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 reg [1:0] state, state_nxt; 
 reg mouse_mode_nxt, play_selected_nxt;
 
-
+localparam TEXT_BOX_X_POS = 432;
+localparam TEXT_BOX_Y_POS = 400;
+localparam TEXT_BOX_Y_SIZE = 80;
+localparam TEXT_BOX_X_SIZE = 128;
+    
 localparam MENU_MODE = 2'b00,
            GAME_MODE = 2'b01,
            GAME_OVER = 2'B11;
@@ -99,12 +103,17 @@ localparam MENU_MODE = 2'b00,
         MENU_MODE: begin
             if (game_on) 
                 state_nxt = GAME_MODE;
+            else if (xpos >= TEXT_BOX_X_POS - 10 && xpos <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS -5 && ypos >= TEXT_BOX_Y_POS - 10 && ypos <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS) begin
+                if (mouse_left)
+                    state_nxt = GAME_MODE;
+                else
+                    state_nxt = MENU_MODE;
+                end    
             else if (game_over)
                 state_nxt = GAME_OVER;
             else
-                state_nxt = MENU_MODE;
-                
-            //state_nxt = game_on ? GAME_MODE : MENU_MODE;
+                state_nxt = MENU_MODE;                
+
             mouse_mode_nxt = MENU_MODE;
                // During blanking, make it it black.
             if (vblnk_in || hblnk_in) rgb_nxt = 12'h0_0_0; 
@@ -135,37 +144,12 @@ localparam MENU_MODE = 2'b00,
                 else if ((hcount_in > 720 && hcount_in <= 760 && vcount_in > 50 && vcount_in <= 210) ||
                 (hcount_in > 720 && hcount_in <= 840 && vcount_in > 210 && vcount_in <= 250) ||
                 (hcount_in > 800 && hcount_in <= 840 && vcount_in > 50 && vcount_in <= 210)) rgb_nxt = 12'hf_f_f;
-      
-                // P
-                else if ((hcount_in > 400 && hcount_in <= 420 && vcount_in > 400 && vcount_in <= 480) ||
-                (hcount_in > 420 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 410) ||
-                (hcount_in > 440 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 440) ||
-                (hcount_in > 420 && hcount_in <= 450 && vcount_in > 430 && vcount_in <= 440) ||
-                //L
-                (hcount_in > 480 && hcount_in <= 500 && vcount_in > 400 && vcount_in <= 480) ||
-                (hcount_in > 500 && hcount_in <= 530 && vcount_in > 460 && vcount_in <= 480) ||
-                //A
-                (hcount_in > 560 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 420) ||
-                (hcount_in > 560 && hcount_in <= 580 && vcount_in > 400 && vcount_in <= 480) ||
-                (hcount_in > 590 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 480) ||
-                (hcount_in > 580 && hcount_in <= 590 && vcount_in > 440 && vcount_in <= 460) ||
-                //Y
-                (hcount_in > 640 && hcount_in <= 660 && vcount_in > 400 && vcount_in <= 420) ||
-                (hcount_in > 670 && hcount_in <= 690 && vcount_in > 400 && vcount_in <= 420) ||
-                (hcount_in > 640 && hcount_in <= 690 && vcount_in > 420 && vcount_in <= 440) ||
-                (hcount_in > 655 && hcount_in <= 675 && vcount_in > 440 && vcount_in <= 480)) begin
-                    if (xpos > 384 && xpos <= 690 && ypos > 384 && ypos <= 480) begin
-                        rgb_nxt = 12'h0_f_0;
-                        if (mouse_left) begin
-                            state_nxt = GAME_MODE;
-                           
-                        end
-                    end
-                    else
-                        rgb_nxt = 12'hf_f_f;
-                end
                 else rgb_nxt = 12'h0_0_0;
-             end
+                
+
+                end
+                
+             
              
         end
         GAME_MODE: begin

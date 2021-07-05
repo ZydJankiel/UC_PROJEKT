@@ -97,7 +97,7 @@ module draw_rect_char(
              if (char_pixels[9-(hcount_in%8)]) 
                 rgb_nxt = LETTER_COLOUR;
              else begin
-                 if (mouse_xpos > 384 && mouse_xpos <= 690 && mouse_ypos > 384 && mouse_ypos <= 480) begin
+                 if (mouse_xpos >= TEXT_BOX_X_POS - 10 && mouse_xpos <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS -5 && mouse_ypos >= TEXT_BOX_Y_POS - 10 && mouse_ypos <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS) begin
                     rgb_nxt = MOUSE_OVER_COLOUR;
                     end
                 else begin
