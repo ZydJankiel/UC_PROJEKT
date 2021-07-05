@@ -225,6 +225,51 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .rgb_out_hp(rgb_out_hp),
     .game_over(game_over_hp)
 );
+wire [11:0] hcount_out_char, vcount_out_char, rgb_out_char;
+wire [7:0] draw_rect_char_xy, font_rom_pixels;
+wire [6:0] char_code_out;
+wire [3:0] draw_rect_char_line;
+wire hsync_out_char, vsync_out_char, hblnk_out_char, vblnk_out_char;
+
+draw_rect_char my_draw_rect_char(
+  //outputs
+  .hcount_out(hcount_out_char),
+  .vcount_out(vcount_out_char),
+  .hsync_out(hsync_out_char),
+  .vsync_out(vsync_out_char),
+  .hblnk_out(hblnk_out_char),
+  .vblnk_out(vblnk_out_char),
+  .rgb_out(rgb_out_char),
+  .char_xy(draw_rect_char_xy),
+  .char_line(draw_rect_char_line),
+  
+  //inputs
+  .rst(locked_reset),
+  .clk(pclk),
+  .hcount_in(hcount_out_hp),
+  .vcount_in(vcount_out_hp),
+  .hsync_in(hsync_out_hp),
+  .vsync_in(vsync_out_hp),
+  .hblnk_in(hblnk_out_hp),
+  .vblnk_in(vblnk_out_hp),
+  .rgb_in(rgb_out_hp),
+  .char_pixels(font_rom_pixels)
+  );
+
+char_rom_16x16 my_char_rom(
+    //inputs
+    .char_xy(draw_rect_char_xy),
+    //outputs
+    .char_code(char_code_out)
+);
+
+font_rom my_font_rom(
+    //inputs
+    .clk(pclk),
+    .addr({char_code_out,draw_rect_char_line}),
+    //outputs
+    .char_line_pixels(font_rom_pixels)
+);
 
 //MOUSE MODULES//  
 
@@ -287,12 +332,12 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .pixel_clk(pclk),
-    .hcount(hcount_out_hp),
-    .vcount(vcount_out_hp),
-    .blank(hblnk_out_hp || vblnk_out_hp), 
-    .red_in(rgb_out_hp[11:8]),
-    .green_in(rgb_out_hp[7:4]),
-    .blue_in(rgb_out_hp[3:0]),
+    .hcount(hcount_out_char),
+    .vcount(vcount_out_char),
+    .blank(hblnk_out_char || vblnk_out_char), 
+    .red_in(rgb_out_char[11:8]),
+    .green_in(rgb_out_char[7:4]),
+    .blue_in(rgb_out_char[3:0]),
   //outputs
       .red_out(red_out_mouse),
       .green_out(green_out_mouse),
@@ -300,8 +345,8 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
       .enable_mouse_display_out()
   );
   
-assign hs = hsync_out_hp;
-assign vs = vsync_out_hp;
+assign hs = hsync_out_char;
+assign vs = vsync_out_char;
 assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
 
 
