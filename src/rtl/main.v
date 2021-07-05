@@ -45,10 +45,11 @@ localparam  TOP_V_LINE     = 317,
   
   wire [27:0] delayed_signals;  
   
-  wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1;
+  wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1, rgb_out_sans, rgb_out_rom;
+  wire [15:0] rgb_address_rom;
   wire [11:0] value_constr;
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
-  wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp;
+  wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp, vcount_out_sans, hcount_out_sans;
   wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out,obstacle1_y_out;
   
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
@@ -57,8 +58,8 @@ localparam  TOP_V_LINE     = 317,
   wire [1:0] mouse_mode_out_back; 
   
   wire play_selected_back;
-  wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
-  wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
+  wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp, vsync_out_sans, hsync_out_sans;
+  wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp, vblnk_out_sans, hblnk_out_sans;
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;
   wire damage_out, game_over_hp;
@@ -226,6 +227,39 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .game_over(game_over_hp)
 );
 
+draw_sans draw_sans(
+//inputs
+    .xpos(xpos_out_mouseCtl),
+    .ypos(ypos_out_mouseCtl),
+    .vcount_in(vcount_out_hp),
+    .vsync_in(vsync_out_hp),
+    .vblnk_in(vblnk_out_hp),
+    .hcount_in(hcount_out_hp),
+    .hsync_in(hsync_out_hp),
+    .hblnk_in(hblnk_out_hp),
+    .rgb_in(rgb_out_hp),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .rgb_pixel(rgb_out_rom), 
+    .game_on(play_selected_back), 
+//outputs
+    .hcount_out(hcount_out_sans),
+    .vcount_out(vcount_out_sans),
+    .hblnk_out(hblnk_out_sans),
+    .vblnk_out(vblnk_out_sans),
+    .hsync_out(hsync_out_sans),
+    .vsync_out(vsync_out_sans),
+    .rgb_out(rgb_out_sans), 
+    .pixel_addr(rgb_address_rom)
+);
+
+image_rom sans_image(
+  //inputs
+    .clk(pclk),
+    .address(rgb_address_rom),  
+  //outputs
+    .rgb(rgb_out_rom)
+);
 //MOUSE MODULES//  
 
   MouseCtl My_MouseCtl(
@@ -282,17 +316,17 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
       .ypos_out(ypos_out_buff)
     );
     */
-  MouseDisplay My_MouseDisplay (
+MouseDisplay My_MouseDisplay (
   //inputs
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .pixel_clk(pclk),
-    .hcount(hcount_out_hp),
-    .vcount(vcount_out_hp),
-    .blank(hblnk_out_hp || vblnk_out_hp), 
-    .red_in(rgb_out_hp[11:8]),
-    .green_in(rgb_out_hp[7:4]),
-    .blue_in(rgb_out_hp[3:0]),
+    .hcount(hcount_out_sans),
+    .vcount(vcount_out_sans),
+    .blank(hblnk_out_sans || vblnk_out_sans), 
+    .red_in(rgb_out_sans[11:8]),
+    .green_in(rgb_out_sans[7:4]),
+    .blue_in(rgb_out_sans[3:0]),
   //outputs
       .red_out(red_out_mouse),
       .green_out(green_out_mouse),
