@@ -229,8 +229,6 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
 
 draw_sans draw_sans(
 //inputs
-    .xpos(xpos_out_mouseCtl),
-    .ypos(ypos_out_mouseCtl),
     .vcount_in(vcount_out_hp),
     .vsync_in(vsync_out_hp),
     .vblnk_in(vblnk_out_hp),
