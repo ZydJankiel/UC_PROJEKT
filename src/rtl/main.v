@@ -253,7 +253,10 @@ draw_rect_char my_draw_rect_char(
   .hblnk_in(hblnk_out_hp),
   .vblnk_in(vblnk_out_hp),
   .rgb_in(rgb_out_hp),
-  .char_pixels(font_rom_pixels)
+  .char_pixels(font_rom_pixels),
+  .mouse_xpos(xpos_out_mouseCtl),
+  .mouse_ypos(ypos_out_mouseCtl),
+  .mouse_left(mouse_left_out_mouseCtl)
   );
 
 char_rom_16x16 my_char_rom(

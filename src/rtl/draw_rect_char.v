@@ -40,23 +40,26 @@ module draw_rect_char(
     input wire vsync_in,
     input wire vblnk_in,
     input wire [11:0] rgb_in,
-    input wire [7:0] char_pixels
+    input wire [7:0] char_pixels,
+    input wire [11:0] mouse_xpos,
+    input wire [11:0] mouse_ypos,
+    input wire mouse_left
     );
     
     reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;   
     reg [10:0] vcount_nxt, hcount_nxt, vcount_rect, hcount_rect;
     reg [11:0] rgb_nxt;
 
-    
-    localparam TEXT_BOX_X_POS = 625;
-    localparam TEXT_BOX_Y_POS = 200;
-    localparam TEXT_BOX_Y_SIZE = 256;
+    //DO NOT TOUCH X POS - IT DISTORTS LETTERS SHAPE
+    localparam TEXT_BOX_X_POS = 432;
+    localparam TEXT_BOX_Y_POS = 400;
+    localparam TEXT_BOX_Y_SIZE = 80;
     localparam TEXT_BOX_X_SIZE = 128;
     
     localparam BG_BLACK = 12'h0_0_0;
     localparam LETTER_COLOUR = 12'h0_0_f;
     localparam TEXT_BG_COLOUR = 12'h0_f_0;
-
+    localparam MOUSE_OVER_COLOUR = 12'hf_f_0;
     
     always @(posedge clk) begin
       if (rst) begin
@@ -91,10 +94,16 @@ module draw_rect_char(
         if (hblnk_out || vblnk_out) 
           rgb_nxt = BG_BLACK; 
         else if (vcount_in <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS && vcount_in >= TEXT_BOX_Y_POS && hcount_in <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS && hcount_in >= TEXT_BOX_X_POS) begin
-            if (char_pixels[9-(hcount_in%8)]) 
-              rgb_nxt = LETTER_COLOUR;
-            else
-              rgb_nxt = TEXT_BG_COLOUR;
+             if (char_pixels[9-(hcount_in%8)]) 
+                rgb_nxt = LETTER_COLOUR;
+             else begin
+                 if (mouse_xpos > 384 && mouse_xpos <= 690 && mouse_ypos > 384 && mouse_ypos <= 480) begin
+                    rgb_nxt = MOUSE_OVER_COLOUR;
+                    end
+                else begin
+                    rgb_nxt = TEXT_BG_COLOUR; 
+                    end
+             end
         end
         else
           rgb_nxt = rgb_in;
