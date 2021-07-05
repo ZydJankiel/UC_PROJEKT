@@ -57,6 +57,9 @@ read_verilog {
     src/rtl/test_module_impulse_generator.v
     src/rtl/colision_detector.v
     src/rtl/obstacle_mux_16to1.v
+    src/rtl/font_rom.v
+    src/rtl/char_rom_16x16.v
+    src/rtl/draw_rect_char.v
 }
 
 read_vhdl {
