@@ -61,7 +61,6 @@ read_verilog {
     src/rtl/char_rom_16x16.v
     src/rtl/draw_rect_char.v
     src/rtl/list_ch04_11_mod_m_counter.v
-    src/rtl/list_ch04_15_disp_hex_mux.v
     src/rtl/list_ch04_20_fifo.v
     src/rtl/list_ch08_01_uart_rx.v
     src/rtl/list_ch08_03_uart_tx.v
