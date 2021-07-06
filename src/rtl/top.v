@@ -2,19 +2,20 @@ module top (
   input clk,
   input rst,
   input rx,
-  input loopback_enable,
-  output tx,
+  input game_over,
+  output tx
   //output rx_monitor,
   //output tx_monitor, 
-  output [3:0] an,
-  output [7:0] led,
-  output [7:0] seg
+  //output [3:0] an,
+  //output [7:0] led,
+  //output [7:0] seg
 );
   reg tx_nxt;
   wire [7:0] r_data, r_data_2nd_char;
   wire [7:0] curr_char_out;
   wire [7:0] prev_char_out;
   wire rx_done;
+  reg counter;
 
   uart my_uart(
     .clk(clk), 
@@ -22,12 +23,12 @@ module top (
     .rd_uart(1'b1), 
     .wr_uart(), 
     .rx(rx),
-    .w_data(),
+    .w_data(8'h4C),
     .tx_full(),
     .rx_empty(), 
-    .tx(),
+    .tx(tx),
     .r_data(r_data),
-    .r_data_2nd_char(r_data_2nd_char),
+    //.r_data_2nd_char(r_data_2nd_char),
     .current_char(),
     .rx_done(),
     .full()
@@ -48,13 +49,20 @@ module top (
   
    assign led = r_data; 
   */ 
+  /*
  //nizej czesc 1 z polecenia
    always @ (posedge clk) begin
-       if (rst)
+       if (rst )begin
            tx_nxt = 0;
+           counter = 0;
+           end
        else begin
-           if (loopback_enable)
-               tx_nxt = rx;
+           if (game_over)begin
+                 counter=1; 
+                 tx_nxt = rx;
+                 end
+           else if (counter == 1)
+                tx_nxt = rx;
            else 
                tx_nxt = 0;
         end
@@ -62,6 +70,6 @@ module top (
    
   assign tx = tx_nxt;
 
-
+*/
 
 endmodule

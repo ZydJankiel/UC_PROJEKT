@@ -10,7 +10,9 @@ module main (
   input wire player_hit_test,
   input wire game_over,
   input wire [3:0] sw,
+  input wire rx,
   
+  output wire tx,
   output wire vs,
   output wire hs,
   output wire [3:0] r,
@@ -351,6 +353,23 @@ font_rom my_font_rom(
 assign hs = hsync_out_char;
 assign vs = vsync_out_char;
 assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
+
+
+
+//UART
+
+top uart_top(
+    //inputs
+    .clk(pclk),
+    .rst(locked_reset),
+    .rx(rx),
+    .game_over(game_over_hp),
+    
+    //outputs
+    .tx(tx)
+
+);
+
 
 
 

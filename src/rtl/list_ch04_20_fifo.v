@@ -9,8 +9,8 @@ module fifo
     input wire rd, wr,
     input wire [B-1:0] w_data,
     output wire empty, full,
-    output wire [B-1:0] r_data,
-    output wire [B-1:0] r_data_2nd_char
+    output wire [B-1:0] r_data
+    //output wire [B-1:0] r_data_2nd_char
    );
 
    //signal declaration
@@ -27,7 +27,7 @@ module fifo
          array_reg[w_ptr_reg] <= w_data;
    // register file read operation
    assign r_data = array_reg[r_ptr_reg+3];
-   assign r_data_2nd_char = array_reg[r_ptr_reg+2];
+
    // write enabled only when FIFO is not full
    assign wr_en = wr & ~full_reg;
 
