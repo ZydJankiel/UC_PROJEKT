@@ -53,6 +53,8 @@ localparam  TOP_V_LINE     = 317,
   wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp;
   wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out,obstacle1_y_out;
   
+  wire [7:0] curr_char_out;
+  
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
   wire [3:0] obstacle_mux_select_bg;
   
@@ -64,6 +66,7 @@ localparam  TOP_V_LINE     = 317,
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;
   wire damage_out, game_over_hp;
+  wire equal;
 
   
   vga_timing my_timing (
@@ -95,7 +98,7 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .rst(locked_reset),
     .game_on(game_button),
     .menu_on(menu_button),
-    .game_over(game_over || game_over_hp),
+    .game_over(game_over || game_over_hp || equal),
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .mouse_left(mouse_left_out_mouseCtl),
@@ -364,9 +367,16 @@ top uart_top(
     .game_over(game_over_hp),
 
     //outputs
-    .tx(tx)
-
+    .tx(tx),
+    .curr_char_out(curr_char_out)
 );
 
+
+comparator comparator(
+    .clk(pclk),
+    .rst(locked_reset),
+    .curr_char(curr_char_out),
+    .equal(equal)
+);
 
 endmodule

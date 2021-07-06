@@ -3,12 +3,11 @@ module top (
   input rst,
   input rx,
   input game_over,
-  output tx
+  output tx,
+  output [7:0] curr_char_out
 );
   reg tx_nxt;
-  wire [7:0] r_data, r_data_2nd_char;
-  wire [7:0] curr_char_out;
-  wire [7:0] prev_char_out;
+  wire [7:0] r_data;
   wire rx_done;
   reg counter;
 
@@ -23,8 +22,7 @@ module top (
     .rx_empty(), 
     .tx(),
     .r_data(r_data),
-    .r_data_2nd_char(r_data_2nd_char),
-    .current_char(),
+    .current_char(curr_char_out),
     .rx_done(),
     .full()
 

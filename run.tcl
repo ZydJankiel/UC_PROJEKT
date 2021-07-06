@@ -66,6 +66,7 @@ read_verilog {
     src/rtl/list_ch08_03_uart_tx.v
     src/rtl/list_ch08_04_uart.v
     src/rtl/top.v
+    src/rtl/comparator.v
 }
 
 read_vhdl {
