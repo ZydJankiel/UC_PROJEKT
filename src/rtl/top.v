@@ -33,7 +33,7 @@ module top (
     .full()
 
   );
-  
+  /*
   disp_hex_mux my_disp(
     .clk(clk), 
     .reset(rst),  
@@ -47,7 +47,7 @@ module top (
   );
   
    assign led = r_data; 
-   
+  */ 
  //nizej czesc 1 z polecenia
    always @ (posedge clk) begin
        if (rst)
