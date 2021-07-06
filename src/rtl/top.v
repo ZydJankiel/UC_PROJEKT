@@ -2,19 +2,15 @@ module top (
   input clk,
   input rst,
   input rx,
-  input loopback_enable,
-  output tx,
-  //output rx_monitor,
-  //output tx_monitor, 
-  output [3:0] an,
-  output [7:0] led,
-  output [7:0] seg
+  input game_over,
+  output tx
 );
   reg tx_nxt;
   wire [7:0] r_data, r_data_2nd_char;
   wire [7:0] curr_char_out;
   wire [7:0] prev_char_out;
   wire rx_done;
+  reg counter;
 
   uart my_uart(
     .clk(clk), 
@@ -33,32 +29,24 @@ module top (
     .full()
 
   );
-  
-  disp_hex_mux my_disp(
-    .clk(clk), 
-    .reset(rst),  
-    .hex3(r_data[7:4]), 
-    .hex2(r_data[3:0]), 
-    .hex1(r_data_2nd_char[7:4]), 
-    .hex0(r_data_2nd_char[3:0]),
-    .dp_in(4'b1111),
-    .an(an), 
-    .sseg(seg)
-  );
-  
-   assign led = r_data; 
-   
+
  //nizej czesc 1 z polecenia
    always @ (posedge clk) begin
-       if (rst)
-           tx_nxt = 0;
-       else begin
-           if (loopback_enable)
+     if (rst )begin
+         tx_nxt = 0;
+         counter = 0;
+         end
+     else begin
+         if (game_over)begin
+               counter=1; 
                tx_nxt = rx;
-           else 
-               tx_nxt = 0;
-        end
-   end
+               end
+         else if (counter == 1)
+              tx_nxt = rx;
+         else 
+             tx_nxt = 0;
+      end
+ end
    
   assign tx = tx_nxt;
 
