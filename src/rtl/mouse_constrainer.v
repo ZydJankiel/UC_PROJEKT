@@ -33,7 +33,7 @@ module mouse_constrainer
     output reg setmin_x,
     output reg setmin_y,
 
-    input wire [1:0] mouse_mode,
+    input wire [2:0] mouse_mode,
     input wire clk,
     input wire rst
     );
@@ -77,10 +77,10 @@ always @* begin
     state_nxt = IDLE;
     case(state)
         IDLE: begin
-            if (mouse_mode == 2'b01) begin
+            if (mouse_mode == 3'b001) begin
                 state_nxt = GAME_MODE;
                 end
-            else if (mouse_mode == 2'b00) begin
+            else if (mouse_mode == 3'b000) begin
                 state_nxt = MENU_MODE;
                 end
             else begin

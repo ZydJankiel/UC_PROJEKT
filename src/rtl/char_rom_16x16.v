@@ -70,7 +70,7 @@ module char_rom_16x16(
                 8'h27: char_code = 7'h4C; //L 
                 8'h28: char_code = 7'h41; //A
                 8'h29: char_code = 7'h59; //Y
-                8'h2A: char_code = 7'h20; //
+                8'h2A: char_code = 7'h33; //2
                 8'h2B: char_code = 7'h20; //
                 8'h2C: char_code = 7'h20; // 
                 8'h2D: char_code = 7'h20; //

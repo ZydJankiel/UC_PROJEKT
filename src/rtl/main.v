@@ -23,10 +23,20 @@ module main (
   output wire [3:0] b
   );
 
-localparam  TOP_V_LINE     = 317,
-            BOTTOM_V_LINE  = 617,
-            LEFT_H_LINE    = 361,
-            RIGHT_H_LINE   = 661;
+localparam  TOP_V_LINE      = 317,
+            BOTTOM_V_LINE   = 617,
+            LEFT_H_LINE     = 361,
+            RIGHT_H_LINE    = 661,
+            
+            PLAY_BOX_X_POS  = 432,
+            PLAY_BOX_Y_POS  = 400,
+            PLAY_BOX_Y_SIZE = 80,
+            PLAY_BOX_X_SIZE = 128,
+            
+            MULTI_BOX_X_POS = 432,
+            MULTI_BOX_Y_POS  = 640,
+            MULTI_BOX_Y_SIZE = 80,
+            MULTI_BOX_X_SIZE = 128;
             
   wire locked;
   wire pclk;
@@ -61,9 +71,9 @@ localparam  TOP_V_LINE     = 317,
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
   wire [3:0] obstacle_mux_select_bg;
   
-  wire [1:0] mouse_mode_out_back; 
+  wire [2:0] mouse_mode_out_back; 
   
-  wire play_selected_back;
+  wire play_selected_back, display_buttons_bg;
   wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
@@ -89,7 +99,20 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
                   .BOTTOM_V_LINE(BOTTOM_V_LINE), 
                   .LEFT_H_LINE(LEFT_H_LINE), 
                   .RIGHT_H_LINE(RIGHT_H_LINE),
-                  .BORDER(7)) draw_game_background (
+                  .BORDER(7),
+                  
+                  .PLAY_BOX_X_POS(PLAY_BOX_X_POS),
+                  .PLAY_BOX_Y_POS(PLAY_BOX_Y_POS),
+                  .PLAY_BOX_Y_SIZE(PLAY_BOX_Y_SIZE),
+                  .PLAY_BOX_X_SIZE(PLAY_BOX_X_SIZE),
+                  
+                  .MULTI_BOX_X_POS(MULTI_BOX_X_POS),
+                  .MULTI_BOX_Y_POS(MULTI_BOX_Y_POS),
+                  .MULTI_BOX_Y_SIZE(MULTI_BOX_Y_SIZE),
+                  .MULTI_BOX_X_SIZE(MULTI_BOX_X_SIZE)
+                  ) 
+                  
+    draw_game_background (
 //inputs
     .vcount_in(vcount_out_timing),
     .vsync_in(vsync_out_timing),
@@ -115,8 +138,8 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .vsync_out(vsync_out_back),
     .rgb_out(rgb_out_back),
     .mouse_mode(mouse_mode_out_back),
-    .play_selected(play_selected_back)
-    //.obstacle_mux_select(obstacle_mux_select_bg)
+    .play_selected(play_selected_back),
+    .display_buttons(display_buttons_bg)
 );
 delay #(.WIDTH(28), .CLK_DEL(1))  control_signals_delay(
     .clk(pclk),
@@ -228,12 +251,18 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .game_over(game_over_hp)
 );
 wire [11:0] hcount_out_char, vcount_out_char, rgb_out_char;
-wire [7:0] draw_rect_char_xy, font_rom_pixels;
-wire [6:0] char_code_out;
-wire [3:0] draw_rect_char_line;
+wire [7:0] draw_rect_char_xy, play_font_rom_pixels;
+wire [6:0] play_char_code_out;
+wire [3:0] draw_rect_play_line;
 wire hsync_out_char, vsync_out_char, hblnk_out_char, vblnk_out_char;
 
-draw_rect_char draw_play_button(
+draw_rect_char #(   .TEXT_BOX_X_POS(PLAY_BOX_X_POS), 
+                    .TEXT_BOX_Y_POS(PLAY_BOX_Y_POS), 
+                    .TEXT_BOX_Y_SIZE(PLAY_BOX_Y_SIZE), 
+                    .TEXT_BOX_X_SIZE(PLAY_BOX_X_SIZE)
+  )
+  draw_play_button                 
+  (
   //outputs
   .hcount_out(hcount_out_char),
   .vcount_out(vcount_out_char),
@@ -243,7 +272,7 @@ draw_rect_char draw_play_button(
   .vblnk_out(vblnk_out_char),
   .rgb_out(rgb_out_char),
   .char_xy(draw_rect_char_xy),
-  .char_line(draw_rect_char_line),
+  .char_line(draw_rect_play_line),
   
   //inputs
   .rst(locked_reset),
@@ -255,23 +284,79 @@ draw_rect_char draw_play_button(
   .hblnk_in(hblnk_out_hp),
   .vblnk_in(vblnk_out_hp),
   .rgb_in(rgb_out_hp),
-  .char_pixels(font_rom_pixels),
+  .char_pixels(play_font_rom_pixels),
   .mouse_xpos(xpos_out_mouseCtl),
   .mouse_ypos(ypos_out_mouseCtl),
-  .game_on(play_selected_back)
+  .display_buttons(display_buttons_bg)
   );
 
-char_rom_16x16 char_rom(
+char_rom_16x16 play_char_rom(
     //inputs
     .char_xy(draw_rect_char_xy),
     //outputs
-    .char_code(char_code_out)
+    .char_code(play_char_code_out)
 );
 
-font_rom font_rom(
+font_rom play_font_rom(
     //inputs
     .clk(pclk),
-    .addr({char_code_out,draw_rect_char_line}),
+    .addr({play_char_code_out, draw_rect_play_line}),
+    //outputs
+    .char_line_pixels(play_font_rom_pixels)
+);
+
+
+wire [11:0] hcount_out_multi, vcount_out_multi, rgb_out_multi;
+wire [7:0] draw_rect_mutli_xy, font_rom_pixels;
+wire [6:0] multi_char_code_out;
+wire [3:0] draw_rect_multi_line;
+wire hsync_out_multi, vsync_out_multi, hblnk_out_multi, vblnk_out_multi;
+
+draw_rect_char #(   .TEXT_BOX_X_POS(MULTI_BOX_X_POS), 
+                    .TEXT_BOX_Y_POS(MULTI_BOX_Y_POS), 
+                    .TEXT_BOX_Y_SIZE(MULTI_BOX_Y_SIZE), 
+                    .TEXT_BOX_X_SIZE(MULTI_BOX_X_SIZE)
+  )
+  draw_multiplayer_button                 
+  (
+  //outputs
+  .hcount_out(hcount_out_multi),
+  .vcount_out(vcount_out_multi),
+  .hsync_out(hsync_out_multi),
+  .vsync_out(vsync_out_multi),
+  .hblnk_out(hblnk_out_multi),
+  .vblnk_out(vblnk_out_multi),
+  .rgb_out(rgb_out_multi),
+  .char_xy(draw_rect_mutli_xy),
+  .char_line(draw_rect_multi_line),
+  
+  //inputs
+  .rst(locked_reset),
+  .clk(pclk),
+  .hcount_in(hcount_out_char),
+  .vcount_in(vcount_out_char),
+  .hsync_in(hsync_out_char),
+  .vsync_in(vsync_out_char),
+  .hblnk_in(hblnk_out_char),
+  .vblnk_in(vblnk_out_char),
+  .rgb_in(rgb_out_char),
+  .char_pixels(font_rom_pixels),
+  .mouse_xpos(xpos_out_mouseCtl),
+  .mouse_ypos(ypos_out_mouseCtl),
+  .display_buttons(display_buttons_bg)
+  );
+
+char_rom_16x16 multi_char_rom(
+    //inputs
+    .char_xy(draw_rect_mutli_xy),
+    //outputs
+    .char_code(multi_char_code_out)
+);
+
+font_rom multi_font_rom(
+    //inputs
+    .clk(pclk),
+    .addr({multi_char_code_out, draw_rect_multi_line}),
     //outputs
     .char_line_pixels(font_rom_pixels)
 );
@@ -337,12 +422,12 @@ font_rom font_rom(
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .pixel_clk(pclk),
-    .hcount(hcount_out_char),
-    .vcount(vcount_out_char),
-    .blank(hblnk_out_char || vblnk_out_char), 
-    .red_in(rgb_out_char[11:8]),
-    .green_in(rgb_out_char[7:4]),
-    .blue_in(rgb_out_char[3:0]),
+    .hcount(hcount_out_multi),
+    .vcount(vcount_out_multi),
+    .blank(hblnk_out_multi || vblnk_out_multi), 
+    .red_in(rgb_out_multi[11:8]),
+    .green_in(rgb_out_multi[7:4]),
+    .blue_in(rgb_out_multi[3:0]),
   //outputs
       .red_out(red_out_mouse),
       .green_out(green_out_mouse),
@@ -350,8 +435,8 @@ font_rom font_rom(
       .enable_mouse_display_out()
   );
   
-assign hs = hsync_out_char;
-assign vs = vsync_out_char;
+assign hs = hsync_out_multi;
+assign vs = vsync_out_multi;
 assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
 
 //UART

@@ -19,7 +19,14 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
-module draw_rect_char(
+module draw_rect_char#( parameter
+    //DO NOT TOUCH X POS - IT DISTORTS LETTERS SHAPE
+    TEXT_BOX_X_POS = 432,
+    TEXT_BOX_Y_POS = 400,
+    TEXT_BOX_Y_SIZE = 80,
+    TEXT_BOX_X_SIZE = 128
+    )
+    (
     output reg [11:0] hcount_out,
     output reg hsync_out,
     output reg hblnk_out,
@@ -43,18 +50,14 @@ module draw_rect_char(
     input wire [7:0] char_pixels,
     input wire [11:0] mouse_xpos,
     input wire [11:0] mouse_ypos,
-    input wire game_on
+    input wire display_buttons
     );
     
     reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;   
     reg [10:0] vcount_nxt, hcount_nxt, vcount_rect, hcount_rect;
     reg [11:0] rgb_nxt;
 
-    //DO NOT TOUCH X POS - IT DISTORTS LETTERS SHAPE
-    localparam TEXT_BOX_X_POS = 432;
-    localparam TEXT_BOX_Y_POS = 400;
-    localparam TEXT_BOX_Y_SIZE = 80;
-    localparam TEXT_BOX_X_SIZE = 128;
+
     
     localparam BG_BLACK = 12'h0_0_0;
     localparam LETTER_COLOUR = 12'h0_0_f;
@@ -90,7 +93,7 @@ module draw_rect_char(
     hsync_nxt = hsync_in;
     hblnk_nxt = hblnk_in;
           
-     if (!game_on) begin   
+     if (display_buttons) begin   
             if (hblnk_out || vblnk_out) 
               rgb_nxt = BG_BLACK; 
             else if (vcount_in <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS && vcount_in >= TEXT_BOX_Y_POS && hcount_in <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS && hcount_in >= TEXT_BOX_X_POS) begin
