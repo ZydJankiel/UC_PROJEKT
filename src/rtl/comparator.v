@@ -1,6 +1,7 @@
 module comparator (
   input clk,
   input rst,
+  input play_selected,
   input wire [7:0] curr_char,
   output reg victory,
   output reg opponent_ready
@@ -47,7 +48,12 @@ module comparator (
                 end
             OPPONENT_READY:
                 begin
-                    state_nxt = (curr_char == 8'h4C) ? VICTORY : OPPONENT_READY;
+                    if (~play_selected)
+                        state_nxt = IDLE;
+                    else if (curr_char == 8'h4C)
+                        state_nxt = VICTORY;
+                    else 
+                        state_nxt = OPPONENT_READY;
                     opponent_ready_nxt = 1;
                 end
         endcase

@@ -70,15 +70,8 @@ always @* begin
         game_over_reg_nxt = 1;
     end
     if (player_ready) begin  
-        if (counter >= 65000000) begin
             message_nxt = 8'h52;
             player_ready_reg_nxt = 1;
-            counter_nxt = 0;
-        end
-        else begin
-            player_ready_reg_nxt = 0;
-            counter_nxt = counter + 1;
-        end
     end
 end
 
