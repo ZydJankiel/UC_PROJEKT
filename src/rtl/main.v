@@ -32,7 +32,7 @@ localparam  TOP_V_LINE     = 317,
   wire pclk;
   wire clkMouse;
 
-  clk_wiz_0 my_clk_wiz_0 (
+  clk_wiz_0 clk_wiz_0 (
       .clk(clk),
       .reset(rst),
       .clk130MHz(clkMouse),
@@ -41,7 +41,7 @@ localparam  TOP_V_LINE     = 317,
   );
 
   wire locked_reset;
-  clk_locked_menager my_clk_locked_menager(
+  clk_locked_menager clk_locked_menager(
       .pclk(pclk),
       .locked_in(locked),
       .reset_out(locked_reset)
@@ -72,7 +72,7 @@ localparam  TOP_V_LINE     = 317,
   wire equal;
 
   
-  vga_timing my_timing (
+  vga_timing vga_timing (
       //inputs 
       .pclk(pclk),
       .rst(locked_reset),
@@ -89,7 +89,7 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
                   .BOTTOM_V_LINE(BOTTOM_V_LINE), 
                   .LEFT_H_LINE(LEFT_H_LINE), 
                   .RIGHT_H_LINE(RIGHT_H_LINE),
-                  .BORDER(7)) my_game_background (
+                  .BORDER(7)) draw_game_background (
 //inputs
     .vcount_in(vcount_out_timing),
     .vsync_in(vsync_out_timing),
@@ -162,14 +162,14 @@ obstacle1 #(.TEST_TOP_LINE(600),
 );
 
 wire pulse;
-monostable my_monostable(
+monostable monostable_button(
     .clk(pclk),
     .reset(rst),
     .trigger(player_hit_test),
     .pulse(pulse)
 );
 
-obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
+obstacle_mux_16_to_1 obstacle_mux_16_to_1(
     //inputs
     .input_0({obstacle0_x_out,obstacle0_y_out,rgb_out_obs0}),
     .input_1({obstacle1_x_out,obstacle1_y_out,rgb_out_obs1}),
@@ -193,7 +193,7 @@ obstacle_mux_16_to_1 my_obstacle_mux_16_to_1(
     .obstacle_mux_out(mux_out)
 );
 
-colision_detector damage_checker(
+colision_detector colision_detector(
     .pclk(pclk),
     .rst(rst),
     .obstacle_x_in(mux_out[35:24]),
@@ -208,7 +208,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
                     .LEFT_H_LINE(LEFT_H_LINE), 
                     .RIGHT_H_LINE(RIGHT_H_LINE),
                     .BORDER(3))
-    player_hp_control 
+    hp_control
     (
     //inputs
     .vcount_in_hp(delayed_signals[27:16]),
@@ -239,7 +239,7 @@ wire [6:0] char_code_out;
 wire [3:0] draw_rect_char_line;
 wire hsync_out_char, vsync_out_char, hblnk_out_char, vblnk_out_char;
 
-draw_rect_char my_draw_rect_char(
+draw_rect_char draw_play_button(
   //outputs
   .hcount_out(hcount_out_char),
   .vcount_out(vcount_out_char),
@@ -267,14 +267,14 @@ draw_rect_char my_draw_rect_char(
   .game_on(play_selected_back)
   );
 
-char_rom_16x16 my_char_rom(
+char_rom_16x16 char_rom(
     //inputs
     .char_xy(draw_rect_char_xy),
     //outputs
     .char_code(char_code_out)
 );
 
-font_rom my_font_rom(
+font_rom font_rom(
     //inputs
     .clk(pclk),
     .addr({char_code_out,draw_rect_char_line}),
@@ -313,7 +313,7 @@ font_rom my_font_rom(
   mouse_constrainer #(.MIN_Y(TOP_V_LINE), 
                       .MAX_Y(BOTTOM_V_LINE), 
                       .MIN_X(LEFT_H_LINE), 
-                      .MAX_X(RIGHT_H_LINE)) my_mouse_constrainer (
+                      .MAX_X(RIGHT_H_LINE)) mouse_constrainer (
   //inputs
       .clk(pclk),
       .rst(locked_reset),
@@ -338,7 +338,7 @@ font_rom my_font_rom(
       .ypos_out(ypos_out_buff)
     );
     */
-  MouseDisplay My_MouseDisplay (
+  MouseDisplay MouseDisplay (
   //inputs
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
