@@ -35,7 +35,7 @@ module comparator (
                 begin
                     if (curr_char == 8'h4C)
                         state_nxt = VICTORY;
-                    else if (curr_char == 8'h57)
+                    else if (curr_char == 8'h52)
                         state_nxt = OPPONENT_READY;
                     else
                         state_nxt = IDLE;                
