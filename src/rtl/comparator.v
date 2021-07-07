@@ -22,7 +22,7 @@ module comparator (
         else begin
             state <= state_nxt;
             victory <= victory_nxt;
-            opponent_ready <= 0;
+            opponent_ready <= opponent_ready_nxt;
         end
     end
 
