@@ -17,13 +17,13 @@ module top (
   uart my_uart(
     .clk(clk), 
     .reset(rst),
-    .rd_uart(), 
-    .wr_uart(), 
+    .rd_uart(~game_over), 
+    .wr_uart(game_over), 
     .rx(rx),
-    .w_data(),
+    .w_data(8'h4C),
     .tx_full(),
     .rx_empty(), 
-    .tx(),
+    .tx(tx),
     .r_data(r_data),
     .current_char(curr_char_out)
   );
@@ -57,7 +57,6 @@ module top (
       end
  end
    
-  assign tx = tx_nxt;
   assign led = r_data; 
 
 
