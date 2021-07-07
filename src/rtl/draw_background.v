@@ -29,6 +29,7 @@ module draw_background
   input wire game_on,
   input wire menu_on,
   input wire game_over,
+  input wire victory,
   input wire [11:0] xpos,
   input wire [11:0] ypos,
   input wire mouse_left,
@@ -56,9 +57,11 @@ localparam TEXT_BOX_Y_POS = 400;
 localparam TEXT_BOX_Y_SIZE = 80;
 localparam TEXT_BOX_X_SIZE = 128;
     
-localparam MENU_MODE = 2'b00,
-           GAME_MODE = 2'b01,
-           GAME_OVER = 2'B11;
+localparam MENU_MODE    = 2'b00,
+           GAME_MODE    = 2'b01,
+           VICTORY_MODE = 2'b10,
+           GAME_OVER    = 2'b11;
+           
 
   always @(posedge pclk) begin
       if (rst) begin
@@ -111,6 +114,8 @@ localparam MENU_MODE = 2'b00,
                 end    
             else if (game_over)
                 state_nxt = GAME_OVER;
+            else if (victory)
+                state_nxt = VICTORY_MODE;
             else
                 state_nxt = MENU_MODE;                
 
@@ -157,6 +162,8 @@ localparam MENU_MODE = 2'b00,
                 state_nxt = MENU_MODE;
             else if (game_over)
                 state_nxt = GAME_OVER;
+            else if (victory)
+                state_nxt = VICTORY_MODE;
             else
                 state_nxt = GAME_MODE;
             //state_nxt = menu_on ? MENU_MODE : GAME_MODE;
@@ -183,6 +190,28 @@ localparam MENU_MODE = 2'b00,
             end
             
         end
+        
+        VICTORY_MODE: begin
+            if (game_on) 
+                state_nxt = GAME_MODE;
+            else if (menu_on)
+                state_nxt = MENU_MODE;
+            else if (xpos >= TEXT_BOX_X_POS - 10 && xpos <= TEXT_BOX_X_SIZE + TEXT_BOX_X_POS -5 && ypos >= TEXT_BOX_Y_POS - 10 && ypos <= TEXT_BOX_Y_SIZE + TEXT_BOX_Y_POS) begin
+                if (mouse_left)
+                    state_nxt = GAME_MODE;
+                else
+                    state_nxt = VICTORY_MODE;
+                end    
+            else if (mouse_left)
+                state_nxt = MENU_MODE;
+            else
+                state_nxt = VICTORY_MODE; 
+                       
+            rgb_nxt = 12'h2_f_2;
+        end
+        
+        
+        
         //to go to menu from game over screen press left mouse button anywhere on the screen,  
         //to play the game again press PLAY button on gameover screen
         GAME_OVER: begin
@@ -204,42 +233,7 @@ localparam MENU_MODE = 2'b00,
             else
                 state_nxt = GAME_OVER; 
                 
-            rgb_nxt = 12'h1_9_2;    
-            /*
-            //P
-            if ((hcount_in > 400 && hcount_in <= 420 && vcount_in > 400 && vcount_in <= 480) ||
-            (hcount_in > 420 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 410) ||
-            (hcount_in > 440 && hcount_in <= 450 && vcount_in > 400 && vcount_in <= 440) ||
-            (hcount_in > 420 && hcount_in <= 450 && vcount_in > 430 && vcount_in <= 440) ||
-            //L
-            (hcount_in > 480 && hcount_in <= 500 && vcount_in > 400 && vcount_in <= 480) ||
-            (hcount_in > 500 && hcount_in <= 530 && vcount_in > 460 && vcount_in <= 480) ||
-            //A
-            (hcount_in > 560 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 420) ||
-            (hcount_in > 560 && hcount_in <= 580 && vcount_in > 400 && vcount_in <= 480) ||
-            (hcount_in > 590 && hcount_in <= 610 && vcount_in > 400 && vcount_in <= 480) ||
-            (hcount_in > 580 && hcount_in <= 590 && vcount_in > 440 && vcount_in <= 460) ||
-            //Y
-            (hcount_in > 640 && hcount_in <= 660 && vcount_in > 400 && vcount_in <= 420) ||
-            (hcount_in > 670 && hcount_in <= 690 && vcount_in > 400 && vcount_in <= 420) ||
-            (hcount_in > 640 && hcount_in <= 690 && vcount_in > 420 && vcount_in <= 440) ||
-            (hcount_in > 655 && hcount_in <= 675 && vcount_in > 440 && vcount_in <= 480)) begin
-                if (xpos > 384 && xpos <= 690 && ypos > 384 && ypos <= 480) begin
-                    rgb_nxt = 12'h0_3_9;
-                    if (mouse_left) begin
-                        state_nxt = GAME_MODE;
-                       
-                    end
-                end
-                else
-                    rgb_nxt = 12'hf_f_f;
-            end
-            else if (mouse_left) begin
-                state_nxt = MENU_MODE;
-                rgb_nxt = 12'h1_9_2;
-                end
-            else rgb_nxt = 12'h1_9_2;  
-            */         
+            rgb_nxt = 12'hf_2_2;            
         end
         
         default begin

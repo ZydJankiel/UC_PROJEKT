@@ -7,7 +7,7 @@ module main (
   input wire rst,
   input wire game_button,
   input wire menu_button,
-  input wire player_hit_test,
+  input wire victory_button,
   input wire game_over,
   input wire [3:0] sw,
   input wire rx,
@@ -105,6 +105,7 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .mouse_left(mouse_left_out_mouseCtl),
+    .victory(victory_button),
  //outputs  
     .hcount_out(hcount_out_back),
     .vcount_out(vcount_out_back),
@@ -161,13 +162,6 @@ obstacle1 #(.TEST_TOP_LINE(600),
     
 );
 
-wire pulse;
-monostable monostable_button(
-    .clk(pclk),
-    .reset(rst),
-    .trigger(player_hit_test),
-    .pulse(pulse)
-);
 
 obstacle_mux_16_to_1 obstacle_mux_16_to_1(
     //inputs
@@ -221,7 +215,7 @@ hp_control #(.TOP_V_LINE(TOP_V_LINE),
     .pclk(pclk),
     .rst(locked_reset),
     .game_on_hp(play_selected_back),
-    .player_hit(pulse || damage_out),
+    .player_hit(damage_out),
  
     //outputs
     .vcount_out_hp(vcount_out_hp),
