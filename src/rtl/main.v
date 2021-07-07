@@ -79,7 +79,7 @@ localparam  TOP_V_LINE      = 317,
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;
   wire damage_out, game_over_hp;
-  wire equal;
+  wire victory, opponent_ready, player_ready;
 
   
   vga_timing vga_timing (
@@ -128,7 +128,8 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .mouse_left(mouse_left_out_mouseCtl),
-    .victory(victory_button || equal),
+    .victory(victory_button || victory),
+    .opponent_ready(opponent_ready),
  //outputs  
     .hcount_out(hcount_out_back),
     .vcount_out(vcount_out_back),
@@ -139,7 +140,8 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .rgb_out(rgb_out_back),
     .mouse_mode(mouse_mode_out_back),
     .play_selected(play_selected_back),
-    .display_buttons(display_buttons_bg)
+    .display_buttons(display_buttons_bg),
+    .player_ready(player_ready)
 );
 delay #(.WIDTH(28), .CLK_DEL(1))  control_signals_delay(
     .clk(pclk),
@@ -447,6 +449,7 @@ top uart_top(
     .rst(locked_reset),
     .rx(rx),
     .game_over(game_over_hp),
+    .player_ready(player_ready),
 
     //outputs
     .tx(tx),
@@ -461,7 +464,9 @@ comparator comparator(
     .clk(pclk),
     .rst(locked_reset),
     .curr_char(curr_char_out),
-    .equal(equal)
+    
+    .victory(victory),
+    .opponent_ready(opponent_ready)
 );
 
 endmodule

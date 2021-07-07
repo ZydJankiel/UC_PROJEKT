@@ -43,6 +43,7 @@ module draw_background
   input wire [11:0] xpos,
   input wire [11:0] ypos,
   input wire mouse_left,
+  input wire opponent_ready,
 
   output reg [11:0] vcount_out,
   output reg vsync_out,
@@ -53,7 +54,8 @@ module draw_background
   output reg [11:0] rgb_out,
   output reg play_selected,
   output reg [2:0] mouse_mode,
-  output reg display_buttons
+  output reg display_buttons,
+  output reg player_ready
   
 
   );
@@ -61,7 +63,7 @@ reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 reg [2:0] state, state_nxt; 
-reg mouse_mode_nxt, play_selected_nxt, display_buttons_nxt;
+reg mouse_mode_nxt, play_selected_nxt, display_buttons_nxt, player_ready_nxt;
 
 
     
@@ -85,6 +87,7 @@ localparam MENU_MODE    = 3'b000,
           mouse_mode <= MENU_MODE; 
           play_selected <= 0;
           display_buttons <= 0;  
+          player_ready <= 0;
           
       end
       else begin
@@ -99,6 +102,7 @@ localparam MENU_MODE    = 3'b000,
           mouse_mode <= mouse_mode_nxt;
           play_selected <= play_selected_nxt;
           display_buttons <= display_buttons_nxt;
+          player_ready <= player_ready_nxt;
       end
   end
   
@@ -112,6 +116,7 @@ localparam MENU_MODE    = 3'b000,
     play_selected_nxt = 0;  
     mouse_mode_nxt = MENU_MODE;
     display_buttons_nxt = 1;
+    player_ready_nxt = 0;
 
     case (state)
         MENU_MODE: begin
@@ -262,8 +267,11 @@ localparam MENU_MODE    = 3'b000,
 
         //wait for 2nd player if multiplayer mode selected
         MULTI_WAIT: begin
+            player_ready_nxt = 1;
             if (mouse_left)
                 state_nxt = MENU_MODE;
+            else if (opponent_ready)
+                state_nxt = GAME_MODE;
             else
                 state_nxt = MULTI_WAIT;
             display_buttons_nxt = 0;
