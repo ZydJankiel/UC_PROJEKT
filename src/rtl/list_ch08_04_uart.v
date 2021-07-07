@@ -5,7 +5,7 @@ module uart
       parameter DBIT = 8,     // # data bits
                 SB_TICK = 16, // # ticks for stop bits, 16/24/32
                               // for 1/1.5/2 stop bits
-                DVSR = 352,   // baud rate divisor
+                DVSR = 212,   // baud rate divisor
                               // DVSR = 50M/(16*baud rate)
                 DVSR_BIT = 8, // # bits of DVSR
                 FIFO_W = 2    // # addr bits of FIFO
@@ -17,11 +17,7 @@ module uart
     input wire [7:0] w_data,
     output wire tx_full, rx_empty, tx,
     output wire [7:0] r_data,
-    output wire rx_done,
-    output [7:0] current_char,
-    
-    
-    output wire full
+    output [7:0] current_char
    );
 
    // signal declaration
@@ -40,7 +36,7 @@ module uart
    fifo #(.B(DBIT), .W(FIFO_W)) fifo_rx_unit
       (.clk(clk), .reset(reset), .rd(rd_uart),
        .wr(rx_done_tick), .w_data(rx_data_out),
-       .empty(rx_empty), .full(full), .r_data(r_data));
+       .empty(rx_empty), .full(), .r_data(r_data));
 
    fifo #(.B(DBIT), .W(FIFO_W)) fifo_tx_unit
       (.clk(clk), .reset(reset), .rd(tx_done_tick),
@@ -51,7 +47,7 @@ module uart
       (.clk(clk), .reset(reset), .tx_start(tx_fifo_not_empty),
        .s_tick(tick), .din(tx_fifo_out),
        .tx_done_tick(tx_done_tick), .tx(tx));
-    assign rx_done = rx_done_tick;
+
    assign tx_fifo_not_empty = ~tx_empty;
    assign current_char = rx_data_out;
 

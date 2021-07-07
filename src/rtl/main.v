@@ -15,6 +15,9 @@ module main (
   output wire tx,
   output wire vs,
   output wire hs,
+  output wire [3:0] an,
+  output wire [7:0] led,
+  output wire [7:0] seg,
   output wire [3:0] r,
   output wire [3:0] g,
   output wire [3:0] b
@@ -368,7 +371,10 @@ top uart_top(
 
     //outputs
     .tx(tx),
-    .curr_char_out(curr_char_out)
+    .curr_char_out(curr_char_out),
+    .an(an),
+    .led(led),
+    .seg(seg)
 );
 
 

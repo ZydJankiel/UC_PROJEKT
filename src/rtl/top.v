@@ -4,7 +4,10 @@ module top (
   input rx,
   input game_over,
   output tx,
-  output [7:0] curr_char_out
+  output [7:0] curr_char_out,
+  output [3:0] an,
+  output [7:0] led,
+  output [7:0] seg
 );
   reg tx_nxt;
   wire [7:0] r_data;
@@ -14,7 +17,7 @@ module top (
   uart my_uart(
     .clk(clk), 
     .reset(rst),
-    .rd_uart(1'b1), 
+    .rd_uart(), 
     .wr_uart(), 
     .rx(rx),
     .w_data(),
@@ -22,12 +25,20 @@ module top (
     .rx_empty(), 
     .tx(),
     .r_data(r_data),
-    .current_char(curr_char_out),
-    .rx_done(),
-    .full()
-
+    .current_char(curr_char_out)
   );
-
+  
+  disp_hex_mux my_disp(
+    .clk(clk), 
+    .reset(rst),
+    .hex3(curr_char_out[7:4]), 
+    .hex2(curr_char_out[3:0]), 
+    .hex1(curr_char_out[7:4]), 
+    .hex0(curr_char_out[3:0]), 
+    .dp_in(4'b1111),
+    .an(an), 
+    .sseg(seg)
+  );
  //nizej czesc 1 z polecenia
    always @ (posedge clk) begin
      if (rst )begin
@@ -47,7 +58,7 @@ module top (
  end
    
   assign tx = tx_nxt;
-
+  assign led = r_data; 
 
 
 endmodule
