@@ -35,7 +35,12 @@ localparam  TOP_V_LINE      = 317,
             MULTI_BOX_X_POS = 432,
             MULTI_BOX_Y_POS  = 640,
             MULTI_BOX_Y_SIZE = 80,
-            MULTI_BOX_X_SIZE = 128;
+            MULTI_BOX_X_SIZE = 128,
+            
+            MENU_BOX_X_POS = 432,
+            MENU_BOX_Y_POS  = 520,
+            MENU_BOX_Y_SIZE = 80,
+            MENU_BOX_X_SIZE = 128;            
             
   wire locked;
   wire pclk;
@@ -72,7 +77,7 @@ localparam  TOP_V_LINE      = 317,
   
   wire [2:0] mouse_mode_out_back; 
   
-  wire play_selected_back, display_buttons_bg;
+  wire play_selected_back, display_buttons_m_and_s, display_menu_button;
   wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
@@ -139,8 +144,9 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .rgb_out(rgb_out_back),
     .mouse_mode(mouse_mode_out_back),
     .play_selected(play_selected_back),
-    .display_buttons(display_buttons_bg),
+    .display_buttons_m_and_s(display_buttons_m_and_s),
     .player_ready(player_ready),
+    .display_menu_button(display_menu_button),
     .multiplayer(multiplayer_out_back)
 );
 
@@ -264,7 +270,7 @@ draw_rect_char #(   .TEXT_BOX_X_POS(PLAY_BOX_X_POS),
                     .TEXT_BOX_Y_SIZE(PLAY_BOX_Y_SIZE), 
                     .TEXT_BOX_X_SIZE(PLAY_BOX_X_SIZE)
   )
-  draw_play_button                 
+  draw_single_button                 
   (
   //outputs
   .hcount_out(hcount_out_char),
@@ -290,17 +296,17 @@ draw_rect_char #(   .TEXT_BOX_X_POS(PLAY_BOX_X_POS),
   .char_pixels(play_font_rom_pixels),
   .mouse_xpos(xpos_out_mouseCtl),
   .mouse_ypos(ypos_out_mouseCtl),
-  .display_buttons(display_buttons_bg)
+  .display_buttons(display_buttons_m_and_s)
   );
 
-char_rom_16x16 play_char_rom(
+char_rom_16x16 single_char_rom(
     //inputs
     .char_xy(draw_rect_char_xy),
     //outputs
     .char_code(play_char_code_out)
 );
 
-font_rom play_font_rom(
+font_rom single_font_rom(
     //inputs
     .clk(pclk),
     .addr({play_char_code_out, draw_rect_play_line}),
@@ -308,12 +314,14 @@ font_rom play_font_rom(
     .char_line_pixels(play_font_rom_pixels)
 );
 
-
+//MULTPLAYER BUTTON
 wire [11:0] hcount_out_multi, vcount_out_multi, rgb_out_multi;
-wire [7:0] draw_rect_mutli_xy, font_rom_pixels;
+wire [7:0] draw_rect_mutli_xy, multi_font_rom_pixels;
 wire [6:0] multi_char_code_out;
 wire [3:0] draw_rect_multi_line;
 wire hsync_out_multi, vsync_out_multi, hblnk_out_multi, vblnk_out_multi;
+
+
 
 draw_rect_char #(   .TEXT_BOX_X_POS(MULTI_BOX_X_POS), 
                     .TEXT_BOX_Y_POS(MULTI_BOX_Y_POS), 
@@ -343,17 +351,17 @@ draw_rect_char #(   .TEXT_BOX_X_POS(MULTI_BOX_X_POS),
   .hblnk_in(hblnk_out_char),
   .vblnk_in(vblnk_out_char),
   .rgb_in(rgb_out_char),
-  .char_pixels(font_rom_pixels),
+  .char_pixels(multi_font_rom_pixels),
   .mouse_xpos(xpos_out_mouseCtl),
   .mouse_ypos(ypos_out_mouseCtl),
-  .display_buttons(display_buttons_bg)
+  .display_buttons(display_buttons_m_and_s)
   );
 
-char_rom_16x16 multi_char_rom(
+multi_char_rom_16x16 multi_char_rom(
     //inputs
-    .char_xy(draw_rect_mutli_xy),
+    .multi_char_xy(draw_rect_mutli_xy),
     //outputs
-    .char_code(multi_char_code_out)
+    .multi_char_code(multi_char_code_out)
 );
 
 font_rom multi_font_rom(
@@ -361,8 +369,68 @@ font_rom multi_font_rom(
     .clk(pclk),
     .addr({multi_char_code_out, draw_rect_multi_line}),
     //outputs
-    .char_line_pixels(font_rom_pixels)
+    .char_line_pixels(multi_font_rom_pixels)
 );
+
+
+
+//MENU BUTTON
+
+wire [11:0] hcount_out_menubut, vcount_out_menubut, rgb_out_menubut;
+wire [7:0] draw_rect_menubut_xy, menubut_font_rom_pixels;
+wire [6:0] menubut_char_code_out;
+wire [3:0] draw_rect_menubut_line;
+wire hsync_out_menubut, vsync_out_menubut, hblnk_out_menubut, vblnk_out_menubut;
+
+draw_rect_char #(   .TEXT_BOX_X_POS(MENU_BOX_X_POS), 
+                    .TEXT_BOX_Y_POS(MENU_BOX_Y_POS), 
+                    .TEXT_BOX_Y_SIZE(MENU_BOX_Y_SIZE), 
+                    .TEXT_BOX_X_SIZE(MENU_BOX_X_SIZE)
+  )
+  draw_menu_button                 
+  (
+  //outputs
+  .hcount_out(hcount_out_menubut),
+  .vcount_out(vcount_out_menubut),
+  .hsync_out(hsync_out_menubut),
+  .vsync_out(vsync_out_menubut),
+  .hblnk_out(hblnk_out_menubut),
+  .vblnk_out(vblnk_out_menubut),
+  .rgb_out(rgb_out_menubut),
+  .char_xy(draw_rect_menubut_xy),
+  .char_line(draw_rect_menubut_line),
+  
+  //inputs
+  .rst(locked_reset),
+  .clk(pclk),
+  .hcount_in(hcount_out_multi),
+  .vcount_in(vcount_out_multi),
+  .hsync_in(hsync_out_multi),
+  .vsync_in(vsync_out_multi),
+  .hblnk_in(hblnk_out_multi),
+  .vblnk_in(vblnk_out_multi),
+  .rgb_in(rgb_out_multi),
+  .char_pixels(menubut_font_rom_pixels),
+  .mouse_xpos(xpos_out_mouseCtl),
+  .mouse_ypos(ypos_out_mouseCtl),
+  .display_buttons(display_menu_button)
+  );
+
+menu_char_rom_16x16 menu_char_rom(
+    //inputs
+    .menu_char_xy(draw_rect_menubut_xy),
+    //outputs
+    .menu_char_code(menubut_char_code_out)
+);
+
+font_rom menu_font_rom(
+    //inputs
+    .clk(pclk),
+    .addr({menubut_char_code_out, draw_rect_menubut_line}),
+    //outputs
+    .char_line_pixels(menubut_font_rom_pixels)
+);
+
 
 //MOUSE MODULES//  
 
@@ -415,12 +483,12 @@ font_rom multi_font_rom(
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .pixel_clk(pclk),
-    .hcount(hcount_out_multi),
-    .vcount(vcount_out_multi),
-    .blank(hblnk_out_multi || vblnk_out_multi), 
-    .red_in(rgb_out_multi[11:8]),
-    .green_in(rgb_out_multi[7:4]),
-    .blue_in(rgb_out_multi[3:0]),
+    .hcount(hcount_out_menubut),
+    .vcount(vcount_out_menubut),
+    .blank(hblnk_out_menubut || vblnk_out_menubut), 
+    .red_in(rgb_out_menubut[11:8]),
+    .green_in(rgb_out_menubut[7:4]),
+    .blue_in(rgb_out_menubut[3:0]),
   //outputs
       .red_out(red_out_mouse),
       .green_out(green_out_mouse),
@@ -428,9 +496,7 @@ font_rom multi_font_rom(
       .enable_mouse_display_out()
   );
   
-assign hs = hsync_out_multi;
-assign vs = vsync_out_multi;
-assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
+
 
 //UART
 
@@ -460,4 +526,8 @@ comparator comparator(
     .opponent_ready(opponent_ready)
 );
 
+
+assign hs = hsync_out_menubut;
+assign vs = vsync_out_menubut;
+assign {r,g,b} = {red_out_mouse, green_out_mouse, blue_out_mouse};
 endmodule

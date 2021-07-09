@@ -57,6 +57,8 @@ read_verilog {
     src/rtl/obstacle_mux_16to1.v
     src/rtl/font_rom.v
     src/rtl/char_rom_16x16.v
+    src/rtl/multi_char_rom_16x16.v
+    src/rtl/menu_char_rom_16x16.v
     src/rtl/draw_rect_char.v
     src/rtl/list_ch04_11_mod_m_counter.v
     src/rtl/list_ch04_20_fifo.v
