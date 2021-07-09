@@ -1,3 +1,7 @@
+/*
+ * PWJ: Added comparator for comparing messages from uart
+*/
+
 module comparator (
   input clk,
   input rst,

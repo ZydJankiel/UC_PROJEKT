@@ -16,7 +16,6 @@ module main (
   output wire vs,
   output wire hs,
   output wire [3:0] an,
-  output wire [7:0] led,
   output wire [7:0] seg,
   output wire [3:0] r,
   output wire [3:0] g,
@@ -455,10 +454,8 @@ top uart_top(
     .tx(tx),
     .curr_char_out(curr_char_out),
     .an(an),
-    .led(led),
     .seg(seg)
 );
-
 
 comparator comparator(
     .clk(pclk),
