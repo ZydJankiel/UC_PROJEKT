@@ -299,14 +299,14 @@ localparam MENU_MODE    = 3'b000,
 
         //wait for 2nd player if multiplayer mode selected
         MULTI_WAIT: begin
-            if (xpos >= MENU_BOX_X_POS - 10 && xpos <= MENU_BOX_X_SIZE + MENU_BOX_X_POS -5 && ypos >= MENU_BOX_Y_POS - 10 && ypos <= MENU_BOX_Y_SIZE + MENU_BOX_Y_POS) begin
+            if (opponent_ready)
+                state_nxt = GAME_MODE;
+            else if (xpos >= MENU_BOX_X_POS - 10 && xpos <= MENU_BOX_X_SIZE + MENU_BOX_X_POS -5 && ypos >= MENU_BOX_Y_POS - 10 && ypos <= MENU_BOX_Y_SIZE + MENU_BOX_Y_POS) begin
                 if (mouse_left)
                     state_nxt = MENU_MODE;
                 else
                     state_nxt = MULTI_WAIT;
                 end
-            else if (opponent_ready)
-                state_nxt = GAME_MODE;
             else
                 state_nxt = MULTI_WAIT;
                 
