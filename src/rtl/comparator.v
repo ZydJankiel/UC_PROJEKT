@@ -1,5 +1,6 @@
 /*
  * PWJ: Added comparator for comparing messages from uart
+ * this module is working only in multiplayer
 */
 
 module comparator (
@@ -40,12 +41,16 @@ module comparator (
         case(state)
             IDLE:
                 begin
-                    if (curr_char == 8'h4C)
-                        state_nxt = VICTORY;
-                    else if (curr_char == 8'h52)
-                        state_nxt = OPPONENT_READY;
+                    if (multiplayer) begin
+                        if (curr_char == 8'h4C)
+                            state_nxt = VICTORY;
+                        else if (curr_char == 8'h52)
+                            state_nxt = OPPONENT_READY;
+                        else
+                            state_nxt = IDLE;    
+                    end
                     else
-                        state_nxt = IDLE;                  
+                        state_nxt = IDLE;                   
                 end
             VICTORY:
                 begin
