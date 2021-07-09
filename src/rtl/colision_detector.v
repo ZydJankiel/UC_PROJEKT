@@ -23,8 +23,7 @@ module colision_detector (
     localparam CHECK_DAMAGE = 0,
                COUNT = 1;
 
-    //localparam MAX_COUNT = 108 000 000;
-    localparam MAX_COUNT = 54000000;
+    localparam MAX_COUNT = 32500000;
 
     always @(posedge pclk) begin
         if (rst) begin
