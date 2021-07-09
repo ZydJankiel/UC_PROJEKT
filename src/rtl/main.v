@@ -77,7 +77,7 @@ localparam  TOP_V_LINE      = 317,
   
   wire [2:0] mouse_mode_out_back; 
   
-  wire play_selected_back, display_buttons_bg;
+  wire play_selected_back, display_buttons_m_and_s, display_menu_button;
   wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
@@ -144,8 +144,9 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .rgb_out(rgb_out_back),
     .mouse_mode(mouse_mode_out_back),
     .play_selected(play_selected_back),
-    .display_buttons(display_buttons_bg),
-    .player_ready(player_ready)
+    .display_buttons_m_and_s(display_buttons_m_and_s),
+    .player_ready(player_ready),
+    .display_menu_button(display_menu_button)
 );
 delay #(.WIDTH(28), .CLK_DEL(1))  control_signals_delay(
     .clk(pclk),
@@ -293,7 +294,7 @@ draw_rect_char #(   .TEXT_BOX_X_POS(PLAY_BOX_X_POS),
   .char_pixels(play_font_rom_pixels),
   .mouse_xpos(xpos_out_mouseCtl),
   .mouse_ypos(ypos_out_mouseCtl),
-  .display_buttons(display_buttons_bg)
+  .display_buttons(display_buttons_m_and_s)
   );
 
 char_rom_16x16 single_char_rom(
@@ -351,7 +352,7 @@ draw_rect_char #(   .TEXT_BOX_X_POS(MULTI_BOX_X_POS),
   .char_pixels(multi_font_rom_pixels),
   .mouse_xpos(xpos_out_mouseCtl),
   .mouse_ypos(ypos_out_mouseCtl),
-  .display_buttons(display_buttons_bg)
+  .display_buttons(display_buttons_m_and_s)
   );
 
 multi_char_rom_16x16 multi_char_rom(
@@ -410,7 +411,7 @@ draw_rect_char #(   .TEXT_BOX_X_POS(MENU_BOX_X_POS),
   .char_pixels(menubut_font_rom_pixels),
   .mouse_xpos(xpos_out_mouseCtl),
   .mouse_ypos(ypos_out_mouseCtl),
-  .display_buttons(display_buttons_bg)
+  .display_buttons(display_menu_button)
   );
 
 menu_char_rom_16x16 menu_char_rom(

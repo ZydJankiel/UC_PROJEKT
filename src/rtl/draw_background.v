@@ -25,7 +25,12 @@ module draw_background
     MULTI_BOX_X_POS  = 432,
     MULTI_BOX_Y_POS  = 540,
     MULTI_BOX_Y_SIZE = 80,
-    MULTI_BOX_X_SIZE = 128
+    MULTI_BOX_X_SIZE = 128,
+    
+    MENU_BOX_X_POS = 432,
+    MENU_BOX_Y_POS  = 520,
+    MENU_BOX_Y_SIZE = 80,
+    MENU_BOX_X_SIZE = 128
   )
   (
   input wire [11:0] vcount_in,
@@ -54,16 +59,16 @@ module draw_background
   output reg [11:0] rgb_out,
   output reg play_selected,
   output reg [2:0] mouse_mode,
-  output reg display_buttons,
-  output reg player_ready
-  
+  output reg display_buttons_m_and_s,
+  output reg player_ready,
+  output reg display_menu_button
 
   );
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 reg [2:0] state, state_nxt; 
-reg mouse_mode_nxt, play_selected_nxt, display_buttons_nxt, player_ready_nxt;
+reg mouse_mode_nxt, play_selected_nxt, display_buttons_m_and_s_nxt, player_ready_nxt, display_menu_button_nxt;
 
 
     
@@ -86,9 +91,9 @@ localparam MENU_MODE    = 3'b000,
           rgb_out <= 0;
           mouse_mode <= MENU_MODE; 
           play_selected <= 0;
-          display_buttons <= 0;  
+          display_buttons_m_and_s <= 0;  
           player_ready <= 0;
-          
+          display_menu_button <= 0;
       end
       else begin
           state <= state_nxt;
@@ -101,8 +106,9 @@ localparam MENU_MODE    = 3'b000,
           rgb_out <= rgb_nxt;
           mouse_mode <= mouse_mode_nxt;
           play_selected <= play_selected_nxt;
-          display_buttons <= display_buttons_nxt;
+          display_buttons_m_and_s <= display_buttons_m_and_s_nxt;
           player_ready <= player_ready_nxt;
+          display_menu_button <= display_menu_button_nxt;
       end
   end
   
@@ -115,8 +121,9 @@ localparam MENU_MODE    = 3'b000,
     vcount_nxt = vcount_in;  
     play_selected_nxt = 0;  
     mouse_mode_nxt = MENU_MODE;
-    display_buttons_nxt = 1;
+    display_buttons_m_and_s_nxt = 0;
     player_ready_nxt = 0;
+    display_menu_button_nxt = 0;
 
     case (state)
         MENU_MODE: begin
@@ -141,7 +148,9 @@ localparam MENU_MODE    = 3'b000,
                 state_nxt = VICTORY_MODE;
             else
                 state_nxt = MENU_MODE;                
-
+            
+            display_buttons_m_and_s_nxt = 1;
+            
                // During blanking, make it it black.
             if (vblnk_in || hblnk_in) rgb_nxt = 12'h0_0_0; 
             else begin
@@ -187,7 +196,6 @@ localparam MENU_MODE    = 3'b000,
             else
                 state_nxt = GAME_MODE;
             
-            display_buttons_nxt = 0;
             play_selected_nxt = 1;
             mouse_mode_nxt = GAME_MODE;
                            // During blanking, make it it black.
@@ -231,7 +239,8 @@ localparam MENU_MODE    = 3'b000,
                 state_nxt = MENU_MODE;
             else
                 state_nxt = VICTORY_MODE; 
-                       
+            
+            display_buttons_m_and_s_nxt = 1;           
             rgb_nxt = 12'h2_f_2;
         end
         
@@ -260,21 +269,27 @@ localparam MENU_MODE    = 3'b000,
                 state_nxt = MENU_MODE;
             else
                 state_nxt = GAME_OVER; 
-                
+            
+            display_buttons_m_and_s_nxt = 1;    
             rgb_nxt = 12'hf_2_2;            
         end
 
 
         //wait for 2nd player if multiplayer mode selected
         MULTI_WAIT: begin
-            player_ready_nxt = 1;
-            if (mouse_left)
-                state_nxt = MENU_MODE;
+            if (xpos >= MENU_BOX_X_POS - 10 && xpos <= MENU_BOX_X_SIZE + MENU_BOX_X_POS -5 && ypos >= MENU_BOX_Y_POS - 10 && ypos <= MENU_BOX_Y_SIZE + MENU_BOX_Y_POS) begin
+                if (mouse_left)
+                    state_nxt = MENU_MODE;
+                else
+                    state_nxt = MULTI_WAIT;
+                end
             else if (opponent_ready)
                 state_nxt = GAME_MODE;
             else
                 state_nxt = MULTI_WAIT;
-            display_buttons_nxt = 0;
+
+            player_ready_nxt = 1;
+            display_menu_button_nxt = 1;
             rgb_nxt = 12'h2_2_f;
         end
                 
@@ -282,6 +297,7 @@ localparam MENU_MODE    = 3'b000,
         default begin
             state_nxt = state;
             rgb_nxt = rgb_out;
+            display_menu_button_nxt = 1;
         end
      
     endcase     
