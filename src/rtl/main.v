@@ -347,11 +347,11 @@ draw_rect_char #(   .TEXT_BOX_X_POS(MULTI_BOX_X_POS),
   .display_buttons(display_buttons_bg)
   );
 
-char_rom_16x16 multi_char_rom(
+multi_char_rom_16x16 multi_char_rom(
     //inputs
-    .char_xy(draw_rect_mutli_xy),
+    .multi_char_xy(draw_rect_mutli_xy),
     //outputs
-    .char_code(multi_char_code_out)
+    .multi_char_code(multi_char_code_out)
 );
 
 font_rom multi_font_rom(
