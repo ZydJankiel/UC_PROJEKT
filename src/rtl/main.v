@@ -517,11 +517,13 @@ top uart_top(
 );
 
 comparator comparator(
+    //inputs
     .clk(pclk),
     .rst(locked_reset),
     .curr_char(curr_char_out),
     .play_selected(play_selected_back),
-    
+    .multiplayer(multiplayer_out_back),
+    // outputs
     .victory(victory),
     .opponent_ready(opponent_ready)
 );

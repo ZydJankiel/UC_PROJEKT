@@ -238,14 +238,18 @@ localparam MENU_MODE    = 3'b000,
             else if (menu_on)
                 state_nxt = MENU_MODE;
             else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
-                if (mouse_left)
+                if (mouse_left) begin
                     state_nxt = GAME_MODE;
+                    multi_reg_nxt = 0;
+                end
                 else
                     state_nxt = VICTORY_MODE;
                 end
             else if (xpos >= MULTI_BOX_X_POS - 10 && xpos <= MULTI_BOX_X_SIZE + MULTI_BOX_X_POS -5 && ypos >= MULTI_BOX_Y_POS - 10 && ypos <= MULTI_BOX_Y_SIZE + MULTI_BOX_Y_POS) begin
-                if (mouse_left)
+                if (mouse_left) begin
                     state_nxt = MULTI_WAIT;
+                    multi_reg_nxt = 1;
+                end
                 else
                     state_nxt = VICTORY_MODE;
                 end           
@@ -268,14 +272,18 @@ localparam MENU_MODE    = 3'b000,
             else if (menu_on)
                     state_nxt = MENU_MODE;
             else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
-                if (mouse_left)
+                if (mouse_left) begin
                     state_nxt = GAME_MODE;
+                    multi_reg_nxt = 0;
+                end
                 else
                     state_nxt = GAME_OVER;
                 end
             else if (xpos >= MULTI_BOX_X_POS - 10 && xpos <= MULTI_BOX_X_SIZE + MULTI_BOX_X_POS -5 && ypos >= MULTI_BOX_Y_POS - 10 && ypos <= MULTI_BOX_Y_SIZE + MULTI_BOX_Y_POS) begin
-                    if (mouse_left)
+                    if (mouse_left) begin
                         state_nxt = MULTI_WAIT;
+                        multi_reg_nxt = 1;
+                    end
                     else
                         state_nxt = GAME_OVER;
                     end                    

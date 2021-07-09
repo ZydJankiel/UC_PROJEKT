@@ -6,7 +6,9 @@ module comparator (
   input clk,
   input rst,
   input play_selected,
+  input multiplayer,
   input wire [7:0] curr_char,
+  
   output reg victory,
   output reg opponent_ready
 );
@@ -43,7 +45,7 @@ module comparator (
                     else if (curr_char == 8'h52)
                         state_nxt = OPPONENT_READY;
                     else
-                        state_nxt = IDLE;                
+                        state_nxt = IDLE;                  
                 end
             VICTORY:
                 begin
