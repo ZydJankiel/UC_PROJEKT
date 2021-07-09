@@ -55,7 +55,8 @@ module draw_background
   output reg play_selected,
   output reg [2:0] mouse_mode,
   output reg display_buttons,
-  output reg player_ready
+  output reg player_ready,
+  output reg multiplayer 
   
 
   );
@@ -64,16 +65,14 @@ reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
 reg [2:0] state, state_nxt; 
 reg mouse_mode_nxt, play_selected_nxt, display_buttons_nxt, player_ready_nxt;
+reg multiplayer_nxt, multi_reg, multi_reg_nxt;
 
-
-    
 localparam MENU_MODE    = 3'b000,
            GAME_MODE    = 3'b001,
            VICTORY_MODE = 3'b010,
            GAME_OVER    = 3'b011,
            MULTI_WAIT   = 3'b100;
            
-
   always @(posedge pclk) begin
       if (rst) begin
           state <= MENU_MODE;
@@ -88,7 +87,8 @@ localparam MENU_MODE    = 3'b000,
           play_selected <= 0;
           display_buttons <= 0;  
           player_ready <= 0;
-          
+          multiplayer <= 0;
+          multi_reg <= 0;
       end
       else begin
           state <= state_nxt;
@@ -103,6 +103,8 @@ localparam MENU_MODE    = 3'b000,
           play_selected <= play_selected_nxt;
           display_buttons <= display_buttons_nxt;
           player_ready <= player_ready_nxt;
+          multiplayer <= multiplayer_nxt;
+          multi_reg <= multi_reg_nxt;
       end
   end
   
@@ -117,21 +119,27 @@ localparam MENU_MODE    = 3'b000,
     mouse_mode_nxt = MENU_MODE;
     display_buttons_nxt = 1;
     player_ready_nxt = 0;
+    multiplayer_nxt = 0;
+    multi_reg_nxt = multi_reg;
 
     case (state)
         MENU_MODE: begin
             if (game_on) 
                 state_nxt = GAME_MODE;   
             else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
-                if (mouse_left)
+                if (mouse_left) begin
                     state_nxt = GAME_MODE;
+                    multi_reg_nxt = 0;
+                end
                 else
                     state_nxt = MENU_MODE;
                 end
 
             else if (xpos >= MULTI_BOX_X_POS - 10 && xpos <= MULTI_BOX_X_SIZE + MULTI_BOX_X_POS -5 && ypos >= MULTI_BOX_Y_POS - 10 && ypos <= MULTI_BOX_Y_SIZE + MULTI_BOX_Y_POS) begin
-                if (mouse_left)
+                if (mouse_left) begin
                     state_nxt = MULTI_WAIT;
+                    multi_reg_nxt = 1;
+                end
                 else
                     state_nxt = MENU_MODE;
                 end                 
@@ -178,6 +186,11 @@ localparam MENU_MODE    = 3'b000,
         end
         
         GAME_MODE: begin
+            if (multi_reg)
+                multiplayer_nxt = 1;
+            else
+                multiplayer_nxt = 0;
+                
             if (menu_on) 
                 state_nxt = MENU_MODE;
             else if (game_over)
@@ -267,6 +280,7 @@ localparam MENU_MODE    = 3'b000,
 
         //wait for 2nd player if multiplayer mode selected
         MULTI_WAIT: begin
+            multiplayer_nxt = 1;
             player_ready_nxt = 1;
             if (mouse_left)
                 state_nxt = MENU_MODE;

@@ -60,6 +60,10 @@ module comparator (
                         state_nxt = OPPONENT_READY;
                     opponent_ready_nxt = 1;
                 end
+            default:
+                begin
+                    state_nxt = IDLE;
+                end
         endcase
     end
 endmodule

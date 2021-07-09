@@ -4,18 +4,21 @@
  * and his comparator module interprets it as victory for him.
  * When one player is waiting for game, his UART sends "R" letter continously to other player, and is waiting for message
  * from him. The game starts only when two players receive "R" letters.
+ * UART send letters only in multiplayer mode
 */
 
 module top (
-  input clk,
-  input rst,
-  input rx,
-  input game_over,
-  input player_ready,
-  output tx,
-  output [7:0] curr_char_out,
-  output [3:0] an,
-  output [7:0] seg
+  input wire clk,
+  input wire rst,
+  input wire rx,
+  input wire game_over,
+  input wire player_ready,
+  input wire multiplayer,
+  
+  output wire tx,
+  output wire [7:0] curr_char_out,
+  output wire [3:0] an,
+  output wire [7:0] seg
 );
 
   reg tx_nxt;
@@ -69,13 +72,15 @@ always @* begin
     message_nxt = 8'h00;
     game_over_reg_nxt = 0;
     player_ready_reg_nxt = 0;
-    if (game_over) begin
-        message_nxt = 8'h4C;
-        game_over_reg_nxt = 1;
-    end
-    if (player_ready) begin  
-            message_nxt = 8'h52;
-            player_ready_reg_nxt = 1;
+    if (multiplayer) begin
+        if (game_over) begin
+            message_nxt = 8'h4C;
+            game_over_reg_nxt = 1;
+        end
+        if (player_ready) begin  
+                message_nxt = 8'h52;
+                player_ready_reg_nxt = 1;
+        end
     end
 end
 

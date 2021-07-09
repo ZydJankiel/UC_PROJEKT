@@ -76,9 +76,9 @@ localparam  TOP_V_LINE      = 317,
   wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
   wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
   wire mouse_left_out_mouseCtl, mouse_left_out_buff;
-  wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr;
+  wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, set_x_constr, set_y_constr;
   wire damage_out, game_over_hp;
-  wire victory, opponent_ready, player_ready;
+  wire victory, opponent_ready, player_ready, multiplayer_out_back;
 
   
   vga_timing vga_timing (
@@ -140,8 +140,10 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .mouse_mode(mouse_mode_out_back),
     .play_selected(play_selected_back),
     .display_buttons(display_buttons_bg),
-    .player_ready(player_ready)
+    .player_ready(player_ready),
+    .multiplayer(multiplayer_out_back)
 );
+
 delay #(.WIDTH(28), .CLK_DEL(1))  control_signals_delay(
     .clk(pclk),
     .rst(locked_reset),
@@ -371,8 +373,8 @@ font_rom multi_font_rom(
   //inputs
       .rst(locked_reset),
       .clk(clkMouse),
-      .setx(0),
-      .sety(0),
+      .setx(set_x_constr),
+      .sety(set_y_constr),
       .setmax_x(setmax_x_constr),
       .setmax_y(setmax_y_constr),
       .setmin_x(setmin_x_constr),
@@ -403,21 +405,11 @@ font_rom multi_font_rom(
       .setmax_y(setmax_y_constr),
       .setmin_x(setmin_x_constr),
       .setmin_y(setmin_y_constr),
+      .set_x(set_x_constr),
+      .set_y(set_y_constr),
       .value(value_constr)
   );
- /*   mouse_buffor my_mouse_buffor(
-        // inputs
-      .pclk(pclk),
-      .rst(locked_reset),
-      .xpos_in(xpos_out_mouseCtl),
-      .ypos_in(ypos_out_mouseCtl),
-      .mouse_left_in(mouse_left_out_mouseCtl), 
-    // outputs
-      .mouse_left_out(mouse_left_out_buff),
-      .xpos_out(xpos_out_buff),
-      .ypos_out(ypos_out_buff)
-    );
-    */
+
   MouseDisplay MouseDisplay (
   //inputs
     .xpos(xpos_out_mouseCtl),
@@ -449,6 +441,7 @@ top uart_top(
     .rx(rx),
     .game_over(game_over_hp),
     .player_ready(player_ready),
+    .multiplayer(multiplayer_out_back),
 
     //outputs
     .tx(tx),
