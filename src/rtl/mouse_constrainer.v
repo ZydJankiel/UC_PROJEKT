@@ -40,13 +40,13 @@ module mouse_constrainer
     output reg set_y
     );
 
-reg [11:0] value_nxt = 0;
-reg [11:0] counter = 0, counter_nxt = 0;
+reg [9:0] value_nxt = 0;
+reg [2:0] counter = 0, counter_nxt = 0;
 reg setmax_x_nxt, setmax_y_nxt, setmin_x_nxt, setmin_y_nxt, set_x_nxt, set_y_nxt;
 reg [2:0] state,state_nxt;
 
 localparam BOX_CENTER_X = 511,
-           BOX_CENTER_Y = 517;
+           BOX_CENTER_Y = 460;
 
 localparam IDLE = 2'b00,
            GAME_MODE = 2'b01,
@@ -87,6 +87,7 @@ always @* begin
     value_nxt = 0;
     counter_nxt = 0;
     state_nxt = IDLE;
+    
     case(state)
         IDLE: begin
             if (mouse_mode == 3'b001) begin
@@ -118,13 +119,7 @@ always @* begin
                 value_nxt = MIN_X;
                 counter_nxt = counter +1;
             end
-            else begin
-                setmin_y_nxt = 1;
-                value_nxt = MIN_Y;
-                counter_nxt = 0;
-            end
-            //  I WILL USE IT LATER
-            /*else if (counter == 3) begin
+            else if (counter == 3) begin
                 setmin_y_nxt = 1;
                 value_nxt = MIN_Y;
                 counter_nxt = counter +1;
@@ -134,12 +129,14 @@ always @* begin
                 value_nxt = BOX_CENTER_X;
                 counter_nxt = counter +1;
             end
-            else begin
+            else if (counter == 5) begin
                 set_y_nxt = 1;
                 value_nxt = BOX_CENTER_Y;
-                counter_nxt = 0;
-            end */                              
-              state_nxt = counter_nxt == 0 ? IDLE : GAME_MODE;
+                counter_nxt = counter +1;
+            end
+            else
+                counter_nxt = counter;                
+            state_nxt = (mouse_mode == 3'b000) ? IDLE : GAME_MODE;
         end  
         
         MENU_MODE : begin
