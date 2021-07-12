@@ -48,13 +48,13 @@ reg [2:0] state,state_nxt;
 localparam BOX_CENTER_X = 511,
            BOX_CENTER_Y = 460;
 
-localparam IDLE = 2'b00,
+localparam COUNTER_RESET = 2'b00,
            GAME_MODE = 2'b01,
            MENU_MODE = 2'b10;
 
 always @(posedge clk) begin
     if(rst) begin
-        state <= IDLE;
+        state <= MENU_MODE;
         value <= 0;
         setmax_x <= 0;
         setmax_y <= 0;
@@ -86,10 +86,11 @@ always @* begin
     set_y_nxt = 0;
     value_nxt = 0;
     counter_nxt = 0;
-    state_nxt = IDLE;
+    state_nxt = MENU_MODE;
     
     case(state)
-        IDLE: begin
+        COUNTER_RESET: begin
+            counter_nxt = 0;
             if (mouse_mode == 3'b001) begin
                 state_nxt = GAME_MODE;
                 end
@@ -97,10 +98,36 @@ always @* begin
                 state_nxt = MENU_MODE;
                 end
             else begin
-                state_nxt = IDLE;
+                state_nxt = COUNTER_RESET;
                 end
               //state_nxt = menu_on ? MENU_MODE : IDLE; //CZEMU DODANIE TEJ LINIJKI PSUJE WSZYSTKIE PRZYCISKI??????/
               //FOR FUTURE USES NEVER USE LINE ABOVE TO CHECK STATES OF BUTTONS - FOR SOME REASON DISABLES ALL BUTTONS
+        end 
+        
+        MENU_MODE : begin
+            if (counter == 0) begin
+                setmax_x_nxt = 1;
+                value_nxt = 1019;
+                counter_nxt = counter + 1;
+            end
+            else if (counter == 1) begin
+                setmax_y_nxt = 1;
+                value_nxt = 763;
+                counter_nxt = counter +1;
+            end
+            else if (counter == 2)begin
+                setmin_x_nxt = 1;
+                value_nxt = 0;
+                counter_nxt = counter +1;
+            end
+            else if (counter == 3) begin
+                setmin_y_nxt = 1;
+                value_nxt = 0;
+                counter_nxt = counter + 1;
+            end
+            else
+                counter_nxt = counter;  
+            state_nxt = (mouse_mode == 3'b001) ? COUNTER_RESET : MENU_MODE;
         end
             
         GAME_MODE: begin
@@ -136,32 +163,8 @@ always @* begin
             end
             else
                 counter_nxt = counter;                
-            state_nxt = (mouse_mode == 3'b000) ? IDLE : GAME_MODE;
+            state_nxt = (mouse_mode == 3'b000) ? COUNTER_RESET : GAME_MODE;
         end  
-        
-        MENU_MODE : begin
-            if (counter == 0) begin
-                setmax_x_nxt = 1;
-                value_nxt = 1019;
-                counter_nxt = counter + 1;
-            end
-            else if (counter == 1) begin
-                setmax_y_nxt = 1;
-                value_nxt = 763;
-                counter_nxt = counter +1;
-            end
-            else if (counter == 2)begin
-                setmin_x_nxt = 1;
-                value_nxt = 0;
-                counter_nxt = counter +1;
-            end
-            else begin
-                setmin_y_nxt = 1;
-                value_nxt = 0;
-                counter_nxt = 0;
-            end
-            state_nxt = counter_nxt == 0 ? IDLE : MENU_MODE;
-        end
         
     endcase
 end
