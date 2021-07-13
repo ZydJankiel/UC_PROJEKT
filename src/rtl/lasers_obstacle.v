@@ -80,7 +80,7 @@ always @* begin
     laser_left_nxt = 341;
     case (state)
         IDLE: begin
-            if (selected == 4'b0011)
+            if ((selected == 4'b0011) || (game_on == 1))
                 state_nxt = DRAW_LEFT;
             else
                 state_nxt = IDLE;
