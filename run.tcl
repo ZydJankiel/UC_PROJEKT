@@ -68,6 +68,7 @@ read_verilog {
     src/rtl/list_ch04_15_disp_hex_mux.v
     src/rtl/top.v
     src/rtl/comparator.v
+    src/rtl/obstacles_control.v
 }
 
 read_vhdl {

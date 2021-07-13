@@ -13,6 +13,7 @@ module obstacle0 (
   input wire menu_on,
   input wire [11:0] rgb_in,
   input wire play_selected,
+  input wire [3:0] selected,
 
   output reg [11:0] rgb_out,
   output reg [11:0] obstacle_x,
@@ -81,7 +82,8 @@ localparam IDLE  = 2'b00,
       case(state)
           IDLE: 
               begin
-                  state_nxt = (game_on || play_selected) ? DRAW : IDLE;
+                  //state_nxt = (game_on || play_selected) ? DRAW : IDLE;
+                  state_nxt = (selected == 4'b0000) ? DRAW : IDLE;
                   count_nxt = 0;
               end
           DRAW:

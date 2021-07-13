@@ -64,16 +64,18 @@ localparam  TOP_V_LINE      = 317,
   
   wire [27:0] delayed_signals;  
   
-  wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1;
+  wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1, rgb_out_obs2, rgb_out_obs3, rgb_out_obs4, rgb_out_obs5, rgb_out_obs6, rgb_out_obs7;
   wire [11:0] value_constr;
   wire [11:0] xpos_out_mouseCtl, ypos_out_mouseCtl, xpos_out_buff, ypos_out_buff;
   wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp;
-  wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out,obstacle1_y_out;
+  wire [11:0] obstacle0_x_out,obstacle0_y_out, obstacle1_x_out, obstacle1_y_out, obstacle2_x_out, obstacle2_y_out, obstacle3_x_out, obstacle3_y_out;
+  wire [11:0] obstacle4_x_out,obstacle4_y_out, obstacle5_x_out, obstacle5_y_out, obstacle6_x_out, obstacle6_y_out, obstacle7_x_out, obstacle7_y_out;
   
   wire [7:0] curr_char_out;
   
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
   wire [3:0] obstacle_mux_select_bg;
+  wire [3:0] selected_obstacle;
   
   wire [2:0] mouse_mode_out_back; 
   
@@ -132,7 +134,7 @@ draw_background #(.TOP_V_LINE(TOP_V_LINE),
     .xpos(xpos_out_mouseCtl),
     .ypos(ypos_out_mouseCtl),
     .mouse_left(mouse_left_out_mouseCtl),
-    .victory(victory_button || victory),
+    .victory(victory),
     .opponent_ready(opponent_ready),
  //outputs  
     .hcount_out(hcount_out_back),
@@ -167,6 +169,7 @@ obstacle0 moving_pillars_obstacle(
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
+    .selected(selected_obstacle),
   //outputs  
     .obstacle_x(obstacle0_x_out),
     .obstacle_y(obstacle0_y_out),
@@ -177,7 +180,9 @@ obstacle0 moving_pillars_obstacle(
 obstacle1 #(.TEST_TOP_LINE(600), 
                  .TEST_BOTTOM_LINE(500), 
                  .TEST_LEFT_LINE(520), 
-                 .TEST_RIGHT_LINE(620)) rectangle_obstacle(
+                 .TEST_RIGHT_LINE(620),
+                 .COLOR(12'hf_f_f),
+                 .SELECT_CODE(4'b0001)) rectangle_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
@@ -187,24 +192,161 @@ obstacle1 #(.TEST_TOP_LINE(600),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
+    .selected(selected_obstacle),
   //outputs  
     .obstacle_x(obstacle1_x_out),
     .obstacle_y(obstacle1_y_out),
-    .rgb_out(rgb_out_obs1)
+    .rgb_out(rgb_out_obs1) 
+);
+
+obstacle1 #(.TEST_TOP_LINE(500),
+                 .TEST_BOTTOM_LINE(400),
+                 .TEST_LEFT_LINE(520), 
+                 .TEST_RIGHT_LINE(620),
+                 .COLOR(12'hf_0_0),
+                 .SELECT_CODE(4'b0010)) rectangle2_obstacle(
+//inputs
+    .vcount_in(vcount_out_back),
+    .hcount_in(hcount_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+    .selected(selected_obstacle),
+  //outputs  
+    .obstacle_x(obstacle2_x_out),
+    .obstacle_y(obstacle2_y_out),
+    .rgb_out(rgb_out_obs2) 
+);
+
+obstacle1 #(.TEST_TOP_LINE(500),
+                 .TEST_BOTTOM_LINE(400),
+                 .TEST_LEFT_LINE(400), 
+                 .TEST_RIGHT_LINE(500),
+                 .COLOR(12'h0_0_f),
+                 .SELECT_CODE(4'b0011)) rectangle3_obstacle(
+//inputs
+    .vcount_in(vcount_out_back),
+    .hcount_in(hcount_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+    .selected(selected_obstacle),
+  //outputs  
+    .obstacle_x(obstacle3_x_out),
+    .obstacle_y(obstacle3_y_out),
+    .rgb_out(rgb_out_obs3) 
+);
+
+obstacle0 moving_pillars_obstacle4(
+//inputs
+    .vcount_in(vcount_out_back),
+    .hcount_in(hcount_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+    .selected(selected_obstacle),
+  //outputs  
+    .obstacle_x(obstacle4_x_out),
+    .obstacle_y(obstacle4_y_out),
+    .rgb_out(rgb_out_obs4)
     
 );
 
+obstacle1 #(.TEST_TOP_LINE(600), 
+                 .TEST_BOTTOM_LINE(500), 
+                 .TEST_LEFT_LINE(520), 
+                 .TEST_RIGHT_LINE(620),
+                 .COLOR(12'hf_f_f),
+                 .SELECT_CODE(4'b0001)) rectangle5_obstacle(
+//inputs
+    .vcount_in(vcount_out_back),
+    .hcount_in(hcount_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+    .selected(selected_obstacle),
+  //outputs  
+    .obstacle_x(obstacle5_x_out),
+    .obstacle_y(obstacle5_y_out),
+    .rgb_out(rgb_out_obs5) 
+);
 
+obstacle1 #(.TEST_TOP_LINE(500),
+                 .TEST_BOTTOM_LINE(400),
+                 .TEST_LEFT_LINE(520), 
+                 .TEST_RIGHT_LINE(620),
+                 .COLOR(12'hf_0_0),
+                 .SELECT_CODE(4'b0010)) rectangle6_obstacle(
+//inputs
+    .vcount_in(vcount_out_back),
+    .hcount_in(hcount_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+    .selected(selected_obstacle),
+  //outputs  
+    .obstacle_x(obstacle6_x_out),
+    .obstacle_y(obstacle6_y_out),
+    .rgb_out(rgb_out_obs6) 
+);
+
+obstacle1 #(.TEST_TOP_LINE(500),
+                 .TEST_BOTTOM_LINE(400),
+                 .TEST_LEFT_LINE(400), 
+                 .TEST_RIGHT_LINE(500),
+                 .COLOR(12'h0_0_f),
+                 .SELECT_CODE(4'b0011)) rectangle7_obstacle(
+//inputs
+    .vcount_in(vcount_out_back),
+    .hcount_in(hcount_out_back),
+    .pclk(pclk),
+    .rst(locked_reset),
+    .game_on(game_button),
+    .menu_on(menu_button),
+    .rgb_in(rgb_out_back),
+    .play_selected(play_selected_back),
+    .selected(selected_obstacle),
+  //outputs  
+    .obstacle_x(obstacle7_x_out),
+    .obstacle_y(obstacle7_y_out),
+    .rgb_out(rgb_out_obs7) 
+);
+LFSR obstacles_control(
+//inputs
+    .i_Clk(pclk),
+    .i_Enable(victory_button),
+
+    .i_Seed_DV(),
+    .i_Seed_Data(),
+
+    .o_LFSR_Data(selected_obstacle),
+    .o_LFSR_Done()
+);
 obstacle_mux_16_to_1 obstacle_mux_16_to_1(
     //inputs
     .input_0({obstacle0_x_out,obstacle0_y_out,rgb_out_obs0}),
     .input_1({obstacle1_x_out,obstacle1_y_out,rgb_out_obs1}),
-    .input_2(0),
-    .input_3(0),
-    .input_4(0),
-    .input_5(0),
-    .input_6(0),
-    .input_7(0),
+    .input_2({obstacle2_x_out,obstacle2_y_out,rgb_out_obs2}),
+    .input_3({obstacle3_x_out,obstacle3_y_out,rgb_out_obs3}),
+    .input_4({obstacle4_x_out,obstacle4_y_out,rgb_out_obs4}),
+    .input_5({obstacle5_x_out,obstacle5_y_out,rgb_out_obs5}),
+    .input_6({obstacle6_x_out,obstacle6_y_out,rgb_out_obs6}),
+    .input_7({obstacle7_x_out,obstacle7_y_out,rgb_out_obs7}),
     .input_8(0),
     .input_9(0),
     .input_10(0),
@@ -213,7 +355,7 @@ obstacle_mux_16_to_1 obstacle_mux_16_to_1(
     .input_13(0),
     .input_14(0),
     .input_15(0),
-    .select(sw),
+    .select(selected_obstacle),
     
     //outputs
     .obstacle_mux_out(mux_out)
