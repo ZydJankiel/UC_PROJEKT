@@ -25,15 +25,20 @@ module obstacle1
   
   output reg [11:0] rgb_out,
   output reg [11:0] obstacle_x,
-  output reg [11:0] obstacle_y
+  output reg [11:0] obstacle_y,
+  output reg done
   );
   
 reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg state, state_nxt;
+reg [29:0] elapsed_time, elapsed_time_nxt, done_nxt;
 
 localparam IDLE = 0,
            DRAW = 1;
+           
+localparam MAX_TIME = 3; //seconds
+localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
 
   always @(posedge pclk) begin
       if (rst) begin
@@ -41,34 +46,49 @@ localparam IDLE = 0,
           rgb_out <= 0; 
           obstacle_x <= 0;
           obstacle_y <= 0;
+          done <= 0;
+          elapsed_time <= 0;
       end
       else begin
           state <= state_nxt;
           rgb_out <= rgb_nxt;
           obstacle_x <= obstacle_x_nxt;
           obstacle_y <= obstacle_y_nxt;
+          done <= done_nxt;
+          elapsed_time <= elapsed_time_nxt;
       end
   end
   
   always @* begin 
       obstacle_x_nxt = 0;
       obstacle_y_nxt = 0;
+      done_nxt = 0;
+      elapsed_time_nxt = 0;
       case(state)
           IDLE: 
               begin
                   //state_nxt = (game_on || play_selected) ? DRAW : IDLE;
-                  state_nxt = (selected == SELECT_CODE) ? DRAW : IDLE;
+                  state_nxt = ((selected == SELECT_CODE) && play_selected) ? DRAW : IDLE;
                   rgb_nxt = rgb_in; 
               end
           DRAW:
               begin
-                  state_nxt = (menu_on || !play_selected) ? IDLE : DRAW;
                   if (hcount_in <TEST_RIGHT_LINE && hcount_in >TEST_LEFT_LINE && vcount_in < TEST_TOP_LINE && vcount_in >TEST_BOTTOM_LINE) begin 
                       rgb_nxt = COLOR;
                       obstacle_x_nxt = hcount_in;
                       obstacle_y_nxt = vcount_in;
                   end
                   else rgb_nxt = rgb_in;
+                  if (elapsed_time >= MAX_ELAPSED_TIME) begin
+                      done_nxt = 1;
+                      elapsed_time_nxt = 0;
+                      state_nxt = IDLE;
+                  end
+                  else begin
+                      state_nxt = (menu_on || !play_selected) ? IDLE : DRAW;
+                      done_nxt = 0;
+                      elapsed_time_nxt = elapsed_time + 1;
+                  end
               end
       endcase
   end

@@ -42,8 +42,8 @@ localparam PILLAR_TOP1 = 417 ,
            
 localparam DX = 1;
 localparam MAX_COUNT = 600;
-localparam MAX_TIME = 10; //seconds
-localparam MAX_ELAPSED_TIME = 65000000 * 10;
+localparam MAX_TIME = 3; //seconds
+localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
 
 
 
@@ -83,6 +83,7 @@ localparam IDLE  = 2'b00,
   
   always @* begin 
       count_nxt = count;
+      elapsed_time_nxt = 0;
       obstacle_x_nxt = 0;
       obstacle_y_nxt = 0;
       pillar_right_nxt = pillar_right;

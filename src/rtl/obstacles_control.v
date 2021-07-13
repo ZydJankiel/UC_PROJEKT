@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-// File downloaded from http://www.nandland.com
+// File downloaded from https://www.nandland.com/vhdl/modules/lfsr-linear-feedback-shift-register.html
 ///////////////////////////////////////////////////////////////////////////////
 // Description: 
 // A LFSR or Linear Feedback Shift Register is a quick and easy way to generate

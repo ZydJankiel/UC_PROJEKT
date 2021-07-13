@@ -86,7 +86,7 @@ localparam  TOP_V_LINE      = 317,
   wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, set_x_constr, set_y_constr;
   wire damage_out, game_over_hp;
   wire victory, opponent_ready, player_ready, multiplayer_out_back;
-  wire LFSR_Done, done_obs0, done_obs4;
+  wire LFSR_Done, done_obs0, done_obs1, done_obs2, done_obs3, done_obs4, done_obs5, done_obs6, done_obs7;
 
   
   vga_timing vga_timing (
@@ -198,7 +198,8 @@ obstacle1 #(.TEST_TOP_LINE(600),
   //outputs  
     .obstacle_x(obstacle1_x_out),
     .obstacle_y(obstacle1_y_out),
-    .rgb_out(rgb_out_obs1) 
+    .rgb_out(rgb_out_obs1),
+    .done(done_obs1)
 );
 
 obstacle1 #(.TEST_TOP_LINE(500),
@@ -220,7 +221,8 @@ obstacle1 #(.TEST_TOP_LINE(500),
   //outputs  
     .obstacle_x(obstacle2_x_out),
     .obstacle_y(obstacle2_y_out),
-    .rgb_out(rgb_out_obs2) 
+    .rgb_out(rgb_out_obs2),
+    .done(done_obs2)
 );
 
 obstacle1 #(.TEST_TOP_LINE(500),
@@ -242,7 +244,8 @@ obstacle1 #(.TEST_TOP_LINE(500),
   //outputs  
     .obstacle_x(obstacle3_x_out),
     .obstacle_y(obstacle3_y_out),
-    .rgb_out(rgb_out_obs3) 
+    .rgb_out(rgb_out_obs3),
+    .done(done_obs3)
 );
 
 obstacle0 #(.SELECT_CODE(4'b0100)) moving_pillars_obstacle4(
@@ -283,7 +286,8 @@ obstacle1 #(.TEST_TOP_LINE(600),
   //outputs  
     .obstacle_x(obstacle5_x_out),
     .obstacle_y(obstacle5_y_out),
-    .rgb_out(rgb_out_obs5) 
+    .rgb_out(rgb_out_obs5),
+    .done(done_obs5)
 );
 
 obstacle1 #(.TEST_TOP_LINE(500),
@@ -305,7 +309,8 @@ obstacle1 #(.TEST_TOP_LINE(500),
   //outputs  
     .obstacle_x(obstacle6_x_out),
     .obstacle_y(obstacle6_y_out),
-    .rgb_out(rgb_out_obs6) 
+    .rgb_out(rgb_out_obs6),
+    .done(done_obs6) 
 );
 
 obstacle1 #(.TEST_TOP_LINE(500),
@@ -327,12 +332,13 @@ obstacle1 #(.TEST_TOP_LINE(500),
   //outputs  
     .obstacle_x(obstacle7_x_out),
     .obstacle_y(obstacle7_y_out),
-    .rgb_out(rgb_out_obs7) 
+    .rgb_out(rgb_out_obs7),
+    .done(done_obs7) 
 );
 LFSR obstacles_control(
 //inputs
     .i_Clk(pclk),
-    .i_Enable(victory_button || done_obs0 || done_obs4),
+    .i_Enable(victory_button || done_obs0 || done_obs1 || done_obs2 || done_obs3 || done_obs4 || done_obs5 || done_obs6 || done_obs7),
 
     .i_Seed_DV(),
     .i_Seed_Data(),
