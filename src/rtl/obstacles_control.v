@@ -25,10 +25,12 @@ module LFSR #(parameter NUM_BITS = 3)
    input [NUM_BITS-1:0] i_Seed_Data,
  
    output [NUM_BITS-1:0] o_LFSR_Data,
+   output [NUM_BITS-1:0] mux_code,
    output o_LFSR_Done
    );
  
   reg [NUM_BITS:1] r_LFSR = 0;
+  reg [NUM_BITS:1] code = 0;
   reg              r_XNOR;
  
  
@@ -40,9 +42,12 @@ module LFSR #(parameter NUM_BITS = 3)
         begin
           if (i_Seed_DV == 1'b1)
             r_LFSR <= i_Seed_Data;
-          else
+          else begin
             r_LFSR <= {r_LFSR[NUM_BITS-1:1], r_XNOR};
+            code <= {r_LFSR[NUM_BITS-1:1], r_XNOR};
+          end
         end
+      else r_LFSR <= 0;
     end
  
   // Create Feedback Polynomials.  Based on Application Note:
@@ -146,6 +151,7 @@ module LFSR #(parameter NUM_BITS = 3)
  
  
   assign o_LFSR_Data = r_LFSR[NUM_BITS:1];
+  assign mux_code = code;
  
   // Conditional Assignment (?)
   assign o_LFSR_Done = (r_LFSR[NUM_BITS:1] == i_Seed_Data) ? 1'b1 : 1'b0;
