@@ -75,7 +75,7 @@ localparam  TOP_V_LINE      = 317,
   
   wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
   wire [3:0] obstacle_mux_select_bg;
-  wire [3:0] selected_obstacle;
+  wire [3:0] selected_obstacle; 
   
   wire [2:0] mouse_mode_out_back; 
   
@@ -226,7 +226,7 @@ obstacle1 #(.TEST_TOP_LINE(500),
                  .TEST_LEFT_LINE(400), 
                  .TEST_RIGHT_LINE(500),
                  .COLOR(12'h0_0_f),
-                 .SELECT_CODE(4'b0011)) rectangle3_obstacle(
+                 .SELECT_CODE(4'b0001)) rectangle3_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
@@ -305,12 +305,7 @@ obstacle1 #(.TEST_TOP_LINE(500),
     .rgb_out(rgb_out_obs6) 
 );
 
-obstacle1 #(.TEST_TOP_LINE(500),
-                 .TEST_BOTTOM_LINE(400),
-                 .TEST_LEFT_LINE(400), 
-                 .TEST_RIGHT_LINE(500),
-                 .COLOR(12'h0_0_f),
-                 .SELECT_CODE(4'b0011)) rectangle7_obstacle(
+lasers_obstacle lasers_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
@@ -320,12 +315,13 @@ obstacle1 #(.TEST_TOP_LINE(500),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
-    .selected(selected_obstacle),
+    .selected(4'b0011),
   //outputs  
     .obstacle_x(obstacle7_x_out),
     .obstacle_y(obstacle7_y_out),
     .rgb_out(rgb_out_obs7) 
 );
+/*
 LFSR obstacles_control(
 //inputs
     .i_Clk(pclk),
@@ -336,7 +332,7 @@ LFSR obstacles_control(
 
     .o_LFSR_Data(selected_obstacle),
     .o_LFSR_Done()
-);
+);*/
 obstacle_mux_16_to_1 obstacle_mux_16_to_1(
     //inputs
     .input_0({obstacle0_x_out,obstacle0_y_out,rgb_out_obs0}),
@@ -355,7 +351,7 @@ obstacle_mux_16_to_1 obstacle_mux_16_to_1(
     .input_13(0),
     .input_14(0),
     .input_15(0),
-    .select(selected_obstacle),
+    .select(4'b0011),
     
     //outputs
     .obstacle_mux_out(mux_out)
