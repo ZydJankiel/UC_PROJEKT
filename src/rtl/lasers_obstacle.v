@@ -54,7 +54,7 @@ reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [1:0] state, state_nxt;
 reg [10:0] laser_right, laser_left, laser_right_nxt, laser_left_nxt;
 reg [24:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser, counter_on_laser_nxt;
-reg borders_set, borders_set_nxt;
+reg bounce_back, bounce_back_nxt;
 
 always @(posedge pclk) begin
     if (rst) begin
@@ -66,7 +66,7 @@ always @(posedge pclk) begin
         laser_left              <= 0;
         counter_between_lasers  <= 0;
         counter_on_laser        <= 0;
-        borders_set             <= 0;
+        bounce_back             <= 0;
     end
     else begin
         state                   <= state_nxt;
@@ -77,14 +77,13 @@ always @(posedge pclk) begin
         laser_left              <= laser_left_nxt;
         counter_between_lasers  <= counter_between_lasers_nxt;
         counter_on_laser        <= counter_on_laser_nxt;
-        borders_set             <= borders_set_nxt;
+        bounce_back             <= bounce_back_nxt;
     end
 end
 
 always @* begin
     rgb_nxt = rgb_in;
     state_nxt = IDLE;
-    borders_set = 0;
     counter_between_lasers_nxt = 0;
     counter_on_laser_nxt = 0;
     laser_left_nxt  = laser_left;
@@ -97,6 +96,7 @@ always @* begin
                 state_nxt = DRAW_LEFT;
                 laser_left_nxt = 411;
                 laser_right_nxt = 412;
+                bounce_back_nxt = 0;
                 end
             else
                 state_nxt = IDLE;
@@ -119,9 +119,13 @@ always @* begin
                 
             if ((laser_left <= 386 ) && (laser_right >= 437)) begin
                 if (counter_between_lasers == 32500000) begin
-                    state_nxt = DRAW_MIDDLE;
-                    laser_left_nxt = 511;
-                    laser_right_nxt = 512;
+                    if (bounce_back == 1)
+                        state_nxt = IDLE;
+                    else begin
+                        state_nxt = DRAW_MIDDLE;
+                        laser_left_nxt = 511;
+                        laser_right_nxt = 512;
+                        end
                     end
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
@@ -157,10 +161,17 @@ always @* begin
                 
             if ((laser_left <= 486 ) && (laser_right >= 537)) begin
                 if (counter_between_lasers == 32500000) begin
-                    state_nxt = DRAW_RIGHT;
-                    laser_left_nxt = 611;
-                    laser_right_nxt = 612;
-                    end
+                    if (bounce_back == 1) begin
+                        state_nxt = DRAW_LEFT;
+                        laser_left_nxt = 411;
+                        laser_right_nxt = 412;
+                        end
+                    else begin
+                        laser_left_nxt = 611;
+                        laser_right_nxt = 612;
+                        state_nxt = DRAW_RIGHT;
+                        end
+                    end  
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
@@ -195,9 +206,17 @@ always @* begin
                 
             if ((laser_left <= 586 ) && (laser_right >= 637)) begin
                 if (counter_between_lasers == 32500000) begin
-                    state_nxt = IDLE;
-                    laser_left_nxt = 461;
-                    laser_right_nxt = 462;
+                    if (bounce_back == 1) begin
+                        state_nxt = DRAW_MIDDLE;
+                        laser_left_nxt = 511;
+                        laser_right_nxt = 512;
+                        end
+                    else begin
+                        laser_left_nxt = 611;
+                        laser_right_nxt = 612;
+                        bounce_back_nxt = 1;
+                        state_nxt = DRAW_RIGHT;
+                        end                   
                     end
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
