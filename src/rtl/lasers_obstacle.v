@@ -41,6 +41,8 @@ module lasers_obstacle(
 localparam LASER_TOP    = 317,
            LASER_BOTTOM = 617;
 
+localparam DX           = 1;
+
 localparam IDLE         = 2'b00,
            DRAW_LEFT    = 2'b01,
            DRAW_MIDDLE  = 2'b10,
@@ -51,51 +53,99 @@ reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [1:0] state, state_nxt;
 reg [10:0] laser_right, laser_left, laser_right_nxt, laser_left_nxt;
-
+reg [24:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser, counter_on_laser_nxt;
+reg borders_set, borders_set_nxt;
 
 always @(posedge pclk) begin
     if (rst) begin
-        state       <= IDLE;
-        rgb_out     <= 0; 
-        obstacle_x  <= 0;
-        obstacle_y  <= 0;
-        laser_right <= 371;
-        laser_left  <= 341;
-
+        state                   <= IDLE;
+        rgb_out                 <= 0; 
+        obstacle_x              <= 0;
+        obstacle_y              <= 0;
+        laser_right             <= 0;
+        laser_left              <= 0;
+        counter_between_lasers  <= 0;
+        counter_on_laser        <= 0;
+        borders_set             <= 0;
     end
     else begin
-        state       <= state_nxt;
-        rgb_out     <= rgb_nxt;
-        obstacle_x  <= obstacle_x_nxt;
-        obstacle_y  <= obstacle_y_nxt;
-        laser_right <= laser_right_nxt;
-        laser_left  <= laser_left_nxt;
+        state                   <= state_nxt;
+        rgb_out                 <= rgb_nxt;
+        obstacle_x              <= obstacle_x_nxt;
+        obstacle_y              <= obstacle_y_nxt;
+        laser_right             <= laser_right_nxt;
+        laser_left              <= laser_left_nxt;
+        counter_between_lasers  <= counter_between_lasers_nxt;
+        counter_on_laser        <= counter_on_laser_nxt;
+        borders_set             <= borders_set_nxt;
     end
 end
 
 always @* begin
     rgb_nxt = rgb_in;
     state_nxt = IDLE;
-    laser_right_nxt = 371;
-    laser_left_nxt = 341;
+    borders_set = 0;
+    counter_between_lasers_nxt = 0;
+    counter_on_laser_nxt = 0;
+    laser_left_nxt  = laser_left;
+    laser_right_nxt  = laser_right;
+    obstacle_x_nxt = 0;
+    obstacle_y_nxt = 0;
     case (state)
         IDLE: begin
-            if ((selected == 4'b0011) || (game_on == 1))
+            if ((play_selected == 1) || (game_on == 1))
                 state_nxt = DRAW_LEFT;
             else
                 state_nxt = IDLE;
         end
             
         DRAW_LEFT: begin
-            //state_nxt = (menu_on || !play_selected) ? IDLE : DRAW_LEFT;
-            state_nxt = DRAW_LEFT;
+            if (menu_on || !play_selected) begin
+                state_nxt = IDLE;
+                end
+            else 
+                state_nxt = DRAW_LEFT;
+            
+            if (borders_set == 0) begin
+                laser_left_nxt = 411;
+                laser_right_nxt = 412;
+                borders_set = 1;
+                end
+            else 
+                borders_set = 1;
+                
             if (hcount_in <= laser_right && hcount_in >= laser_left && vcount_in >= LASER_TOP && vcount_in <= LASER_BOTTOM)begin
                 rgb_nxt = 12'hf_f_f;
+                //obstacle_x_nxt = hcount_in;
+                //obstacle_y_nxt = vcount_in;
                 end
             else
                 rgb_nxt = rgb_in;
+                
+            if ((laser_left <= 386 ) && (laser_right >= 437)) begin
+                if (counter_between_lasers == 325000)
+                    state_nxt = DRAW_MIDDLE;
+                else
+                    counter_between_lasers_nxt = counter_between_lasers + 1;
+                end
+            else begin
+                if (counter_on_laser >= 325000) begin
+                    laser_left_nxt = laser_left - 1;
+                    laser_right_nxt = laser_right + 1;
+                    counter_on_laser_nxt = 0;
+                    end
+                else begin
+                    counter_on_laser_nxt = counter_on_laser + 1;
+                    laser_left_nxt  = laser_left;
+                    laser_right_nxt  = laser_right;
+                    end 
+                   
+            end       
         end   
-            
+        
+        DRAW_MIDDLE:begin
+            state_nxt = DRAW_MIDDLE;
+        end        
             
     endcase        
 end

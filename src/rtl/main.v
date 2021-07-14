@@ -315,7 +315,7 @@ lasers_obstacle lasers_obstacle(
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
-    .selected(4'b0011),
+    .selected(4'b0111),
   //outputs  
     .obstacle_x(obstacle7_x_out),
     .obstacle_y(obstacle7_y_out),
@@ -351,7 +351,7 @@ obstacle_mux_16_to_1 obstacle_mux_16_to_1(
     .input_13(0),
     .input_14(0),
     .input_15(0),
-    .select(4'b0011),
+    .select(4'b0111),
     
     //outputs
     .obstacle_mux_out(mux_out)

@@ -69,6 +69,7 @@ read_verilog {
     src/rtl/top.v
     src/rtl/comparator.v
     src/rtl/obstacles_control.v
+    src/rtl/lasers_obstacle.v
 }
 
 read_vhdl {
