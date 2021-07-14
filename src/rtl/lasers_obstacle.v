@@ -93,8 +93,11 @@ always @* begin
     obstacle_y_nxt = 0;
     case (state)
         IDLE: begin
-            if ((play_selected == 1) || (game_on == 1))
+            if ((play_selected == 1) || (game_on == 1)) begin
                 state_nxt = DRAW_LEFT;
+                laser_left_nxt = 411;
+                laser_right_nxt = 412;
+                end
             else
                 state_nxt = IDLE;
         end
@@ -105,31 +108,26 @@ always @* begin
                 end
             else 
                 state_nxt = DRAW_LEFT;
-            
-            if (borders_set == 0) begin
-                laser_left_nxt = 411;
-                laser_right_nxt = 412;
-                borders_set = 1;
-                end
-            else 
-                borders_set = 1;
-                
+
             if (hcount_in <= laser_right && hcount_in >= laser_left && vcount_in >= LASER_TOP && vcount_in <= LASER_BOTTOM)begin
                 rgb_nxt = 12'hf_f_f;
-                //obstacle_x_nxt = hcount_in;
-                //obstacle_y_nxt = vcount_in;
+                obstacle_x_nxt = hcount_in;
+                obstacle_y_nxt = vcount_in;
                 end
             else
                 rgb_nxt = rgb_in;
                 
             if ((laser_left <= 386 ) && (laser_right >= 437)) begin
-                if (counter_between_lasers == 325000)
+                if (counter_between_lasers == 32500000) begin
                     state_nxt = DRAW_MIDDLE;
+                    laser_left_nxt = 511;
+                    laser_right_nxt = 512;
+                    end
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
             else begin
-                if (counter_on_laser >= 325000) begin
+                if (counter_on_laser >= 3250000) begin
                     laser_left_nxt = laser_left - 1;
                     laser_right_nxt = laser_right + 1;
                     counter_on_laser_nxt = 0;
@@ -138,13 +136,84 @@ always @* begin
                     counter_on_laser_nxt = counter_on_laser + 1;
                     laser_left_nxt  = laser_left;
                     laser_right_nxt  = laser_right;
-                    end 
-                   
+                    end       
             end       
         end   
         
-        DRAW_MIDDLE:begin
-            state_nxt = DRAW_MIDDLE;
+        DRAW_MIDDLE: begin
+            if (menu_on || !play_selected) begin
+                state_nxt = IDLE;
+                end
+            else 
+                state_nxt = DRAW_MIDDLE;
+    
+            if (hcount_in <= laser_right && hcount_in >= laser_left && vcount_in >= LASER_TOP && vcount_in <= LASER_BOTTOM)begin
+                rgb_nxt = 12'hf_f_f;
+                obstacle_x_nxt = hcount_in;
+                obstacle_y_nxt = vcount_in;
+                end
+            else
+                rgb_nxt = rgb_in;
+                
+            if ((laser_left <= 486 ) && (laser_right >= 537)) begin
+                if (counter_between_lasers == 32500000) begin
+                    state_nxt = DRAW_RIGHT;
+                    laser_left_nxt = 611;
+                    laser_right_nxt = 612;
+                    end
+                else
+                    counter_between_lasers_nxt = counter_between_lasers + 1;
+                end
+            else begin
+                if (counter_on_laser >= 3250000) begin
+                    laser_left_nxt = laser_left - 1;
+                    laser_right_nxt = laser_right + 1;
+                    counter_on_laser_nxt = 0;
+                    end
+                else begin
+                    counter_on_laser_nxt = counter_on_laser + 1;
+                    laser_left_nxt  = laser_left;
+                    laser_right_nxt  = laser_right;
+                    end       
+            end 
+        end
+        
+        DRAW_RIGHT: begin
+            if (menu_on || !play_selected) begin
+                state_nxt = IDLE;
+                end
+            else 
+                state_nxt = DRAW_RIGHT;
+    
+            if (hcount_in <= laser_right && hcount_in >= laser_left && vcount_in >= LASER_TOP && vcount_in <= LASER_BOTTOM)begin
+                rgb_nxt = 12'hf_f_f;
+                obstacle_x_nxt = hcount_in;
+                obstacle_y_nxt = vcount_in;
+                end
+            else
+                rgb_nxt = rgb_in;
+                
+            if ((laser_left <= 586 ) && (laser_right >= 637)) begin
+                if (counter_between_lasers == 32500000) begin
+                    state_nxt = IDLE;
+                    laser_left_nxt = 461;
+                    laser_right_nxt = 462;
+                    end
+                else
+                    counter_between_lasers_nxt = counter_between_lasers + 1;
+                end
+            else begin
+                if (counter_on_laser >= 3250000) begin
+                    laser_left_nxt = laser_left - 1;
+                    laser_right_nxt = laser_right + 1;
+                    counter_on_laser_nxt = 0;
+                    end
+                else begin
+                    counter_on_laser_nxt = counter_on_laser + 1;
+                    laser_left_nxt  = laser_left;
+                    laser_right_nxt  = laser_right;
+                    end       
+            end
         end        
             
     endcase        
