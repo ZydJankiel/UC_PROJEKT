@@ -183,12 +183,7 @@ obstacle0 #(.SELECT_CODE(4'b0000)) moving_pillars_obstacle(
     
 );
 
-obstacle1 #(.TEST_TOP_LINE(600), 
-                 .TEST_BOTTOM_LINE(500), 
-                 .TEST_LEFT_LINE(520), 
-                 .TEST_RIGHT_LINE(620),
-                 .COLOR(12'hf_f_f),
-                 .SELECT_CODE(4'b0001)) rectangle_obstacle(
+lasers_obstacle lasers_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
@@ -205,7 +200,7 @@ obstacle1 #(.TEST_TOP_LINE(600),
     .obstacle_x(obstacle1_x_out),
     .obstacle_y(obstacle1_y_out),
     .rgb_out(rgb_out_obs1),
-    .done(done_obs1)
+    .done(done_obs1) 
 );
 
 obstacle1 #(.TEST_TOP_LINE(500),

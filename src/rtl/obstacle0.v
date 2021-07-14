@@ -34,9 +34,8 @@ reg [32:0] count,count_nxt;
 reg [10:0] pillar_left = 1003 ,pillar_right = 1023 ,pillar_left_nxt, pillar_right_nxt;
 reg flip,flip_nxt;
 reg [10:0] pillar_top, pillar_bottom, pillar_top_nxt, pillar_bottom_nxt;
-reg done_nxt;
+reg done_nxt, working_nxt;
 reg [29:0] elapsed_time, elapsed_time_nxt;
-reg working_nxt;
 
 localparam PILLAR_TOP1 = 417 ,
            PILLAR_BOTTOM1 = 617,

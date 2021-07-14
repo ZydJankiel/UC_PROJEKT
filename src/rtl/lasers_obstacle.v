@@ -33,10 +33,13 @@ module lasers_obstacle(
   input wire [11:0] rgb_in,
   input wire play_selected,
   input wire [3:0] selected,
+  input wire done_control,
   
+  output reg working,
   output reg [11:0] rgb_out,
   output reg [11:0] obstacle_x,
-  output reg [11:0] obstacle_y
+  output reg [11:0] obstacle_y,
+  output reg done
   );
 localparam LASER_TOP    = 317,
            LASER_BOTTOM = 617;
@@ -55,6 +58,7 @@ reg [1:0] state, state_nxt;
 reg [10:0] laser_right, laser_left, laser_right_nxt, laser_left_nxt;
 reg [24:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser, counter_on_laser_nxt;
 reg bounce_back, bounce_back_nxt;
+reg done_nxt, working_nxt;
 
 always @(posedge pclk) begin
     if (rst) begin
@@ -67,6 +71,8 @@ always @(posedge pclk) begin
         counter_between_lasers  <= 0;
         counter_on_laser        <= 0;
         bounce_back             <= 0;
+        done                    <= 0;
+        working                 <= 0;
     end
     else begin
         state                   <= state_nxt;
@@ -78,6 +84,8 @@ always @(posedge pclk) begin
         counter_between_lasers  <= counter_between_lasers_nxt;
         counter_on_laser        <= counter_on_laser_nxt;
         bounce_back             <= bounce_back_nxt;
+        done                    <= done_nxt;
+        working                 <= working_nxt;
     end
 end
 
@@ -90,19 +98,33 @@ always @* begin
     laser_right_nxt  = laser_right;
     obstacle_x_nxt = 0;
     obstacle_y_nxt = 0;
+    done_nxt = 0;
+    bounce_back_nxt = bounce_back;
     case (state)
         IDLE: begin
+            working_nxt = 0;
+            done_nxt = 0;
             bounce_back_nxt = 0;
-            if ((play_selected == 1) || (game_on == 1)) begin
+            if (done_control) begin
+                state_nxt = ((selected == 4'b0001) && play_selected) ? DRAW_LEFT : IDLE;
+                laser_left_nxt = 411;
+                laser_right_nxt = 412;
+            end
+            else begin
+                state_nxt = IDLE;
+            end
+            /*if ((play_selected == 1) || (game_on == 1)) begin
                 state_nxt = DRAW_LEFT;
                 laser_left_nxt = 411;
                 laser_right_nxt = 412;
                 end
             else
-                state_nxt = IDLE;
+                state_nxt = IDLE; */
         end
             
         DRAW_LEFT: begin
+            done_nxt = 0;
+            working_nxt = 1;
             if (menu_on || !play_selected) begin
                 state_nxt = IDLE;
                 end
@@ -122,6 +144,7 @@ always @* begin
                     if (bounce_back == 1) begin
                         state_nxt = IDLE;
                         bounce_back_nxt = 1;
+                        done_nxt = 1;
                         end
                     else begin
                         state_nxt = DRAW_MIDDLE;
@@ -148,6 +171,7 @@ always @* begin
         end   
         
         DRAW_MIDDLE: begin
+            working_nxt = 1;
             if (menu_on || !play_selected) begin
                 state_nxt = IDLE;
                 end
@@ -195,6 +219,7 @@ always @* begin
         end
         
         DRAW_RIGHT: begin
+            working_nxt = 1;
             if (menu_on || !play_selected) begin
                 state_nxt = IDLE;
                 end
