@@ -22,7 +22,9 @@ module obstacle1
   input wire [11:0] rgb_in,
   input wire play_selected,
   input wire [3:0] selected,
+  input wire done_control,
   
+  output reg working,
   output reg [11:0] rgb_out,
   output reg [11:0] obstacle_x,
   output reg [11:0] obstacle_y,
@@ -33,9 +35,10 @@ reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg state, state_nxt;
 reg [29:0] elapsed_time, elapsed_time_nxt, done_nxt;
+reg working_nxt;
 
-localparam IDLE = 0,
-           DRAW = 1;
+localparam IDLE = 2'b00,
+           DRAW = 2'b01;
            
 localparam MAX_TIME = 3; //seconds
 localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
@@ -48,6 +51,7 @@ localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
           obstacle_y <= 0;
           done <= 0;
           elapsed_time <= 0;
+          working <= 0;
       end
       else begin
           state <= state_nxt;
@@ -56,6 +60,7 @@ localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
           obstacle_y <= obstacle_y_nxt;
           done <= done_nxt;
           elapsed_time <= elapsed_time_nxt;
+          working <= working_nxt;
       end
   end
   
@@ -64,15 +69,22 @@ localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
       obstacle_y_nxt = 0;
       done_nxt = 0;
       elapsed_time_nxt = 0;
+      working_nxt = 0;
       case(state)
           IDLE: 
               begin
                   //state_nxt = (game_on || play_selected) ? DRAW : IDLE;
-                  state_nxt = ((selected == SELECT_CODE) && play_selected) ? DRAW : IDLE;
+                  if (done_control) begin
+                      state_nxt = ((selected == SELECT_CODE) && play_selected) ? DRAW : IDLE;
+                  end
+                  else begin
+                      state_nxt = IDLE;
+                  end
                   rgb_nxt = rgb_in; 
               end
           DRAW:
               begin
+                  working_nxt = 1;
                   if (hcount_in <TEST_RIGHT_LINE && hcount_in >TEST_LEFT_LINE && vcount_in < TEST_TOP_LINE && vcount_in >TEST_BOTTOM_LINE) begin 
                       rgb_nxt = COLOR;
                       obstacle_x_nxt = hcount_in;

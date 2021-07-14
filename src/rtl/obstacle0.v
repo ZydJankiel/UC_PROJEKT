@@ -18,7 +18,9 @@ module obstacle0
   input wire [11:0] rgb_in,
   input wire play_selected,
   input wire [3:0] selected,
-
+  input wire done_control,
+  
+  output reg working,
   output reg [11:0] rgb_out,
   output reg [11:0] obstacle_x,
   output reg [11:0] obstacle_y,
@@ -34,6 +36,7 @@ reg flip,flip_nxt;
 reg [10:0] pillar_top, pillar_bottom, pillar_top_nxt, pillar_bottom_nxt;
 reg done_nxt;
 reg [29:0] elapsed_time, elapsed_time_nxt;
+reg working_nxt;
 
 localparam PILLAR_TOP1 = 417 ,
            PILLAR_BOTTOM1 = 617,
@@ -48,7 +51,8 @@ localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
 
 
 localparam IDLE  = 2'b00,
-           DRAW  = 2'b01;
+           DRAW  = 2'b01,
+           START = 2'b10;
 
   always @(posedge pclk) begin
       if (rst) begin
@@ -64,6 +68,7 @@ localparam IDLE  = 2'b00,
           flip <= 0;
           done <= 0;
           elapsed_time <= 0;
+          working <= 0;
       end
       else begin
           state <= state_nxt;
@@ -78,6 +83,7 @@ localparam IDLE  = 2'b00,
           pillar_top <= pillar_top_nxt;
           done <= done_nxt;
           elapsed_time <= elapsed_time_nxt;
+          working <= working_nxt;
       end
   end
   
@@ -94,16 +100,31 @@ localparam IDLE  = 2'b00,
       pillar_top_nxt = pillar_top;
       pillar_bottom_nxt = pillar_bottom;
       done_nxt = 0;
+      working_nxt = 0;
       case(state)
           IDLE: 
               begin
                   //state_nxt = (game_on || play_selected) ? DRAW : IDLE;
-                  state_nxt = ((selected == SELECT_CODE) && play_selected) ? DRAW : IDLE;
+                  if (done_control) begin
+                      state_nxt = ((selected == SELECT_CODE) && play_selected) ? DRAW : IDLE;
+                  end
+                  else if (!play_selected) begin
+                      state_nxt = START;
+                  end
+                  else begin
+                      state_nxt = IDLE;
+                  end
                   count_nxt = 0;
+                  pillar_right_nxt = 681;
+                  pillar_left_nxt = 661;
+                  elapsed_time_nxt = 0;
+                  pillar_top_nxt = pillar_top;
+                  pillar_bottom_nxt = pillar_bottom;   
               end
 
           DRAW:
               begin
+                  working_nxt = 1;
                   rgb_nxt = rgb_in;
                   if (count <= MAX_COUNT) begin
                       if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
@@ -150,6 +171,10 @@ localparam IDLE  = 2'b00,
                       done_nxt = 0;
                       elapsed_time_nxt = elapsed_time + 1;
                   end
+              end
+          START:
+              begin
+                  state_nxt = play_selected ? DRAW : START;
               end
       endcase
   end
