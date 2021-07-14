@@ -92,11 +92,11 @@ always @* begin
     obstacle_y_nxt = 0;
     case (state)
         IDLE: begin
+            bounce_back_nxt = 0;
             if ((play_selected == 1) || (game_on == 1)) begin
                 state_nxt = DRAW_LEFT;
                 laser_left_nxt = 411;
                 laser_right_nxt = 412;
-                bounce_back_nxt = 0;
                 end
             else
                 state_nxt = IDLE;
@@ -119,12 +119,15 @@ always @* begin
                 
             if ((laser_left <= 386 ) && (laser_right >= 437)) begin
                 if (counter_between_lasers == 32500000) begin
-                    if (bounce_back == 1)
+                    if (bounce_back == 1) begin
                         state_nxt = IDLE;
+                        bounce_back_nxt = 1;
+                        end
                     else begin
                         state_nxt = DRAW_MIDDLE;
                         laser_left_nxt = 511;
                         laser_right_nxt = 512;
+                        bounce_back_nxt = 0;
                         end
                     end
                 else
@@ -165,11 +168,13 @@ always @* begin
                         state_nxt = DRAW_LEFT;
                         laser_left_nxt = 411;
                         laser_right_nxt = 412;
+                        bounce_back_nxt = 1;
                         end
                     else begin
                         laser_left_nxt = 611;
                         laser_right_nxt = 612;
                         state_nxt = DRAW_RIGHT;
+                        bounce_back_nxt = 0;
                         end
                     end  
                 else
@@ -210,6 +215,7 @@ always @* begin
                         state_nxt = DRAW_MIDDLE;
                         laser_left_nxt = 511;
                         laser_right_nxt = 512;
+                        bounce_back_nxt = 1;
                         end
                     else begin
                         laser_left_nxt = 611;
