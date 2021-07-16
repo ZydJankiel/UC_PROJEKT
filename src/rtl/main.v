@@ -183,7 +183,7 @@ obstacle0 #(.SELECT_CODE(4'b0000)) moving_pillars_obstacle(
     
 );
 
-lasers_obstacle lasers_obstacle(
+lasers_obstacle vertical_lasers_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
