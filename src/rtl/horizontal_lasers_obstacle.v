@@ -131,7 +131,7 @@ always @* begin
             else 
                 state_nxt = DRAW_LEFT;
                 
-            //draw left laser
+            //draw top laser
             if (hcount_in <= LASER_RIGHT && hcount_in >= LASER_LEFT && vcount_in >= laser_top && vcount_in <= laser_bottom) begin
                 rgb_nxt = 12'hf_f_f;
                 obstacle_x_nxt = hcount_in;
@@ -157,7 +157,7 @@ always @* begin
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
-            else begin                                      //expand left and right borders of laser with delay between expansions to slow down
+            else begin                                      //expand top and bottom borders of laser with delay between expansions to slow down
                 if (counter_on_laser >= 3200000) begin  
                     laser_top_nxt = laser_top - 1;
                     laser_bottom_nxt = laser_bottom + 1;
@@ -206,7 +206,7 @@ always @* begin
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
-            else begin                                                      //expand left and right borders of laser with delay between expansions to slow down the expansion
+            else begin                                                      //expand top and bottom borders of laser with delay between expansions to slow down the expansion
                 if (counter_on_laser >= 3200000) begin              
                     laser_top_nxt = laser_top - 1;
                     laser_bottom_nxt = laser_bottom + 1;
@@ -248,14 +248,14 @@ always @* begin
                     else begin
                         laser_top_nxt = 567;
                         laser_bottom_nxt = 568;
-                        bounce_back_nxt = 1;            //if not bounced then repeat right and then go in reverse order
+                        bounce_back_nxt = 1;            //if not bounced then repeat bottom and then go in reverse order
                         state_nxt = DRAW_RIGHT;
                         end                   
                     end
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
-            else begin                                                      //expand left and right borders of laser with delay between expansions to slow down the expansion
+            else begin                                                      //expand top and bottom  borders of laser with delay between expansions to slow down the expansion
                 if (counter_on_laser >= 3200000) begin
                     laser_top_nxt = laser_top - 1;
                     laser_bottom_nxt = laser_bottom + 1;
