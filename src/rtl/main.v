@@ -203,12 +203,7 @@ lasers_obstacle vertical_lasers_obstacle(
     .done(done_obs1) 
 );
 
-obstacle1 #(.TEST_TOP_LINE(500),
-                 .TEST_BOTTOM_LINE(400),
-                 .TEST_LEFT_LINE(520), 
-                 .TEST_RIGHT_LINE(620),
-                 .COLOR(12'hf_0_0),
-                 .SELECT_CODE(4'b0010)) rectangle2_obstacle(
+horizontal_lasers_obstacle horizontal_lasers_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),

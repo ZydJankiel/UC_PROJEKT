@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 13.07.2021 13:12:45
+// Create Date: 16.07.2021 13:49:48
 // Design Name: 
-// Module Name: lasers_obstacle
+// Module Name: vertical_lasers_obstacle
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -23,7 +23,7 @@
 *
 */
 
-module lasers_obstacle(
+module horizontal_lasers_obstacle(
   input wire [11:0] vcount_in,
   input wire [11:0] hcount_in,
   input wire pclk,
@@ -106,7 +106,7 @@ always @* begin
             done_nxt = 0;
             bounce_back_nxt = 0;
             if (done_control) begin
-                state_nxt = ((selected == 4'b0001) && play_selected) ? DRAW_LEFT : IDLE;
+                state_nxt = ((selected == 4'b0010) && play_selected) ? DRAW_LEFT : IDLE;
                 laser_left_nxt = 411;
                 laser_right_nxt = 412;
             end
@@ -271,9 +271,5 @@ always @* begin
             
     endcase        
 end
-
-
-
-
 
 endmodule
