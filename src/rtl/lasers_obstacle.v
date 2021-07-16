@@ -140,7 +140,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                             
-            if ((laser_left <= 381 ) && (laser_right >= 432)) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_left <= 381 ) && (laser_right >= 442)) begin         //move to next laser after delay and when reached set size (border +- 30)
                 if (counter_between_lasers == 32000000) begin               
                     if (bounce_back == 1) begin                         //direction based on whether the obstacle already reached right laser
                         state_nxt = IDLE;
@@ -188,7 +188,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_left <= 481 ) && (laser_right >= 532)) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_left <= 481 ) && (laser_right >= 542)) begin         //move to next laser after delay and when reached set size (border +- 30)
                 if (counter_between_lasers == 32000000) begin
                     if (bounce_back == 1) begin                        //direction based on whether the obstacle already reached right laser
                         state_nxt = DRAW_LEFT;
@@ -237,7 +237,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_left <= 581 ) && (laser_right >= 632)) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_left <= 581 ) && (laser_right >= 642)) begin         //move to next laser after delay and when reached set size (border +- 30)
                 if (counter_between_lasers == 32000000) begin               
                     if (bounce_back == 1) begin                             ////direction based on whether the obstacle already reached right laser
                         state_nxt = DRAW_MIDDLE;        //if already bounced go in reverse order                        
