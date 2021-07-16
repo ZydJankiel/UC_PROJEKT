@@ -57,7 +57,7 @@ reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [1:0] state, state_nxt;
 reg [10:0] laser_top, laser_bottom, laser_top_nxt, laser_bottom_nxt;
 reg [24:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser, counter_on_laser_nxt;
-reg bounce_back, bounce_back_nxt;
+reg [5:0] obstacle_counter, obstacle_counter_nxt;
 reg done_nxt, working_nxt;
 
 always @(posedge pclk) begin
@@ -70,9 +70,9 @@ always @(posedge pclk) begin
         laser_bottom            <= 0;
         counter_between_lasers  <= 0;
         counter_on_laser        <= 0;
-        bounce_back             <= 0;
         done                    <= 0;
         working                 <= 0;
+        obstacle_counter        <= 0;
     end
     else begin
         state                   <= state_nxt;
@@ -83,9 +83,9 @@ always @(posedge pclk) begin
         laser_bottom            <= laser_bottom_nxt;
         counter_between_lasers  <= counter_between_lasers_nxt;
         counter_on_laser        <= counter_on_laser_nxt;
-        bounce_back             <= bounce_back_nxt;
         done                    <= done_nxt;
         working                 <= working_nxt;
+        obstacle_counter        <= obstacle_counter_nxt;
     end
 end
 
@@ -99,12 +99,12 @@ always @* begin
     obstacle_x_nxt = 0;
     obstacle_y_nxt = 0;
     done_nxt = 0;
-    bounce_back_nxt = bounce_back;
+    obstacle_counter_nxt = obstacle_counter;
     case (state)
         IDLE: begin
             working_nxt = 0;
             done_nxt = 0;
-            bounce_back_nxt = 0;
+            obstacle_counter_nxt = 0;
             if (done_control) begin
                 state_nxt = ((selected == 4'b0010) && play_selected) ? DRAW_LEFT : IDLE;
                 laser_top_nxt = 367;
@@ -113,13 +113,6 @@ always @* begin
             else begin
                 state_nxt = IDLE;
             end
-            /*if ((play_selected == 1) || (game_on == 1)) begin
-                state_nxt = DRAW_LEFT;
-                laser_left_nxt = 411;
-                laser_right_nxt = 412;
-                end
-            else
-                state_nxt = IDLE; */
         end
             
         DRAW_LEFT: begin
@@ -142,16 +135,15 @@ always @* begin
                             
             if ((laser_top <= 337 ) && (laser_bottom >= 398)) begin         //move to next laser after delay and when reached set size (border +- 30)
                 if (counter_between_lasers == 32000000) begin               
-                    if (bounce_back == 1) begin                         //direction based on whether the obstacle already reached right laser
+                    if (obstacle_counter >= 15) begin                         
                         state_nxt = IDLE;
-                        bounce_back_nxt = 1;
                         done_nxt = 1;
                         end
                     else begin
                         state_nxt = DRAW_MIDDLE;
                         laser_top_nxt = 467;
                         laser_bottom_nxt = 468;
-                        bounce_back_nxt = 0;
+                        obstacle_counter_nxt = obstacle_counter + 1;
                         end
                     end
                 else
@@ -190,17 +182,23 @@ always @* begin
                 
             if ((laser_top <= 437 ) && (laser_bottom >= 498)) begin         //move to next laser after delay and when reached set size (border +- 30)
                 if (counter_between_lasers == 32000000) begin
-                    if (bounce_back == 1) begin                        //direction based on whether the obstacle already reached right laser
+                    if (obstacle_counter == 9) begin                        
                         state_nxt = DRAW_LEFT;
                         laser_top_nxt = 367;
                         laser_bottom_nxt = 368;
-                        bounce_back_nxt = 1;
+                        obstacle_counter_nxt = obstacle_counter_nxt + 1;
+                        end
+                    if (obstacle_counter == 12) begin                        
+                        state_nxt = DRAW_MIDDLE;
+                        laser_top_nxt = 467;
+                        laser_bottom_nxt = 468;
+                        obstacle_counter_nxt = obstacle_counter_nxt + 1;
                         end
                     else begin
                         laser_top_nxt = 567;
                         laser_bottom_nxt = 568;
                         state_nxt = DRAW_RIGHT;
-                        bounce_back_nxt = 0;
+                        obstacle_counter_nxt = obstacle_counter_nxt + 1;
                         end
                     end  
                 else
@@ -239,17 +237,29 @@ always @* begin
                 
             if ((laser_top <= 537 ) && (laser_bottom >= 597)) begin         //move to next laser after delay and when reached set size (border +- 30)
                 if (counter_between_lasers == 32000000) begin               
-                    if (bounce_back == 1) begin                             ////direction based on whether the obstacle already reached right laser
-                        state_nxt = DRAW_MIDDLE;        //if already bounced go in reverse order                        
+                    if (obstacle_counter == 8) begin                             
+                        state_nxt = DRAW_MIDDLE;                               
                         laser_top_nxt = 467;
                         laser_bottom_nxt = 468;
-                        bounce_back_nxt = 1;                                
+                        obstacle_counter_nxt = obstacle_counter + 1;                                
+                        end
+                    else if (obstacle_counter > 9) begin
+                        laser_top_nxt = 367;
+                        laser_bottom_nxt = 368;
+                        obstacle_counter_nxt = obstacle_counter + 1;            
+                        state_nxt = DRAW_LEFT;
+                        end                    
+                    else if (obstacle_counter > 4) begin
+                        laser_top_nxt = 467;
+                        laser_bottom_nxt = 468;
+                        obstacle_counter_nxt = obstacle_counter + 1;            
+                        state_nxt = DRAW_MIDDLE;
                         end
                     else begin
-                        laser_top_nxt = 567;
-                        laser_bottom_nxt = 568;
-                        bounce_back_nxt = 1;            //if not bounced then repeat bottom and then go in reverse order
-                        state_nxt = DRAW_RIGHT;
+                        laser_top_nxt = 367;
+                        laser_bottom_nxt = 368;
+                        obstacle_counter_nxt = obstacle_counter + 1;            
+                        state_nxt = DRAW_LEFT;
                         end                   
                     end
                 else
