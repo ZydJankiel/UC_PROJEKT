@@ -41,8 +41,19 @@ module lasers_obstacle(
   output reg [11:0] obstacle_y,
   output reg done
   );
+  
+localparam COUNTER_ON_LASER_VALUE       = 3200000,
+           COUNTER_BETWEEN_LASERS_VALUE = 32000000;
+
 localparam LASER_TOP    = 317,
            LASER_BOTTOM = 617;
+
+localparam LEFT_LASER_LEFT      = 411,
+           LEFT_LASER_RIGHT     = 412,
+           MIDDLE_LASER_LEFT    = 511,
+           MIDDLE_LASER_RIGHT   = 512,
+           RIGHT_LASER_LEFT     = 611,
+           RIGHT_LASER_RIGHT    = 612;           
 
 localparam DX           = 1;
 
@@ -107,19 +118,12 @@ always @* begin
             bounce_back_nxt = 0;
             if (done_control) begin
                 state_nxt = ((selected == 4'b0001) && play_selected) ? DRAW_LEFT : IDLE;
-                laser_left_nxt = 411;
-                laser_right_nxt = 412;
+                laser_left_nxt = LEFT_LASER_LEFT;
+                laser_right_nxt = LEFT_LASER_RIGHT;
             end
             else begin
                 state_nxt = IDLE;
             end
-            /*if ((play_selected == 1) || (game_on == 1)) begin
-                state_nxt = DRAW_LEFT;
-                laser_left_nxt = 411;
-                laser_right_nxt = 412;
-                end
-            else
-                state_nxt = IDLE; */
         end
             
         DRAW_LEFT: begin
@@ -141,7 +145,7 @@ always @* begin
                 rgb_nxt = rgb_in;
                             
             if ((laser_left <= 381 ) && (laser_right >= 442)) begin         //move to next laser after delay and when reached set size (border +- 30)
-                if (counter_between_lasers == 32000000) begin               
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
                     if (bounce_back == 1) begin                         //direction based on whether the obstacle already reached right laser
                         state_nxt = IDLE;
                         bounce_back_nxt = 1;
@@ -149,8 +153,8 @@ always @* begin
                         end
                     else begin
                         state_nxt = DRAW_MIDDLE;
-                        laser_left_nxt = 511;
-                        laser_right_nxt = 512;
+                        laser_left_nxt = MIDDLE_LASER_LEFT;
+                        laser_right_nxt = MIDDLE_LASER_RIGHT;
                         bounce_back_nxt = 0;
                         end
                     end
@@ -158,7 +162,7 @@ always @* begin
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
             else begin                                      //expand left and right borders of laser with delay between expansions to slow down
-                if (counter_on_laser >= 3200000) begin  
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
                     laser_left_nxt = laser_left - 1;
                     laser_right_nxt = laser_right + 1;
                     counter_on_laser_nxt = 0;
@@ -189,16 +193,16 @@ always @* begin
                 rgb_nxt = rgb_in;
                 
             if ((laser_left <= 481 ) && (laser_right >= 542)) begin         //move to next laser after delay and when reached set size (border +- 30)
-                if (counter_between_lasers == 32000000) begin
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin
                     if (bounce_back == 1) begin                        //direction based on whether the obstacle already reached right laser
                         state_nxt = DRAW_LEFT;
-                        laser_left_nxt = 411;
-                        laser_right_nxt = 412;
+                        laser_left_nxt = LEFT_LASER_LEFT;
+                        laser_right_nxt = LEFT_LASER_RIGHT;
                         bounce_back_nxt = 1;
                         end
                     else begin
-                        laser_left_nxt = 611;
-                        laser_right_nxt = 612;
+                        laser_left_nxt = RIGHT_LASER_LEFT;
+                        laser_right_nxt = RIGHT_LASER_RIGHT;
                         state_nxt = DRAW_RIGHT;
                         bounce_back_nxt = 0;
                         end
@@ -207,7 +211,7 @@ always @* begin
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
             else begin                                                      //expand left and right borders of laser with delay between expansions to slow down the expansion
-                if (counter_on_laser >= 3200000) begin              
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin              
                     laser_left_nxt = laser_left - 1;
                     laser_right_nxt = laser_right + 1;
                     counter_on_laser_nxt = 0;
@@ -238,16 +242,16 @@ always @* begin
                 rgb_nxt = rgb_in;
                 
             if ((laser_left <= 581 ) && (laser_right >= 642)) begin         //move to next laser after delay and when reached set size (border +- 30)
-                if (counter_between_lasers == 32000000) begin               
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
                     if (bounce_back == 1) begin                             ////direction based on whether the obstacle already reached right laser
                         state_nxt = DRAW_MIDDLE;        //if already bounced go in reverse order                        
-                        laser_left_nxt = 511;
-                        laser_right_nxt = 512;
+                        laser_left_nxt = MIDDLE_LASER_LEFT;
+                        laser_right_nxt = MIDDLE_LASER_RIGHT;
                         bounce_back_nxt = 1;                                
                         end
                     else begin
-                        laser_left_nxt = 611;
-                        laser_right_nxt = 612;
+                        laser_left_nxt = RIGHT_LASER_LEFT;
+                        laser_right_nxt = RIGHT_LASER_RIGHT;
                         bounce_back_nxt = 1;            //if not bounced then repeat right and then go in reverse order
                         state_nxt = DRAW_RIGHT;
                         end                   
@@ -256,7 +260,7 @@ always @* begin
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
             else begin                                                      //expand left and right borders of laser with delay between expansions to slow down the expansion
-                if (counter_on_laser >= 3200000) begin
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin
                     laser_left_nxt = laser_left - 1;
                     laser_right_nxt = laser_right + 1;
                     counter_on_laser_nxt = 0;

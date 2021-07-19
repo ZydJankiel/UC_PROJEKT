@@ -42,7 +42,7 @@ module horizontal_lasers_obstacle(
   output reg done
   );
   
-localparam COUNTER_ON_LASER_VALUE = 3200000,
+localparam COUNTER_ON_LASER_VALUE       = 3200000,
            COUNTER_BETWEEN_LASERS_VALUE = 32000000;
 
 localparam LASER_LEFT           = 361,
