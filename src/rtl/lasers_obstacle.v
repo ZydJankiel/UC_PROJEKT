@@ -161,17 +161,31 @@ always @* begin
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
-            else begin                                      //expand left and right borders of laser with delay between expansions to slow down
-                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
-                    laser_left_nxt = laser_left - 1;
-                    laser_right_nxt = laser_right + 1;
-                    counter_on_laser_nxt = 0;
+            else begin                                      
+                if ((laser_left == LEFT_LASER_LEFT) && (laser_right == LEFT_LASER_RIGHT)) begin //after spawning laser wait
+                    if (counter_on_laser >= COUNTER_BETWEEN_LASERS_VALUE) begin  
+                        laser_left_nxt = laser_left - 1;
+                        laser_right_nxt = laser_right + 1;
+                        counter_on_laser_nxt = 0;
+                        end
+                    else begin
+                        counter_on_laser_nxt = counter_on_laser + 1;
+                        laser_left_nxt  = laser_left;
+                        laser_right_nxt  = laser_right;
+                        end
                     end
-                else begin
-                    counter_on_laser_nxt = counter_on_laser + 1;
-                    laser_left_nxt  = laser_left;
-                    laser_right_nxt  = laser_right;
-                    end       
+                else begin              //expand left and right borders of laser with delay between expansions to slow down
+                    if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
+                        laser_left_nxt = laser_left - 1;
+                        laser_right_nxt = laser_right + 1;
+                        counter_on_laser_nxt = 0;
+                        end
+                    else begin
+                        counter_on_laser_nxt = counter_on_laser + 1;
+                        laser_left_nxt  = laser_left;
+                        laser_right_nxt  = laser_right;
+                        end
+                    end           
             end       
         end   
         
@@ -210,17 +224,31 @@ always @* begin
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
-            else begin                                                      //expand left and right borders of laser with delay between expansions to slow down the expansion
-                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin              
-                    laser_left_nxt = laser_left - 1;
-                    laser_right_nxt = laser_right + 1;
-                    counter_on_laser_nxt = 0;
+            else begin                                                      
+                if ((laser_left == MIDDLE_LASER_LEFT) && (laser_right == MIDDLE_LASER_RIGHT)) begin //after spawning laser wait
+                    if (counter_on_laser >= COUNTER_BETWEEN_LASERS_VALUE) begin  
+                        laser_left_nxt = laser_left - 1;
+                        laser_right_nxt = laser_right + 1;
+                        counter_on_laser_nxt = 0;
+                        end
+                    else begin
+                        counter_on_laser_nxt = counter_on_laser + 1;
+                        laser_left_nxt  = laser_left;
+                        laser_right_nxt  = laser_right;
+                        end
                     end
-                else begin
-                    counter_on_laser_nxt = counter_on_laser + 1;
-                    laser_left_nxt  = laser_left;
-                    laser_right_nxt  = laser_right;
-                    end       
+                else begin              //expand left and right borders of laser with delay between expansions to slow down
+                    if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
+                        laser_left_nxt = laser_left - 1;
+                        laser_right_nxt = laser_right + 1;
+                        counter_on_laser_nxt = 0;
+                        end
+                    else begin
+                        counter_on_laser_nxt = counter_on_laser + 1;
+                        laser_left_nxt  = laser_left;
+                        laser_right_nxt  = laser_right;
+                        end
+                    end        
             end 
         end
         
@@ -259,17 +287,31 @@ always @* begin
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
-            else begin                                                      //expand left and right borders of laser with delay between expansions to slow down the expansion
-                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin
-                    laser_left_nxt = laser_left - 1;
-                    laser_right_nxt = laser_right + 1;
-                    counter_on_laser_nxt = 0;
+            else begin                                                      
+                if ((laser_left == RIGHT_LASER_LEFT) && (laser_right == RIGHT_LASER_RIGHT)) begin //after spawning laser wait
+                    if (counter_on_laser >= COUNTER_BETWEEN_LASERS_VALUE) begin  
+                        laser_left_nxt = laser_left - 1;
+                        laser_right_nxt = laser_right + 1;
+                        counter_on_laser_nxt = 0;
+                        end
+                    else begin
+                        counter_on_laser_nxt = counter_on_laser + 1;
+                        laser_left_nxt  = laser_left;
+                        laser_right_nxt  = laser_right;
+                        end
                     end
-                else begin
-                    counter_on_laser_nxt = counter_on_laser + 1;
-                    laser_left_nxt  = laser_left;
-                    laser_right_nxt  = laser_right;
-                    end       
+                else begin              //expand left and right borders of laser with delay between expansions to slow down
+                    if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
+                        laser_left_nxt = laser_left - 1;
+                        laser_right_nxt = laser_right + 1;
+                        counter_on_laser_nxt = 0;
+                        end
+                    else begin
+                        counter_on_laser_nxt = counter_on_laser + 1;
+                        laser_left_nxt  = laser_left;
+                        laser_right_nxt  = laser_right;
+                        end
+                    end         
             end
         end        
             
