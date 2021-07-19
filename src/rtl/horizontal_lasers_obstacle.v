@@ -41,15 +41,26 @@ module horizontal_lasers_obstacle(
   output reg [11:0] obstacle_y,
   output reg done
   );
-localparam LASER_LEFT   = 361,
-           LASER_RIGHT  = 661;
+  
+localparam COUNTER_ON_LASER_VALUE = 3200000,
+           COUNTER_BETWEEN_LASERS_VALUE = 32000000;
 
-localparam DX           = 1;
+localparam LASER_LEFT           = 361,
+           LASER_RIGHT          = 661;
+           
+localparam TOP_LASER_TOP        = 367,
+           TOP_LASER_BOTTOM     = 368,
+           MIDDLE_LASER_TOP     = 467,
+           MIDDLE_LASER_BOTTOM  = 468,
+           BOTTOM_LASER_TOP     = 567,
+           BOTTOM_LASER_BOTTOM  = 568;
+           
+localparam DX                   = 1;
 
-localparam IDLE         = 2'b00,
-           DRAW_LEFT    = 2'b01,
-           DRAW_MIDDLE  = 2'b10,
-           DRAW_RIGHT   = 2'b11;
+localparam IDLE                 = 2'b00,
+           DRAW_TOP             = 2'b01,
+           DRAW_MIDDLE          = 2'b10,
+           DRAW_BOTTOM          = 2'b11;
            
 
 reg [11:0] rgb_nxt;
@@ -106,23 +117,23 @@ always @* begin
             done_nxt = 0;
             obstacle_counter_nxt = 0;
             if (done_control) begin
-                state_nxt = ((selected == 4'b0010) && play_selected) ? DRAW_LEFT : IDLE;
-                laser_top_nxt = 367;
-                laser_bottom_nxt = 368;
+                state_nxt = ((selected == 4'b0010) && play_selected) ? DRAW_TOP : IDLE;
+                laser_top_nxt = TOP_LASER_TOP;
+                laser_bottom_nxt = TOP_LASER_BOTTOM;
             end
             else begin
                 state_nxt = IDLE;
             end
         end
             
-        DRAW_LEFT: begin
+        DRAW_TOP: begin
             done_nxt = 0;
             working_nxt = 1;
             if (menu_on || !play_selected) begin
                 state_nxt = IDLE;
                 end
             else 
-                state_nxt = DRAW_LEFT;
+                state_nxt = DRAW_TOP;
                 
             //draw top laser
             if (hcount_in <= LASER_RIGHT && hcount_in >= LASER_LEFT && vcount_in >= laser_top && vcount_in <= laser_bottom) begin
@@ -133,16 +144,16 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                             
-            if ((laser_top <= 337 ) && (laser_bottom >= 398)) begin         //move to next laser after delay and when reached set size (border +- 30)
-                if (counter_between_lasers == 32000000) begin               
+            if ((laser_top <= TOP_LASER_TOP - 30 ) && (laser_bottom >= TOP_LASER_BOTTOM + 30)) begin         //move to next laser after delay and when reached set size (border +- 30)
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
                     if (obstacle_counter >= 15) begin                         
                         state_nxt = IDLE;
                         done_nxt = 1;
                         end
                     else begin
                         state_nxt = DRAW_MIDDLE;
-                        laser_top_nxt = 467;
-                        laser_bottom_nxt = 468;
+                        laser_top_nxt = MIDDLE_LASER_TOP;
+                        laser_bottom_nxt = MIDDLE_LASER_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter + 1;
                         end
                     end
@@ -150,7 +161,7 @@ always @* begin
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
             else begin                                      //expand top and bottom borders of laser with delay between expansions to slow down
-                if (counter_on_laser >= 3200000) begin  
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
                     laser_top_nxt = laser_top - 1;
                     laser_bottom_nxt = laser_bottom + 1;
                     counter_on_laser_nxt = 0;
@@ -180,24 +191,24 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_top <= 437 ) && (laser_bottom >= 498)) begin         //move to next laser after delay and when reached set size (border +- 30)
-                if (counter_between_lasers == 32000000) begin
+            if ((laser_top <= MIDDLE_LASER_TOP - 30 ) && (laser_bottom >= MIDDLE_LASER_BOTTOM + 30)) begin     //move to next laser after delay and when reached set size (border +- 30)
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin
                     if (obstacle_counter == 9) begin                        
-                        state_nxt = DRAW_LEFT;
-                        laser_top_nxt = 367;
-                        laser_bottom_nxt = 368;
+                        state_nxt = DRAW_TOP;
+                        laser_top_nxt = TOP_LASER_TOP;
+                        laser_bottom_nxt = TOP_LASER_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter_nxt + 1;
                         end
                     if (obstacle_counter == 12) begin                        
                         state_nxt = DRAW_MIDDLE;
-                        laser_top_nxt = 467;
-                        laser_bottom_nxt = 468;
+                        laser_top_nxt = MIDDLE_LASER_TOP;
+                        laser_bottom_nxt = MIDDLE_LASER_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter_nxt + 1;
                         end
                     else begin
-                        laser_top_nxt = 567;
-                        laser_bottom_nxt = 568;
-                        state_nxt = DRAW_RIGHT;
+                        laser_top_nxt = BOTTOM_LASER_TOP;
+                        laser_bottom_nxt = BOTTOM_LASER_BOTTOM;
+                        state_nxt = DRAW_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter_nxt + 1;
                         end
                     end  
@@ -205,7 +216,7 @@ always @* begin
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
             else begin                                                      //expand top and bottom borders of laser with delay between expansions to slow down the expansion
-                if (counter_on_laser >= 3200000) begin              
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin              
                     laser_top_nxt = laser_top - 1;
                     laser_bottom_nxt = laser_bottom + 1;
                     counter_on_laser_nxt = 0;
@@ -218,13 +229,13 @@ always @* begin
             end 
         end
         
-        DRAW_RIGHT: begin
+        DRAW_BOTTOM: begin
             working_nxt = 1;
             if (menu_on || !play_selected) begin
                 state_nxt = IDLE;
                 end
             else 
-                state_nxt = DRAW_RIGHT;
+                state_nxt = DRAW_BOTTOM;
             
             //draw right laser
             if (hcount_in <= LASER_RIGHT && hcount_in >= LASER_LEFT && vcount_in >= laser_top && vcount_in <= laser_bottom)begin
@@ -235,38 +246,38 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_top <= 537 ) && (laser_bottom >= 597)) begin         //move to next laser after delay and when reached set size (border +- 30)
-                if (counter_between_lasers == 32000000) begin               
+            if ((laser_top <= BOTTOM_LASER_TOP - 30 ) && (laser_bottom >= BOTTOM_LASER_BOTTOM + 30 )) begin         //move to next laser after delay and when reached set size (border +- 30)
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
                     if (obstacle_counter == 8) begin                             
                         state_nxt = DRAW_MIDDLE;                               
-                        laser_top_nxt = 467;
-                        laser_bottom_nxt = 468;
+                        laser_top_nxt = MIDDLE_LASER_TOP;
+                        laser_bottom_nxt = MIDDLE_LASER_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter + 1;                                
                         end
                     else if (obstacle_counter > 9) begin
-                        laser_top_nxt = 367;
-                        laser_bottom_nxt = 368;
+                        laser_top_nxt = TOP_LASER_TOP;
+                        laser_bottom_nxt = TOP_LASER_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter + 1;            
-                        state_nxt = DRAW_LEFT;
+                        state_nxt = DRAW_TOP;
                         end                    
                     else if (obstacle_counter > 4) begin
-                        laser_top_nxt = 467;
-                        laser_bottom_nxt = 468;
+                        laser_top_nxt = MIDDLE_LASER_TOP;
+                        laser_bottom_nxt = MIDDLE_LASER_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter + 1;            
                         state_nxt = DRAW_MIDDLE;
                         end
                     else begin
-                        laser_top_nxt = 367;
-                        laser_bottom_nxt = 368;
+                        laser_top_nxt = TOP_LASER_TOP;
+                        laser_bottom_nxt = TOP_LASER_BOTTOM;
                         obstacle_counter_nxt = obstacle_counter + 1;            
-                        state_nxt = DRAW_LEFT;
+                        state_nxt = DRAW_TOP;
                         end                   
                     end
                 else
                     counter_between_lasers_nxt = counter_between_lasers + 1;
                 end
             else begin                                                      //expand top and bottom  borders of laser with delay between expansions to slow down the expansion
-                if (counter_on_laser >= 3200000) begin
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin
                     laser_top_nxt = laser_top - 1;
                     laser_bottom_nxt = laser_bottom + 1;
                     counter_on_laser_nxt = 0;
