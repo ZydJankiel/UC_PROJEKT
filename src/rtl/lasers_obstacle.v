@@ -55,8 +55,6 @@ localparam LEFT_LASER_LEFT      = 411,
            RIGHT_LASER_LEFT     = 611,
            RIGHT_LASER_RIGHT    = 612;           
 
-localparam DX           = 1;
-
 localparam IDLE         = 2'b00,
            DRAW_LEFT    = 2'b01,
            DRAW_MIDDLE  = 2'b10,
@@ -101,16 +99,16 @@ always @(posedge pclk) begin
 end
 
 always @* begin
-    rgb_nxt = rgb_in;
-    state_nxt = IDLE;
-    counter_between_lasers_nxt = 0;
-    counter_on_laser_nxt = 0;
-    laser_left_nxt  = laser_left;
-    laser_right_nxt  = laser_right;
-    obstacle_x_nxt = 0;
-    obstacle_y_nxt = 0;
-    done_nxt = 0;
-    bounce_back_nxt = bounce_back;
+    rgb_nxt                     = rgb_in;
+    state_nxt                   = IDLE;
+    counter_between_lasers_nxt  = 0;
+    counter_on_laser_nxt        = 0;
+    laser_left_nxt              = laser_left;
+    laser_right_nxt             = laser_right;
+    obstacle_x_nxt              = 0;
+    obstacle_y_nxt              = 0;
+    done_nxt                    = 0;
+    bounce_back_nxt             = bounce_back;
     case (state)
         IDLE: begin
             working_nxt = 0;

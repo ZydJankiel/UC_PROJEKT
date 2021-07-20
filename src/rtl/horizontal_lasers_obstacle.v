@@ -54,8 +54,6 @@ localparam TOP_LASER_TOP        = 367,
            MIDDLE_LASER_BOTTOM  = 468,
            BOTTOM_LASER_TOP     = 567,
            BOTTOM_LASER_BOTTOM  = 568;
-           
-localparam DX                   = 1;
 
 localparam IDLE                 = 2'b00,
            DRAW_TOP             = 2'b01,
@@ -101,16 +99,16 @@ always @(posedge pclk) begin
 end
 
 always @* begin
-    rgb_nxt = rgb_in;
-    state_nxt = IDLE;
-    counter_between_lasers_nxt = 0;
-    counter_on_laser_nxt = 0;
-    laser_top_nxt  = laser_top;
-    laser_bottom_nxt  = laser_bottom;
-    obstacle_x_nxt = 0;
-    obstacle_y_nxt = 0;
-    done_nxt = 0;
-    obstacle_counter_nxt = obstacle_counter;
+    rgb_nxt                     = rgb_in;
+    state_nxt                   = IDLE;
+    counter_between_lasers_nxt  = 0;
+    counter_on_laser_nxt        = 0;
+    laser_top_nxt               = laser_top;
+    laser_bottom_nxt            = laser_bottom;
+    obstacle_x_nxt              = 0;
+    obstacle_y_nxt              = 0;
+    done_nxt                    = 0;
+    obstacle_counter_nxt        = obstacle_counter;
     case (state)
         IDLE: begin
             working_nxt = 0;
@@ -145,8 +143,9 @@ always @* begin
                 rgb_nxt = rgb_in;
                             
             if ((laser_top <= TOP_LASER_TOP - 30 ) && (laser_bottom >= TOP_LASER_BOTTOM + 30)) begin         //move to next laser after delay and when reached set size (border +- 30)
-                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
-                    if (obstacle_counter >= 15) begin                         
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin 
+                    if (obstacle_counter != 0) begin            
+                    //if (obstacle_counter >= 15) begin                         
                         state_nxt = IDLE;
                         done_nxt = 1;
                         end

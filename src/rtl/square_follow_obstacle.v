@@ -1,0 +1,233 @@
+`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 20.07.2021 13:04:21
+// Design Name: 
+// Module Name: square_follow_obstacle
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+/*
+*MO-created module
+*
+*/
+
+
+module square_follow_obstacle(
+  input wire [11:0] vcount_in,
+  input wire [11:0] hcount_in,
+  input wire pclk,
+  input wire rst,
+  input wire game_on,
+  input wire menu_on,
+  input wire [11:0] rgb_in,
+  input wire play_selected,
+  input wire [3:0] selected,
+  input wire done_control,
+  
+  output reg working,
+  output reg [11:0] rgb_out,
+  output reg [11:0] obstacle_x,
+  output reg [11:0] obstacle_y,
+  output reg done
+);
+  
+localparam COUNTER_ON_LASER_VALUE       = 3200000,
+           COUNTER_BETWEEN_LASERS_VALUE = 32000000;
+
+localparam GAME_FIELD_TOP       = 317,
+           GAME_FIELD_BOTTOM    = 617,
+           GAME_FIELD_LEFT      = 361,
+           GAME_FIELD_RIGHT     = 661;
+          
+
+localparam IDLE                 = 3'b000,
+           CLOSE_IN             = 3'b001,
+           MOVE_TO_RIGHT_TOP    = 3'b010,
+           MOVE_TO_RIGHT_BOTTOM = 3'b011,
+           MOVE_TO_LEFT_TOP     = 3'b100,
+           MOVE_TO_LEFT_MIDDLE  = 3'b101,
+           MOVE_TO_CENTER       = 3'b110;
+           
+reg [25:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser, counter_on_laser_nxt;
+reg [11:0] rgb_nxt;
+reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
+reg [2:0] state, state_nxt;
+reg done_nxt, working_nxt;
+
+
+reg [10:0] square_hole_top, square_hole_bottom, square_hole_left, square_hole_right, square_hole_top_nxt, square_hole_bottom_nxt, square_hole_left_nxt, square_hole_right_nxt;
+
+always @(posedge pclk) begin
+    if (rst) begin
+        state                   <= IDLE;
+        rgb_out                 <= 0; 
+        obstacle_x              <= 0;
+        obstacle_y              <= 0;
+        square_hole_top         <= 0;
+        square_hole_bottom      <= 0;
+        square_hole_left        <= 0;
+        square_hole_right       <= 0;
+        counter_between_lasers  <= 0;
+        counter_on_laser        <= 0;
+        done                    <= 0;
+        working                 <= 0;
+    end
+    else begin
+        state                   <= state_nxt;
+        rgb_out                 <= rgb_nxt;
+        obstacle_x              <= obstacle_x_nxt;
+        obstacle_y              <= obstacle_y_nxt;
+        square_hole_top         <= square_hole_top_nxt;
+        square_hole_bottom      <= square_hole_bottom_nxt;
+        square_hole_left        <= square_hole_left_nxt;
+        square_hole_right       <= square_hole_right_nxt;
+        counter_between_lasers  <= counter_between_lasers_nxt;
+        counter_on_laser        <= counter_on_laser_nxt;
+        done                    <= done_nxt;
+        working                 <= working_nxt;
+    end
+end
+
+always @* begin
+    rgb_nxt                     = rgb_in;
+    state_nxt                   = IDLE;
+    counter_between_lasers_nxt  = counter_between_lasers;
+    counter_on_laser_nxt        = 0;
+    square_hole_top_nxt         = square_hole_top;
+    square_hole_bottom_nxt      = square_hole_bottom;
+    square_hole_left_nxt        = square_hole_left;
+    square_hole_right_nxt       = square_hole_right;
+    obstacle_x_nxt              = 0;
+    obstacle_y_nxt              = 0;
+    done_nxt                    = 0;
+    working_nxt                 = 1;
+    case (state)
+        IDLE: begin
+            working_nxt = 0;
+
+            if (done_control) begin
+                state_nxt = ((selected == 4'b0011) && play_selected) ? CLOSE_IN : IDLE;
+                square_hole_top_nxt = GAME_FIELD_TOP + 1;
+                square_hole_bottom_nxt = GAME_FIELD_BOTTOM - 1;
+                square_hole_left_nxt = GAME_FIELD_LEFT + 1;
+                square_hole_right_nxt = GAME_FIELD_RIGHT - 1;
+                counter_between_lasers_nxt = 0;
+            end
+            else begin
+                state_nxt = IDLE;
+            end
+        end
+        
+        CLOSE_IN: begin
+            if (menu_on || !play_selected) begin
+                state_nxt = IDLE;
+                end
+            else 
+                state_nxt = CLOSE_IN;
+            
+            if ((hcount_in <= GAME_FIELD_RIGHT && hcount_in >= GAME_FIELD_LEFT && vcount_in >= GAME_FIELD_TOP && vcount_in <= square_hole_top)  ||
+                (hcount_in <= GAME_FIELD_RIGHT && hcount_in >= GAME_FIELD_LEFT && vcount_in >= square_hole_bottom && vcount_in <= GAME_FIELD_BOTTOM) ||
+                (hcount_in <= GAME_FIELD_RIGHT && hcount_in >= square_hole_right && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) ||
+                (hcount_in <= square_hole_left && hcount_in >= GAME_FIELD_LEFT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM)) begin
+                //begin
+                rgb_nxt = 12'hf_f_0;
+                obstacle_x_nxt = hcount_in;
+                obstacle_y_nxt = vcount_in;
+                end
+            else
+                rgb_nxt = rgb_in;
+                                 
+            if (square_hole_top >= GAME_FIELD_TOP + 125 ) begin         //move to next state after delay when size conditions are met 
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE)               
+                    state_nxt = MOVE_TO_RIGHT_TOP;
+                else
+                    counter_between_lasers_nxt = counter_between_lasers + 1;  
+                    
+            end
+            else begin          //expand borders with delay between expansions to slow down   
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
+                    square_hole_top_nxt = square_hole_top + 1;          // "-" to go up, "+" to go down 
+                    square_hole_bottom_nxt = square_hole_bottom - 1;    // "-" to go up, "+" to go down 
+                    square_hole_left_nxt = square_hole_left + 1;        // "-" to go left, "+" to go right
+                    square_hole_right_nxt = square_hole_right - 1;      // "-" to go left, "+" to go right
+                    counter_on_laser_nxt = 0;
+                    end
+                else begin
+                    counter_on_laser_nxt = counter_on_laser + 1;
+                    square_hole_top_nxt = square_hole_top;
+                    square_hole_bottom_nxt = square_hole_bottom;
+                    square_hole_left_nxt = square_hole_left;
+                    square_hole_right_nxt = square_hole_right;
+                    end
+            end 
+         end
+         
+         MOVE_TO_RIGHT_TOP: begin
+            if (menu_on || !play_selected) begin
+                state_nxt = IDLE;
+                end
+            else 
+                state_nxt = MOVE_TO_RIGHT_TOP;
+            
+            if ((hcount_in <= GAME_FIELD_RIGHT && hcount_in >= GAME_FIELD_LEFT && vcount_in >= GAME_FIELD_TOP && vcount_in <= square_hole_top)  ||
+                (hcount_in <= GAME_FIELD_RIGHT && hcount_in >= GAME_FIELD_LEFT && vcount_in >= square_hole_bottom && vcount_in <= GAME_FIELD_BOTTOM) ||
+                (hcount_in <= GAME_FIELD_RIGHT && hcount_in >= square_hole_right && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) ||
+                (hcount_in <= square_hole_left && hcount_in >= GAME_FIELD_LEFT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM)) begin
+                //begin
+                rgb_nxt = 12'h0_0_f;
+                obstacle_x_nxt = hcount_in;
+                obstacle_y_nxt = vcount_in;
+                end
+            else
+                rgb_nxt = rgb_in;
+                
+                
+            if (square_hole_right >= GAME_FIELD_RIGHT ) begin         //move to next state after delay when size conditions are met 
+                if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
+                    state_nxt = MOVE_TO_RIGHT_BOTTOM;
+                    end
+                else
+                    counter_between_lasers_nxt = counter_between_lasers + 1;
+            end
+            else begin          //expand borders with delay between expansions to slow down   
+                if (counter_on_laser >= COUNTER_ON_LASER_VALUE) begin  
+                   square_hole_top_nxt = square_hole_top -1;            // "-" to go up, "+" to go down 
+                   square_hole_bottom_nxt = square_hole_bottom - 1;     // "-" to go up, "+" to go down
+                   square_hole_left_nxt = square_hole_left + 1;         // "-" to go left, "+" to go right
+                   square_hole_right_nxt = square_hole_right + 1;       // "-" to go left, "+" to go right
+                   counter_on_laser_nxt = 0;
+                   end
+                else begin
+                   counter_on_laser_nxt = counter_on_laser + 1;
+                   square_hole_top_nxt = square_hole_top;
+                   square_hole_bottom_nxt = square_hole_bottom;
+                   square_hole_left_nxt = square_hole_left;
+                   square_hole_right_nxt = square_hole_right;
+                   end
+            end 
+        end
+        
+        MOVE_TO_RIGHT_BOTTOM: begin  
+            state_nxt = MOVE_TO_RIGHT_BOTTOM;
+            if (hcount_in <= 350 && hcount_in >= 300 && vcount_in >= 300 && vcount_in <= 350) begin
+                rgb_nxt = 12'h0_f_0;
+                end
+            else
+                rgb_nxt = rgb_in;
+        end 
+    
+    endcase
+end  
+endmodule

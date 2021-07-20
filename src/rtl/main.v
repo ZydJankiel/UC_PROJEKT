@@ -223,12 +223,7 @@ horizontal_lasers_obstacle horizontal_lasers_obstacle(
     .done(done_obs2)
 );
 
-obstacle1 #(.TEST_TOP_LINE(500),
-                 .TEST_BOTTOM_LINE(400),
-                 .TEST_LEFT_LINE(400), 
-                 .TEST_RIGHT_LINE(500),
-                 .COLOR(12'h0_0_f),
-                 .SELECT_CODE(4'b0011)) rectangle3_obstacle(
+square_follow_obstacle square_follow_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
