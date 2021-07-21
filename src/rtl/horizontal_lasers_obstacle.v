@@ -144,8 +144,8 @@ always @* begin
                             
             if ((laser_top <= TOP_LASER_TOP - 30 ) && (laser_bottom >= TOP_LASER_BOTTOM + 30)) begin         //move to next laser after delay and when reached set size (border +- 30)
                 if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin 
-                    if (obstacle_counter != 0) begin            
-                    //if (obstacle_counter >= 15) begin                         
+                    //if (obstacle_counter != 0) begin            // when uncommented this obstacle will only go UP>MID>DOWN>UP and then end its work , used to speed up testing
+                    if (obstacle_counter >= 15) begin                         
                         state_nxt = IDLE;
                         done_nxt = 1;
                         end
