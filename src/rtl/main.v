@@ -256,8 +256,8 @@ mouse_follower_obstacle mouse_follower_obstacle(
     .selected(selected_obstacle),
     .done_control(done_control),
     
-    .mouse_x_pos(xpos_out_mouseCtl),
-    .mouse_y_pos(ypos_out_mouseCtl),
+    .mouse_xpos(xpos_out_mouseCtl),
+    .mouse_ypos(ypos_out_mouseCtl),
   //outputs  
     .working(work4),
     .obstacle_x(obstacle4_x_out),
