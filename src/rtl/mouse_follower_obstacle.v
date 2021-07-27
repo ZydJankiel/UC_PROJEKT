@@ -57,6 +57,7 @@ reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [1:0] state, state_nxt;
 reg done_nxt, working_nxt; 
 
+
 reg [6:0] enemy_size, enemy_size_nxt;
 
 always @(posedge pclk) begin
@@ -115,7 +116,7 @@ always @* begin
             else 
                 state_nxt = ENEMY_SPAWN;
                 
-            if ((hcount_in - 500)*(hcount_in - 500) + (vcount_in - 500)*(vcount_in - 500) < 10*10) rgb_nxt = 12'hf_f_0;
+            if ((hcount_in >= 200) && ((hcount_in - 500)*(hcount_in - 500) + (vcount_in - 500)*(vcount_in - 500) < 15*15) ) rgb_nxt = 12'hf_f_0;
         end
         
     endcase
