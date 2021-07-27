@@ -1,5 +1,6 @@
 // The module delays the input data 'din' by the number of clock cycles
 // set by CLK_DEL input parameter
+// This module is from our laboratories.
 module delay
     #( parameter
         WIDTH   = 8, // bit width of the input/output data
@@ -9,6 +10,7 @@ module delay
         input  wire                   clk, // posedge active clock
         input  wire                   rst, // ASYNC reset active HIGH
         input  wire [ WIDTH - 1 : 0 ] din, // data to be delayed
+        
         output wire [ WIDTH - 1 : 0 ] dout // delayed data
     );
 

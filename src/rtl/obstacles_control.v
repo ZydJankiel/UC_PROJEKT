@@ -1,4 +1,5 @@
-module obstacles_control #(parameter NUM_BITS = 3)
+module obstacles_control 
+    #(parameter NUM_BITS = 3)
     (
         input wire clk,
         input wire rst,
@@ -15,11 +16,11 @@ module obstacles_control #(parameter NUM_BITS = 3)
     always @(posedge clk) begin
         if (rst) begin
             obstacle_code <= 0;
-            done_out <= 0;
+            done_out      <= 0;
         end
         else begin
             obstacle_code <= code_nxt;
-            done_out <= done_out_nxt;
+            done_out      <= done_out_nxt;
         end
     end
 
@@ -39,6 +40,7 @@ module obstacles_control #(parameter NUM_BITS = 3)
             code_nxt = obstacle_code;
             done_out_nxt = 0;
         end
+        
         if (!play_selected) begin
             code_nxt = 0;
             done_out_nxt = 0;

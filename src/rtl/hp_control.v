@@ -27,35 +27,36 @@
 * health resets after death and after exiting to menu
 */
 
-module hp_control #( parameter
-    TOP_V_LINE     = 367,
-    BOTTOM_V_LINE  = 667,
-    LEFT_H_LINE    = 361,
-    RIGHT_H_LINE   = 661,
-    BORDER         = 10,
-    MAX_DMG_TAKEN  = 5
+module hp_control 
+    #( parameter
+        TOP_V_LINE     = 367,
+        BOTTOM_V_LINE  = 667,
+        LEFT_H_LINE    = 361,
+        RIGHT_H_LINE   = 661,
+        BORDER         = 10,
+        MAX_DMG_TAKEN  = 5
     )
     (
-    input wire [11:0] rgb_in_hp,
-    input wire [11:0] vcount_in_hp,
-    input wire vsync_in_hp,
-    input wire vblnk_in_hp,
-    input wire [11:0] hcount_in_hp,
-    input wire hsync_in_hp,
-    input wire hblnk_in_hp,
-    input wire pclk,
-    input wire rst,
-    input wire game_on_hp,
-    input wire player_hit, //input for future uses to signal control unit that players has taken dmg, currently T17 button
-    
-    output reg [11:0] vcount_out_hp,
-    output reg vsync_out_hp,
-    output reg vblnk_out_hp,
-    output reg [11:0] hcount_out_hp,
-    output reg hsync_out_hp,
-    output reg hblnk_out_hp,
-    output reg [11:0] rgb_out_hp,
-    output reg game_over
+        input wire [11:0] rgb_in_hp,
+        input wire [11:0] vcount_in_hp,
+        input wire vsync_in_hp,
+        input wire vblnk_in_hp,
+        input wire [11:0] hcount_in_hp,
+        input wire hsync_in_hp,
+        input wire hblnk_in_hp,
+        input wire pclk,
+        input wire rst,
+        input wire game_on_hp,
+        input wire player_hit, //input for future uses to signal control unit that players has taken dmg, currently T17 button
+        
+        output reg [11:0] vcount_out_hp,
+        output reg vsync_out_hp,
+        output reg vblnk_out_hp,
+        output reg [11:0] hcount_out_hp,
+        output reg hsync_out_hp,
+        output reg hblnk_out_hp,
+        output reg [11:0] rgb_out_hp,
+        output reg game_over
     );
 
 localparam TOP_HP = BOTTOM_V_LINE + BORDER + 60,
@@ -100,35 +101,36 @@ always @(posedge pclk) begin
         end
 end
 
-always@(*) begin
+always @* begin
     game_over_nxt = 0;
     rgb_nxt = rgb_in_hp;
     curr_dmg_nxt = 0;
+    
     case (state) 
         OFF : begin
             if (game_on_hp) 
                 state_nxt = GAME;
             else
                 state_nxt = OFF; 
-            end
+                
+        end
 
         GAME : begin
-            if (!game_on_hp) begin
+            if (!game_on_hp)
                 state_nxt = OFF;
-                end
-             else if (curr_dmg == MAX_DMG_TAKEN) begin
-                 //You are dead, not big surprise
+            else if (curr_dmg == MAX_DMG_TAKEN) begin
+                //You are dead, not big surprise
                 state_nxt = OFF;
                 game_over_nxt = 1;
-                end    
-             else if (player_hit) begin
+            end    
+            else if (player_hit) begin
                 curr_dmg_nxt = curr_dmg + 1;
                 state_nxt = GAME; 
-                end  
-             else begin   
+            end  
+            else begin   
                 curr_dmg_nxt = curr_dmg;
                 state_nxt = GAME;
-                end  
+            end  
       
             //drawing   
             // HP BAR FRAME
@@ -140,13 +142,12 @@ always@(*) begin
                 end
                 // HP BAR 
                 //each HP point is 60 pixels wide - this draws green rectangle with right border calculated based on current HP
-            else if (curr_dmg < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP && hcount_in_hp <= (RIGHT_HP - ( curr_dmg*60 ) ) && vcount_in_hp >= TOP_HP && vcount_in_hp <= BOTTOM_HP ) ) begin
+            else if (curr_dmg < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP && hcount_in_hp <= (RIGHT_HP - ( curr_dmg*60 ) ) && vcount_in_hp >= TOP_HP && vcount_in_hp <= BOTTOM_HP ) )
                 rgb_nxt = 12'h0_f_0;
-                end
-            else begin
+            else
                 rgb_nxt = rgb_in_hp; 
-                end
-            end
+            
+        end
     endcase           
 end
 

@@ -8,27 +8,27 @@
 */
 
 module top (
-  input wire clk,
-  input wire rst,
-  input wire rx,
-  input wire game_over,
-  input wire player_ready,
-  input wire multiplayer,
-  
-  output wire tx,
-  output wire [7:0] curr_char_out,
-  output wire [3:0] an,
-  output wire [7:0] seg
+    input wire clk,
+    input wire rst,
+    input wire rx,
+    input wire game_over,
+    input wire player_ready,
+    input wire multiplayer,
+    
+    output wire tx,
+    output wire [7:0] curr_char_out,
+    output wire [3:0] an,
+    output wire [7:0] seg
 );
 
-  reg tx_nxt;
-  wire [7:0] r_data;
-  wire rx_done;
-  reg [7:0] message, message_nxt;
-  reg game_over_reg, game_over_reg_nxt;
-  reg player_ready_reg, player_ready_reg_nxt;
+reg tx_nxt;
+wire [7:0] r_data;
+wire rx_done;
+reg [7:0] message, message_nxt;
+reg game_over_reg, game_over_reg_nxt;
+reg player_ready_reg, player_ready_reg_nxt;
 
-  uart my_uart(
+uart my_uart(
     .clk(clk), 
     .reset(rst),
     .rd_uart(~game_over_reg), 
@@ -40,9 +40,9 @@ module top (
     .tx(tx),
     .r_data(r_data),
     .current_char(curr_char_out)
-  );
-  
-  disp_hex_mux my_disp(
+);
+
+disp_hex_mux my_disp(
     .clk(clk), 
     .reset(rst),
     .hex3(curr_char_out[7:4]), 
@@ -52,8 +52,8 @@ module top (
     .dp_in(4'b1111),
     .an(an), 
     .sseg(seg)
-  );
-  
+);
+
   
 always @ (posedge clk) begin
     if (rst )begin
