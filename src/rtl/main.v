@@ -243,12 +243,7 @@ square_follow_obstacle square_follow_obstacle(
     .done(done_obs3)
 );
 
-obstacle1 #(.TEST_TOP_LINE(500),
-                 .TEST_BOTTOM_LINE(400),
-                 .TEST_LEFT_LINE(450), 
-                 .TEST_RIGHT_LINE(550),
-                 .COLOR(12'h8_8_8),
-                 .SELECT_CODE(4'b0100)) rectangle4_obstacle(
+mouse_follower_obstacle mouse_follower_obstacle(
 //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
@@ -260,6 +255,9 @@ obstacle1 #(.TEST_TOP_LINE(500),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
     .done_control(done_control),
+    
+    .mouse_x_pos(xpos_out_mouseCtl),
+    .mouse_y_pos(ypos_out_mouseCtl),
   //outputs  
     .working(work4),
     .obstacle_x(obstacle4_x_out),

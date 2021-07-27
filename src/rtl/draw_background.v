@@ -189,6 +189,15 @@ localparam MENU_MODE    = 3'b000,
                 else if ((hcount_in > 720 && hcount_in <= 760 && vcount_in > 50 && vcount_in <= 210) ||
                 (hcount_in > 720 && hcount_in <= 840 && vcount_in > 210 && vcount_in <= 250) ||
                 (hcount_in > 800 && hcount_in <= 840 && vcount_in > 50 && vcount_in <= 210)) rgb_nxt = 12'hf_f_f;
+                
+                //circle test
+                //else if (((hcount_in-100)*(hcount_in-100)/((10)*(10)) + (vcount_in-100)*(vcount_in-100)/((20)*(20)) >= 1 && (hcount_in-100)*(hcount_in-100)/((15)*(15)) + (vcount_in-100)*(vcount_in-100)/((25)*(25)) <= 6)) rgb_nxt = 12'h0_f_0;
+                //^ by M.Karelus
+                
+                
+                //else if (/* (hcount_in >= 200 &&*/ (hcount_in - 500)*(hcount_in - 500) + (vcount_in - 500)*(vcount_in - 500) < 10*10 /*&& (hcount_in - 200) + (vcount_in - 200)*(vcount_in - 200) >= 25*25)*/ ) rgb_nxt = 12'h0_0_f;
+                //^by P.Kaczmarczyk
+                
                 else rgb_nxt = 12'h0_0_0;
                 
 
