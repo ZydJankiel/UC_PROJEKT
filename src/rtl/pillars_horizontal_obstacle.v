@@ -11,7 +11,7 @@ module pillars_horizontal_obstacle
     (
         input wire [11:0] vcount_in,
         input wire [11:0] hcount_in,
-        input wire pclk,
+        input wire clk,
         input wire rst,
         input wire game_on,
         input wire menu_on,
@@ -51,7 +51,7 @@ localparam PILLARS_MAX_NUMBER = 10;
 localparam IDLE  = 0,
            DRAW  = 1;
 
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         state           <= IDLE;
         rgb_out         <= 0; 

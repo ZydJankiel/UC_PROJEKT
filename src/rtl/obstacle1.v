@@ -15,7 +15,7 @@ module obstacle1
     (
         input wire [11:0] vcount_in,
         input wire [11:0] hcount_in,
-        input wire pclk,
+        input wire clk,
         input wire rst,
         input wire game_on,
         input wire menu_on,
@@ -43,7 +43,7 @@ localparam IDLE = 2'b00,
 localparam MAX_TIME = 3; //seconds
 localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
 
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         state        <= IDLE;
         rgb_out      <= 0; 

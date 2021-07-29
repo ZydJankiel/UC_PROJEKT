@@ -39,7 +39,7 @@ module draw_background
         input wire [11:0] hcount_in,
         input wire hsync_in,
         input wire hblnk_in,
-        input wire pclk,
+        input wire clk,
         input wire rst,
         input wire game_on,
         input wire menu_on,
@@ -77,7 +77,7 @@ localparam MENU_MODE    = 3'b000,
            GAME_OVER    = 3'b011,
            MULTI_WAIT   = 3'b100;
            
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         state <= MENU_MODE;
         hsync_out               <= 0;

@@ -27,7 +27,7 @@
 module square_follow_obstacle(
     input wire [11:0] vcount_in,
     input wire [11:0] hcount_in,
-    input wire pclk,
+    input wire clk,
     input wire rst,
     input wire game_on,
     input wire menu_on,
@@ -71,7 +71,7 @@ reg done_nxt, working_nxt;
 
 reg [10:0] square_hole_top, square_hole_bottom, square_hole_left, square_hole_right, square_hole_top_nxt, square_hole_bottom_nxt, square_hole_left_nxt, square_hole_right_nxt;
 
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         state                   <= IDLE;
         rgb_out                 <= 0; 

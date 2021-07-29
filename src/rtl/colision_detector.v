@@ -7,7 +7,7 @@
 * and it is faster to test.
 */
 module colision_detector (
-    input wire pclk,
+    input wire clk,
     input wire rst,
     input wire [11:0] obstacle_x_in,
     input wire [11:0] obstacle_y_in,
@@ -26,7 +26,7 @@ COUNT = 1;
 
 localparam MAX_COUNT = 32500000;
 
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         state      <= CHECK_DAMAGE;
         damage_out <= 0;

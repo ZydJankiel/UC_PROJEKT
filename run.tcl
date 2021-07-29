@@ -74,6 +74,9 @@ read_verilog {
     src/rtl/square_follow_obstacle.v
     src/rtl/mouse_follower_obstacle.v
     src/rtl/obstacles_counter.v
+    src/rtl/CORE.v
+    src/rtl/UART.v
+    src/rtl/MOUSE.v
 }
 
 read_vhdl {

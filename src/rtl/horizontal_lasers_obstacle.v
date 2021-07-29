@@ -26,7 +26,7 @@
 module horizontal_lasers_obstacle(
     input wire [11:0] vcount_in,
     input wire [11:0] hcount_in,
-    input wire pclk,
+    input wire clk,
     input wire rst,
     input wire game_on,
     input wire menu_on,
@@ -69,7 +69,7 @@ reg [24:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser,
 reg [5:0] obstacle_counter, obstacle_counter_nxt;
 reg done_nxt, working_nxt;
 
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         state                   <= IDLE;
         rgb_out                 <= 0; 

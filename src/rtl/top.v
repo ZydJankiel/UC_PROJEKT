@@ -28,7 +28,7 @@ reg [7:0] message, message_nxt;
 reg game_over_reg, game_over_reg_nxt;
 reg player_ready_reg, player_ready_reg_nxt;
 
-uart my_uart(
+uart_module my_uart(
     .clk(clk), 
     .reset(rst),
     .rd_uart(~game_over_reg), 

@@ -23,7 +23,7 @@
 module mouse_follower_obstacle(
     input wire [11:0] vcount_in,
     input wire [11:0] hcount_in,
-    input wire pclk,
+    input wire clk,
     input wire rst,
     input wire game_on,
     input wire menu_on,
@@ -71,7 +71,7 @@ reg [6:0] enemy_border, enemy_border_nxt;
 reg [11:0] enemy_center_x, enemy_center_x_nxt, enemy_center_y, enemy_center_y_nxt;
 reg [11:0] enemy2_center_x, enemy2_center_x_nxt, enemy2_center_y, enemy2_center_y_nxt;
 
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         state                   <= IDLE;
         rgb_out                 <= 0; 

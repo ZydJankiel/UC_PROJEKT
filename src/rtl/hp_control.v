@@ -44,7 +44,7 @@ module hp_control
         input wire [11:0] hcount_in_hp,
         input wire hsync_in_hp,
         input wire hblnk_in_hp,
-        input wire pclk,
+        input wire clk,
         input wire rst,
         input wire game_on_hp,
         input wire player_hit, //input for future uses to signal control unit that players has taken dmg, currently T17 button
@@ -74,7 +74,7 @@ reg [2:0] curr_dmg, curr_dmg_nxt;
 reg game_over_nxt;
 reg state, state_nxt;
 
-always @(posedge pclk) begin
+always @(posedge clk) begin
     if (rst) begin
         hsync_out_hp        <= 0;
         vsync_out_hp        <= 0;

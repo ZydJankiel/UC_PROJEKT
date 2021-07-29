@@ -11,7 +11,7 @@
 // using Verilog-2001 syntax.
 
 module vga_timing (
-    input wire pclk,
+    input wire clk,
     input wire rst,
     
     output reg [11:0] vcount,
@@ -45,7 +45,7 @@ localparam HOR_SYNC_TIME  = 136,
            VER_SYNC_TIME  = 6,
            VER_BLANC_TIME = 38;
 
-always@ (posedge pclk) begin
+always@ (posedge clk) begin
     if (rst) begin
         vcount <= 0;
         vsync  <= 0;
