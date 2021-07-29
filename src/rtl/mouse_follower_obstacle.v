@@ -34,7 +34,6 @@ module mouse_follower_obstacle(
     input wire [11:0] mouse_xpos,
     input wire [11:0] mouse_ypos,
     
-    output reg working,
     output reg [11:0] rgb_out,
     output reg [11:0] obstacle_x,
     output reg [11:0] obstacle_y,
@@ -63,7 +62,7 @@ reg [25:0] counter2_move_x, counter2_move_x_nxt, counter2_move_y, counter2_move_
 reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [1:0] state, state_nxt;
-reg done_nxt, working_nxt; 
+reg done_nxt;
 reg [30:0] obstacle_time_counter, obstacle_time_counter_nxt;
 
 //reg [6:0] enemy_size, enemy_size_nxt;         //for circle
@@ -83,7 +82,6 @@ always @(posedge clk) begin
         counter2_move_y         <= 0;      
         counter_growth          <= 0;
         done                    <= 0;
-        working                 <= 0;
         //enemy_size              <= 0;
         enemy_center_x          <= 0;
         enemy_center_y          <= 0;
@@ -103,7 +101,6 @@ always @(posedge clk) begin
         counter2_move_y         <= counter2_move_y_nxt;
         counter_growth          <= counter_growth_nxt;
         done                    <= done_nxt;
-        working                 <= working_nxt;
         //enemy_size              <= enemy_size_nxt;
         enemy_center_x          <= enemy_center_x_nxt;
         enemy_center_y          <= enemy_center_y_nxt;
@@ -123,7 +120,6 @@ always @* begin
     obstacle_x_nxt              = 0;
     obstacle_y_nxt              = 0;
     done_nxt                    = 0;
-    working_nxt                 = 1;
     //enemy_size_nxt              = enemy_size;
     enemy_center_x_nxt          = enemy_center_x;
     enemy_center_y_nxt          = enemy_center_y;
@@ -134,7 +130,6 @@ always @* begin
     
     case (state)
         IDLE: begin
-            working_nxt = 0;
 
             if (done_in) begin
                 state_nxt = ((selected == 4'b0100) && play_selected) ? ENEMY_SPAWN : IDLE;

@@ -36,7 +36,6 @@ module square_follow_obstacle(
     input wire [3:0] selected,
     input wire done_in,
     
-    output reg working,
     output reg [11:0] rgb_out,
     output reg [11:0] obstacle_x,
     output reg [11:0] obstacle_y,
@@ -66,7 +65,7 @@ reg [25:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser,
 reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [2:0] state, state_nxt;
-reg done_nxt, working_nxt;
+reg done_nxt;
 
 
 reg [10:0] square_hole_top, square_hole_bottom, square_hole_left, square_hole_right, square_hole_top_nxt, square_hole_bottom_nxt, square_hole_left_nxt, square_hole_right_nxt;
@@ -84,7 +83,6 @@ always @(posedge clk) begin
         counter_between_lasers  <= 0;
         counter_on_laser        <= 0;
         done                    <= 0;
-        working                 <= 0;
     end
     else begin
         state                   <= state_nxt;
@@ -102,7 +100,6 @@ always @(posedge clk) begin
         counter_between_lasers  <= counter_between_lasers_nxt;
         counter_on_laser        <= counter_on_laser_nxt;
         done                    <= done_nxt;
-        working                 <= working_nxt;
     end
 end
 
@@ -118,12 +115,9 @@ always @* begin
     obstacle_x_nxt              = 0;
     obstacle_y_nxt              = 0;
     done_nxt                    = 0;
-    working_nxt                 = 1;
     
     case (state)
         IDLE: begin
-        
-            working_nxt = 0;
 
             if (done_in) begin
                 state_nxt = ((selected == 4'b0011) && play_selected) ? CLOSE_IN : IDLE;

@@ -20,7 +20,6 @@ module pillars_horizontal_obstacle
         input wire [3:0] selected,
         input wire done_in,
         
-        output reg  working,
         output reg [11:0] rgb_out,
         output reg [11:0] obstacle_x,
         output reg [11:0] obstacle_y,
@@ -35,7 +34,7 @@ reg [9:0] pillar_left ,pillar_right ,pillar_left_nxt, pillar_right_nxt;
 reg flip,flip_nxt;
 reg [9:0] pillar_top, pillar_top_nxt;
 reg [9:0] pillar_bottom, pillar_bottom_nxt;
-reg done_nxt, working_nxt;
+reg done_nxt;
 reg [3:0] pillars_counter, pillars_counter_nxt;
 
 
@@ -64,7 +63,6 @@ always @(posedge clk) begin
         pillar_bottom   <= PILLAR_BOTTOM1;
         flip            <= 0;
         done            <= 0;
-        working         <= 0;
         pillars_counter <= 0;
     end
     else begin
@@ -79,7 +77,6 @@ always @(posedge clk) begin
         pillar_bottom   <=  pillar_bottom_nxt;
         pillar_top      <= pillar_top_nxt;
         done            <= done_nxt;
-        working         <= working_nxt;
         pillars_counter <= pillars_counter_nxt;
     end
 end
@@ -96,7 +93,6 @@ always @* begin
     pillar_top_nxt      = pillar_top;
     pillar_bottom_nxt   = pillar_bottom;
     done_nxt            = 0;
-    working_nxt         = 0;
     pillars_counter_nxt = pillars_counter;
     
     case(state)
@@ -118,7 +114,6 @@ always @* begin
         end
         
         DRAW: begin
-            working_nxt = 1;
             rgb_nxt = rgb_in;
             
             if (count <= MAX_COUNT) begin

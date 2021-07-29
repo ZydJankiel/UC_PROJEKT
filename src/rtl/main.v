@@ -10,7 +10,6 @@ module main (
     input wire menu_button,
     input wire victory_button,
     input wire game_over,
-    input wire [3:0] sw,
     input wire rx,
     
     output wire tx,
@@ -20,8 +19,7 @@ module main (
     output wire [7:0] seg,
     output wire [3:0] r,
     output wire [3:0] g,
-    output wire [3:0] b,
-    output wire [15:0] led
+    output wire [3:0] b
 );
 
 localparam  TOP_V_LINE      = 317,
@@ -64,7 +62,7 @@ wire victory_out_UART, opponent_ready_out_UART, tx_out_UART;
 
 //CORE WIRES
 wire [15:0] led_CORE;
-wire [11:0] led_out_CORE;
+wire [11:0] rgb_out_CORE;
 wire [2:0] mouse_mode_out_CORE;
 wire game_over_out_CORE, player_ready_out_CORE, play_selected_out_CORE, multiplayer_out_CORE;
 wire hsync_out_CORE, vsync_out_CORE;
@@ -76,10 +74,10 @@ CORE #( .TOP_V_LINE(TOP_V_LINE),
         
         .clk(pclk),
         .rst(locked_reset),
-        .game_button(),
-        .menu_button(),
-        .victory_button(),
-        .game_over_button(),
+        .game_button(game_button),
+        .menu_button(menu_button),
+        .victory_button(victory_button),
+        .game_over_button(game_over),
         .xpos(xpos_out_mouse),
         .ypos(ypos_out_mouse),
         .mouse_left(mouse_left),
@@ -93,8 +91,7 @@ CORE #( .TOP_V_LINE(TOP_V_LINE),
         .player_ready(player_ready_out_CORE),
         .play_selected(play_selected_out_CORE),
         .multiplayer(multiplayer_out_CORE),
-        .rgb_out(led_out_CORE),
-        .led(led_CORE)
+        .rgb_out(rgb_out_CORE)
     );
 
 MOUSE #( .TOP_V_LINE(TOP_V_LINE),
@@ -138,7 +135,7 @@ UART UART (
 
 assign hs = hsync_out_CORE;
 assign vs = vsync_out_CORE;
-assign {r,g,b} = led_out_CORE;
+assign {r,g,b} = rgb_out_CORE;
 assign led = led_CORE;
 assign an = an_out_UART;
 assign seg = seg_out_UART;

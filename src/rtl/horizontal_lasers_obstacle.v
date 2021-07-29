@@ -35,7 +35,6 @@ module horizontal_lasers_obstacle(
     input wire [3:0] selected,
     input wire done_in,
     
-    output reg working,
     output reg [11:0] rgb_out,
     output reg [11:0] obstacle_x,
     output reg [11:0] obstacle_y,
@@ -67,7 +66,7 @@ reg [1:0] state, state_nxt;
 reg [10:0] laser_top, laser_bottom, laser_top_nxt, laser_bottom_nxt;
 reg [24:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser, counter_on_laser_nxt;
 reg [5:0] obstacle_counter, obstacle_counter_nxt;
-reg done_nxt, working_nxt;
+reg done_nxt;
 
 always @(posedge clk) begin
     if (rst) begin
@@ -80,7 +79,6 @@ always @(posedge clk) begin
         counter_between_lasers  <= 0;
         counter_on_laser        <= 0;
         done                    <= 0;
-        working                 <= 0;
         obstacle_counter        <= 0;
     end
     else begin
@@ -93,7 +91,6 @@ always @(posedge clk) begin
         counter_between_lasers  <= counter_between_lasers_nxt;
         counter_on_laser        <= counter_on_laser_nxt;
         done                    <= done_nxt;
-        working                 <= working_nxt;
         obstacle_counter        <= obstacle_counter_nxt;
     end
 end
@@ -113,7 +110,6 @@ always @* begin
     case (state)
         IDLE: begin
         
-            working_nxt = 0;
             done_nxt = 0;
             obstacle_counter_nxt = 0;
             
@@ -130,7 +126,6 @@ always @* begin
         DRAW_TOP: begin
         
             done_nxt = 0;
-            working_nxt = 1;
             
             if (menu_on || !play_selected)
                 state_nxt = IDLE;
@@ -193,8 +188,6 @@ always @* begin
         end   
         
         DRAW_MIDDLE: begin
-        
-            working_nxt = 1;
             
             if (menu_on || !play_selected)
                 state_nxt = IDLE;
@@ -264,8 +257,6 @@ always @* begin
         end
         
         DRAW_BOTTOM: begin
-        
-            working_nxt = 1;
             
             if (menu_on || !play_selected)
                 state_nxt = IDLE;

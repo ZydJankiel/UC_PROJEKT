@@ -30,8 +30,7 @@ module CORE
         output wire player_ready,
         output wire play_selected,
         output wire multiplayer,
-        output wire [11:0] rgb_out,
-        output wire [15:0] led
+        output wire [11:0] rgb_out
     );
 
 wire [35:0] mux_out;
@@ -56,7 +55,6 @@ wire damage_out, game_over_hp;
 wire player_ready_back, multiplayer_back;
 
 wire done_obs0, done_obs1, done_obs2, done_obs3, done_obs4, done_obs5, done_obs6, done_obs7, done_control, done_counter;
-wire work7, work6, work5, work4, work3, work2, work1, work0;
 
 localparam  PLAY_BOX_X_POS  = 432,
             PLAY_BOX_Y_POS  = 400,
@@ -162,7 +160,6 @@ pillars_horizontal_obstacle #(.SELECT_CODE(4'b0000)) pillars_horizontal_obstacle
     .done_in(done_counter),
     
     //outputs  
-    .working(work0),
     .obstacle_x(obstacle0_x_out),
     .obstacle_y(obstacle0_y_out),
     .rgb_out(rgb_out_obs0),
@@ -183,7 +180,6 @@ lasers_obstacle vertical_lasers_obstacle (
     .done_in(done_counter),
     
     //outputs  
-    .working(work1),
     .obstacle_x(obstacle1_x_out),
     .obstacle_y(obstacle1_y_out),
     .rgb_out(rgb_out_obs1),
@@ -204,7 +200,6 @@ horizontal_lasers_obstacle horizontal_lasers_obstacle (
     .done_in(done_counter),
     
     //outputs  
-    .working(work2),
     .obstacle_x(obstacle2_x_out),
     .obstacle_y(obstacle2_y_out),
     .rgb_out(rgb_out_obs2),
@@ -225,7 +220,6 @@ square_follow_obstacle square_follow_obstacle (
     .done_in(done_counter),
     
     //outputs  
-    .working(work3),
     .obstacle_x(obstacle3_x_out),
     .obstacle_y(obstacle3_y_out),
     .rgb_out(rgb_out_obs3),
@@ -248,7 +242,6 @@ mouse_follower_obstacle mouse_follower_obstacle(
     .mouse_ypos(ypos),
 
     //outputs  
-    .working(work4),
     .obstacle_x(obstacle4_x_out),
     .obstacle_y(obstacle4_y_out),
     .rgb_out(rgb_out_obs4),
@@ -274,7 +267,6 @@ obstacle1 #( .TEST_TOP_LINE(600),
     .done_in(done_counter),
     
     //outputs  
-    .working(work5),
     .obstacle_x(obstacle5_x_out),
     .obstacle_y(obstacle5_y_out),
     .rgb_out(rgb_out_obs5),
@@ -300,7 +292,6 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .done_in(done_counter),
     
     //outputs  
-    .working(work6),
     .obstacle_x(obstacle6_x_out),
     .obstacle_y(obstacle6_y_out),
     .rgb_out(rgb_out_obs6),
@@ -326,7 +317,6 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .done_in(done_counter),
     
     //outputs  
-    .working(work7),
     .obstacle_x(obstacle7_x_out),
     .obstacle_y(obstacle7_y_out),
     .rgb_out(rgb_out_obs7),
@@ -615,7 +605,6 @@ MouseDisplay MouseDisplay (
 
 assign hsync = hsync_out_menubut;
 assign vsync = vsync_out_menubut;
-assign led = {work7, work6, work5, work4, work3, work2, work1, work0, 4'b0000, selected_obstacle};
 assign rgb_out = {red_out_mouse, green_out_mouse, blue_out_mouse};
 assign play_selected = play_selected_back;
 assign player_ready = player_ready_back;

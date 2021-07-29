@@ -35,7 +35,6 @@ module lasers_obstacle(
     input wire [3:0] selected,
     input wire done_in,
     
-    output reg working,
     output reg [11:0] rgb_out,
     output reg [11:0] obstacle_x,
     output reg [11:0] obstacle_y,
@@ -67,7 +66,7 @@ reg [1:0] state, state_nxt;
 reg [10:0] laser_right, laser_left, laser_right_nxt, laser_left_nxt;
 reg [24:0] counter_between_lasers, counter_between_lasers_nxt, counter_on_laser, counter_on_laser_nxt;
 reg bounce_back, bounce_back_nxt;
-reg done_nxt, working_nxt;
+reg done_nxt;
 
 always @(posedge clk) begin
     if (rst) begin
@@ -81,7 +80,6 @@ always @(posedge clk) begin
         counter_on_laser        <= 0;
         bounce_back             <= 0;
         done                    <= 0;
-        working                 <= 0;
     end
     else begin
         state                   <= state_nxt;
@@ -94,7 +92,6 @@ always @(posedge clk) begin
         counter_on_laser        <= counter_on_laser_nxt;
         bounce_back             <= bounce_back_nxt;
         done                    <= done_nxt;
-        working                 <= working_nxt;
     end
 end
 
@@ -113,7 +110,6 @@ always @* begin
     case (state)
         IDLE: begin
         
-            working_nxt = 0;
             done_nxt = 0;
             bounce_back_nxt = 0;
             
@@ -130,7 +126,6 @@ always @* begin
         DRAW_LEFT: begin
         
             done_nxt = 0;
-            working_nxt = 1;
             
             if (menu_on || !play_selected)
                 state_nxt = IDLE;
@@ -193,8 +188,6 @@ always @* begin
         end   
         
         DRAW_MIDDLE: begin
-        
-            working_nxt = 1;
             
             if (menu_on || !play_selected)
                 state_nxt = IDLE;
@@ -258,8 +251,6 @@ always @* begin
         end
         
         DRAW_RIGHT: begin
-        
-            working_nxt = 1;
             
             if (menu_on || !play_selected)
                 state_nxt = IDLE;
