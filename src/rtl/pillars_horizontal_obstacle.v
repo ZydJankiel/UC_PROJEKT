@@ -4,7 +4,7 @@
 // module responsible for checking colision with mouse pointer.
 // Added moving pillars.
 
-module obstacle0 
+module pillars_horizontal_obstacle 
     #( parameter
         SELECT_CODE = 4'b0000
     )
@@ -20,7 +20,7 @@ module obstacle0
         input wire [3:0] selected,
         input wire done_control,
         
-        output reg working,
+        output reg  working,
         output reg [11:0] rgb_out,
         output reg [11:0] obstacle_x,
         output reg [11:0] obstacle_y,
@@ -35,7 +35,8 @@ reg [10:0] pillar_left = 1003 ,pillar_right = 1023 ,pillar_left_nxt, pillar_righ
 reg flip,flip_nxt;
 reg [10:0] pillar_top, pillar_bottom, pillar_top_nxt, pillar_bottom_nxt;
 reg done_nxt, working_nxt;
-reg [29:0] elapsed_time, elapsed_time_nxt;
+reg [3:0] pillars_counter, pillars_counter_nxt;
+
 
 localparam PILLAR_TOP1 = 417 ,
            PILLAR_BOTTOM1 = 617,
@@ -46,6 +47,7 @@ localparam DX = 1;
 localparam MAX_COUNT = 600;
 localparam MAX_TIME = 3; //seconds
 localparam MAX_ELAPSED_TIME = 65000000 * MAX_TIME;
+localparam PILLARS_MAX_NUMBER = 10;
 
 localparam IDLE  = 2'b00,
            DRAW  = 2'b01,
@@ -64,8 +66,8 @@ always @(posedge pclk) begin
         pillar_bottom <= PILLAR_BOTTOM1;
         flip          <= 0;
         done          <= 0;
-        elapsed_time  <= 0;
         working       <= 0;
+        pillars_counter = 0;
     end
     else begin
         state         <= state_nxt;
@@ -79,14 +81,13 @@ always @(posedge pclk) begin
         pillar_bottom <=  pillar_bottom_nxt;
         pillar_top    <= pillar_top_nxt;
         done          <= done_nxt;
-        elapsed_time  <= elapsed_time_nxt;
         working       <= working_nxt;
+        pillars_counter <= pillars_counter_nxt;
     end
 end
 
 always @* begin 
     count_nxt         = count;
-    elapsed_time_nxt  = 0;
     obstacle_x_nxt    = 0;
     obstacle_y_nxt    = 0;
     pillar_right_nxt  = pillar_right;
@@ -98,6 +99,7 @@ always @* begin
     pillar_bottom_nxt = pillar_bottom;
     done_nxt          = 0;
     working_nxt       = 0;
+    pillars_counter_nxt = pillars_counter;
     
     case(state)
         IDLE: begin
@@ -110,11 +112,12 @@ always @* begin
                 state_nxt = IDLE;
             
             count_nxt = 0;
+            pillars_counter_nxt = 0;
             pillar_right_nxt = 681;
             pillar_left_nxt = 661;
-            elapsed_time_nxt = 0;
             pillar_top_nxt = pillar_top;
-            pillar_bottom_nxt = pillar_bottom;   
+            pillar_bottom_nxt = pillar_bottom;
+               
         end
         
         DRAW: begin
@@ -135,47 +138,54 @@ always @* begin
             end
             else begin
                 count_nxt = 0;
-                if (pillar_left <= 341) begin
-                pillar_right_nxt = 682;
-                pillar_left_nxt = 662;
-                flip_nxt = !flip;
-            end
+                if (pillar_left <= 351) begin
+                    pillar_right_nxt = 682;
+                    pillar_left_nxt = 662;
+                    flip_nxt = !flip;
+                    pillars_counter_nxt = pillars_counter + 1;
+                end
+                else begin
+                    pillar_right_nxt = pillar_right;
+                    pillar_left_nxt = pillar_left;
+                    flip_nxt = flip;
+                    pillars_counter_nxt = pillars_counter;
+                end
             
-            if (flip) begin
-                pillar_top_nxt = PILLAR_TOP2;
-                pillar_bottom_nxt = PILLAR_BOTTOM2;
-            end
-            else begin
-                pillar_top_nxt = PILLAR_TOP1;
-                pillar_bottom_nxt = PILLAR_BOTTOM1;
-            end
-            
-            if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
-                rgb_nxt = 12'hf_f_f;
-                obstacle_x_nxt = hcount_in;
-                obstacle_y_nxt = vcount_in;
-                pillar_right_nxt = pillar_right - DX;
-                pillar_left_nxt = pillar_left - DX;   
-            end
-            else 
-                rgb_nxt = rgb_in;
+                if (flip) begin
+                    pillar_top_nxt = PILLAR_TOP2;
+                    pillar_bottom_nxt = PILLAR_BOTTOM2;
+                end
+                else begin
+                    pillar_top_nxt = PILLAR_TOP1;
+                    pillar_bottom_nxt = PILLAR_BOTTOM1;
+                end
+                
+                if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
+                    rgb_nxt = 12'hf_f_f;
+                    obstacle_x_nxt = hcount_in;
+                    obstacle_y_nxt = vcount_in;
+                    pillar_right_nxt = pillar_right - DX;
+                    pillar_left_nxt = pillar_left - DX;   
+                end
+                else 
+                    rgb_nxt = rgb_in;
             end     
             
-            if (elapsed_time >= MAX_ELAPSED_TIME) begin
+            if (pillars_counter >= PILLARS_MAX_NUMBER) begin
                 done_nxt = 1;
-                elapsed_time_nxt = 0;
                 state_nxt = IDLE;
             end
             else begin
                 state_nxt = (menu_on || !play_selected) ? IDLE : DRAW;
                 done_nxt = 0;
-                elapsed_time_nxt = elapsed_time + 1;
             end
+            
         end
         
         START: begin
             state_nxt = play_selected ? DRAW : START;
-        end 
+            
+        end
     endcase 
 end
 

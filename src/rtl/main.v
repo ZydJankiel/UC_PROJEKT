@@ -171,7 +171,7 @@ delay #(.WIDTH(28), .CLK_DEL(1))  control_signals_delay(
     .dout(delayed_signals)
 );
 
-obstacle0 #(.SELECT_CODE(4'b0000)) moving_pillars_obstacle(
+pillars_horizontal_obstacle #(.SELECT_CODE(4'b0000)) pillars_horizontal_obstacle(
     //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),

@@ -48,7 +48,7 @@ read_verilog {
     src/rtl/clk_locked_menager.v
     src/rtl/vga_timing.v
     src/rtl/draw_background.v
-    src/rtl/obstacle0.v
+    src/rtl/pillars_horizontal_obstacle.v
     src/rtl/obstacle1.v
     src/rtl/delay.v
     src/rtl/mouse_constrainer.v
