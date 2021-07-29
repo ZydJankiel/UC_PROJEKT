@@ -4,10 +4,10 @@
 */
 
 module comparator (
-    input clk,
-    input rst,
-    input play_selected,
-    input multiplayer,
+    input wire clk,
+    input wire rst,
+    input wire play_selected,
+    input wire multiplayer,
     input wire [7:0] curr_char,
     
     output reg victory,
@@ -17,27 +17,27 @@ reg victory_nxt;
 reg opponent_ready_nxt;
 reg [1:0] state, state_nxt;
 
-localparam IDLE = 2'b00,
-           VICTORY = 2'b01,
+localparam IDLE           = 2'b00,
+           VICTORY        = 2'b01,
            OPPONENT_READY = 2'b10;
 
 always @(posedge clk) begin
     if (rst) begin
-        state <= IDLE;
-        victory <= 0;
+        state          <= IDLE;
+        victory        <= 0;
         opponent_ready <= 0;
     end
     else begin
-        state <= state_nxt;
-        victory <= victory_nxt;
+        state          <= state_nxt;
+        victory        <= victory_nxt;
         opponent_ready <= opponent_ready_nxt;
     end
 end
 
 always @* begin
-    victory_nxt = 0;
+    victory_nxt        = 0;
     opponent_ready_nxt = 0;
-    state_nxt = state;
+    state_nxt          = state;
     
     case(state)
         IDLE: begin

@@ -73,6 +73,7 @@ read_verilog {
     src/rtl/horizontal_lasers_obstacle.v
     src/rtl/square_follow_obstacle.v
     src/rtl/mouse_follower_obstacle.v
+    src/rtl/obstacles_counter.v
 }
 
 read_vhdl {

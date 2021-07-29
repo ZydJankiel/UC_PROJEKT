@@ -33,7 +33,7 @@ module horizontal_lasers_obstacle(
     input wire [11:0] rgb_in,
     input wire play_selected,
     input wire [3:0] selected,
-    input wire done_control,
+    input wire done_in,
     
     output reg working,
     output reg [11:0] rgb_out,
@@ -117,7 +117,7 @@ always @* begin
             done_nxt = 0;
             obstacle_counter_nxt = 0;
             
-            if (done_control) begin
+            if (done_in) begin
                 state_nxt = ((selected == 4'b0010) && play_selected) ? DRAW_TOP : IDLE;
                 laser_top_nxt = TOP_LASER_TOP;
                 laser_bottom_nxt = TOP_LASER_BOTTOM;

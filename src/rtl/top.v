@@ -72,6 +72,7 @@ always @* begin
     message_nxt = 8'h00;
     game_over_reg_nxt = 0;
     player_ready_reg_nxt = 0;
+
     if (multiplayer) begin
         if (game_over) begin
             message_nxt = 8'h4C;
@@ -82,6 +83,7 @@ always @* begin
                 player_ready_reg_nxt = 1;
         end
     end
+    
 end
 
 endmodule

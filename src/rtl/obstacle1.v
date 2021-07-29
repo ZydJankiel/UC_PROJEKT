@@ -5,12 +5,12 @@
  */
 module obstacle1
     #( parameter
-        TEST_TOP_LINE     = 0,
+        TEST_TOP_LINE      = 0,
         TEST_BOTTOM_LINE   = 0,
         TEST_LEFT_LINE     = 0,
-        TEST_RIGHT_LINE   = 0,
-        COLOR = 12'hf_f_f,
-        SELECT_CODE = 4'b0000
+        TEST_RIGHT_LINE    = 0,
+        COLOR              = 12'hf_f_f,
+        SELECT_CODE        = 4'b0000
     )
     (
         input wire [11:0] vcount_in,
@@ -22,7 +22,7 @@ module obstacle1
         input wire [11:0] rgb_in,
         input wire play_selected,
         input wire [3:0] selected,
-        input wire done_control,
+        input wire done_in,
         
         output reg working,
         output reg [11:0] rgb_out,
@@ -65,16 +65,16 @@ always @(posedge pclk) begin
 end 
   
 always @* begin 
-    obstacle_x_nxt = 0;
-    obstacle_y_nxt = 0;
-    done_nxt = 0;
+    obstacle_x_nxt   = 0;
+    obstacle_y_nxt   = 0;
+    done_nxt         = 0;
     elapsed_time_nxt = 0;
-    working_nxt = 0;
+    working_nxt      = 0;
     
     case(state)
         IDLE: begin
         
-            if (done_control)
+            if (done_in)
                 state_nxt = ((selected == SELECT_CODE) && play_selected) ? DRAW : IDLE;
             else
                 state_nxt = IDLE;

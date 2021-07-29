@@ -96,7 +96,7 @@ wire setmax_x_constr, setmax_y_constr, setmin_x_constr, setmin_y_constr, set_x_c
 wire damage_out, game_over_hp;
 wire victory, opponent_ready, player_ready, multiplayer_out_back;
 
-wire LFSR_Done, done_obs0, done_obs1, done_obs2, done_obs3, done_obs4, done_obs5, done_obs6, done_obs7, done_control;
+wire done_obs0, done_obs1, done_obs2, done_obs3, done_obs4, done_obs5, done_obs6, done_obs7, done_control, done_counter;
 wire work7, work6, work5, work4, work3, work2, work1, work0;
 
 vga_timing vga_timing (
@@ -182,7 +182,7 @@ pillars_horizontal_obstacle #(.SELECT_CODE(4'b0000)) pillars_horizontal_obstacle
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
     
     //outputs  
     .working(work0),
@@ -203,7 +203,8 @@ lasers_obstacle vertical_lasers_obstacle (
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
+    
     //outputs  
     .working(work1),
     .obstacle_x(obstacle1_x_out),
@@ -223,7 +224,7 @@ horizontal_lasers_obstacle horizontal_lasers_obstacle (
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
     
     //outputs  
     .working(work2),
@@ -244,7 +245,7 @@ square_follow_obstacle square_follow_obstacle (
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
     
     //outputs  
     .working(work3),
@@ -265,7 +266,7 @@ mouse_follower_obstacle mouse_follower_obstacle(
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
     .mouse_xpos(xpos_out_mouseCtl),
     .mouse_ypos(ypos_out_mouseCtl),
 
@@ -293,7 +294,7 @@ obstacle1 #( .TEST_TOP_LINE(600),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
     
     //outputs  
     .working(work5),
@@ -319,7 +320,7 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
     
     //outputs  
     .working(work6),
@@ -345,7 +346,7 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .rgb_in(rgb_out_back),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
-    .done_control(done_control),
+    .done_in(done_counter),
     
     //outputs  
     .working(work7),
@@ -353,6 +354,17 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .obstacle_y(obstacle7_y_out),
     .rgb_out(rgb_out_obs7),
     .done(done_obs7) 
+);
+
+obstacles_counter obstacles_counter (
+    //inputs
+    .clk(pclk),
+    .rst(locked_reset),
+    .start(play_selected_back),
+    .done_in(done_control),
+    
+    //outputs
+    .done_out(done_counter)
 );
 
 obstacles_control obstacles_control (

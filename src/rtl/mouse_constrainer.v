@@ -23,9 +23,9 @@
 module mouse_constrainer
     #( parameter
         MIN_Y     = 367,
-        MAX_Y  = 667,
-        MIN_X    = 361,
-        MAX_X   = 661
+        MAX_Y     = 667,
+        MIN_X     = 361,
+        MAX_X     = 661
      )
     (
         input wire clk,
@@ -50,31 +50,31 @@ localparam BOX_CENTER_X = 511,
            BOX_CENTER_Y = 460;
 
 localparam COUNTER_RESET = 2'b00,
-           GAME_MODE = 2'b01,
-           MENU_MODE = 2'b10;
+           GAME_MODE     = 2'b01,
+           MENU_MODE     = 2'b10;
 
 always @(posedge clk) begin
     if(rst) begin
-        state <= MENU_MODE;
-        value <= 0;
+        state    <= MENU_MODE;
+        value    <= 0;
         setmax_x <= 0;
         setmax_y <= 0;
         setmin_x <= 0;
         setmin_y <= 0;
-        set_x <= 0;
-        set_y <= 0;
-        counter <= 0;
+        set_x    <= 0;
+        set_y    <= 0;
+        counter  <= 0;
         end
     else begin
-        state <= state_nxt;
-        value <= value_nxt;
+        state    <= state_nxt;
+        value    <= value_nxt;
         setmax_x <= setmax_x_nxt;
         setmax_y <= setmax_y_nxt;
         setmin_x <= setmin_x_nxt;
         setmin_y <= setmin_y_nxt;
-        set_x <= set_x_nxt;
-        set_y <= set_y_nxt;
-        counter <= counter_nxt;
+        set_x    <= set_x_nxt;
+        set_y    <= set_y_nxt;
+        counter  <= counter_nxt;
         end
 end
     
@@ -83,11 +83,11 @@ always @* begin
     setmax_y_nxt = 0;
     setmin_x_nxt = 0;
     setmin_y_nxt = 0;
-    set_x_nxt = 0;
-    set_y_nxt = 0;
-    value_nxt = 0;
-    counter_nxt = 0;
-    state_nxt = MENU_MODE;
+    set_x_nxt    = 0;
+    set_y_nxt    = 0;
+    value_nxt    = 0;
+    counter_nxt  = 0;
+    state_nxt    = MENU_MODE;
     
     case(state)
         COUNTER_RESET: begin

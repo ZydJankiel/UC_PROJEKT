@@ -30,7 +30,7 @@ module mouse_follower_obstacle(
     input wire [11:0] rgb_in,
     input wire play_selected,
     input wire [3:0] selected,
-    input wire done_control,
+    input wire done_in,
     input wire [11:0] mouse_xpos,
     input wire [11:0] mouse_ypos,
     
@@ -70,6 +70,7 @@ reg [30:0] obstacle_time_counter, obstacle_time_counter_nxt;
 reg [6:0] enemy_border, enemy_border_nxt;
 reg [11:0] enemy_center_x, enemy_center_x_nxt, enemy_center_y, enemy_center_y_nxt;
 reg [11:0] enemy2_center_x, enemy2_center_x_nxt, enemy2_center_y, enemy2_center_y_nxt;
+
 always @(posedge pclk) begin
     if (rst) begin
         state                   <= IDLE;
@@ -135,7 +136,7 @@ always @* begin
         IDLE: begin
             working_nxt = 0;
 
-            if (done_control) begin
+            if (done_in) begin
                 state_nxt = ((selected == 4'b0100) && play_selected) ? ENEMY_SPAWN : IDLE;
                 counter_move_x_nxt = 0;
                 counter_move_y_nxt = 0;

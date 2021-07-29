@@ -103,8 +103,8 @@ end
 
 always @* begin
     game_over_nxt = 0;
-    rgb_nxt = rgb_in_hp;
-    curr_dmg_nxt = 0;
+    rgb_nxt       = rgb_in_hp;
+    curr_dmg_nxt  = 0;
     
     case (state) 
         OFF : begin

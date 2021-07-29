@@ -33,18 +33,17 @@ reg hblnk_nxt;
   // Video timing controller set for 1024x768@60fps
   // using a 65 MHz pixel clock per VESA spec.
 
-// Te warto�ci s� mniejsze o 1 poniewa� liczymy od 0
-localparam HOR_TOTAL_TIME = 1343;
-localparam HOR_SYNC_START = 1047;
-localparam HOR_BLANC_START = 1023;
-localparam VER_TOTAL_TIME = 805;
-localparam VER_SYNC_START = 770;
-localparam VER_BLANC_START = 767;
-// Te warto�ci nie zosta�y pomniejszone, poniewa� to jest czas trwania
-localparam HOR_SYNC_TIME = 136;
-localparam HOR_BLANC_TIME = 320;
-localparam VER_SYNC_TIME = 6;
-localparam VER_BLANC_TIME = 38;
+localparam HOR_TOTAL_TIME  = 1343,
+           HOR_SYNC_START  = 1047,
+           HOR_BLANC_START = 1023,
+           VER_TOTAL_TIME  = 805,
+           VER_SYNC_START  = 770,
+           VER_BLANC_START = 767;
+
+localparam HOR_SYNC_TIME  = 136,
+           HOR_BLANC_TIME = 320,
+           VER_SYNC_TIME  = 6,
+           VER_BLANC_TIME = 38;
 
 always@ (posedge pclk) begin
     if (rst) begin

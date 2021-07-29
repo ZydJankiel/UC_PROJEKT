@@ -41,8 +41,8 @@ end
 
 always @* begin 
     damage_out_nxt = 0;
-    counter_nxt = counter;
-    state_nxt = state;
+    counter_nxt    = counter;
+    state_nxt      = state;
     
     case (state)
         CHECK_DAMAGE: begin

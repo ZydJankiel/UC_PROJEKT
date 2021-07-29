@@ -34,7 +34,7 @@ module square_follow_obstacle(
     input wire [11:0] rgb_in,
     input wire play_selected,
     input wire [3:0] selected,
-    input wire done_control,
+    input wire done_in,
     
     output reg working,
     output reg [11:0] rgb_out,
@@ -125,7 +125,7 @@ always @* begin
         
             working_nxt = 0;
 
-            if (done_control) begin
+            if (done_in) begin
                 state_nxt = ((selected == 4'b0011) && play_selected) ? CLOSE_IN : IDLE;
                 square_hole_top_nxt = GAME_FIELD_TOP + 1;
                 square_hole_bottom_nxt = GAME_FIELD_BOTTOM - 1;

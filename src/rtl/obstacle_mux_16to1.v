@@ -22,10 +22,10 @@
 * MO-created module of mux to select current obstacle to draw. Mux working in asynch mode 
 * Based on 
 * https://technobyte.org/verilog-multiplexer-4x1/
-* From section : Verilog code for 4×1 multiplexer using behavioral modeling
+* From section : Verilog code for 4ï¿½1 multiplexer using behavioral modeling
 *
 * PWJ Adjusted bit lengths and changed input signals to {obstacle_x,obstacle_y,rgb}
-* Changed selecting to switch[3:0] for tests
+* 
 */
 
 // in and out size to be chosen correctly

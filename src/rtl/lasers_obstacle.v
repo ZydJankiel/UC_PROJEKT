@@ -33,7 +33,7 @@ module lasers_obstacle(
     input wire [11:0] rgb_in,
     input wire play_selected,
     input wire [3:0] selected,
-    input wire done_control,
+    input wire done_in,
     
     output reg working,
     output reg [11:0] rgb_out,
@@ -117,7 +117,7 @@ always @* begin
             done_nxt = 0;
             bounce_back_nxt = 0;
             
-            if (done_control) begin
+            if (done_in) begin
                 state_nxt = ((selected == 4'b0001) && play_selected) ? DRAW_LEFT : IDLE;
                 laser_left_nxt = LEFT_LASER_LEFT;
                 laser_right_nxt = LEFT_LASER_RIGHT;

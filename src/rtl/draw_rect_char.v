@@ -22,8 +22,8 @@
 module draw_rect_char 
     #( parameter
         //DO NOT TOUCH X POS - IT DISTORTS LETTERS SHAPE
-        TEXT_BOX_X_POS = 432,
-        TEXT_BOX_Y_POS = 400,
+        TEXT_BOX_X_POS  = 432,
+        TEXT_BOX_Y_POS  = 400,
         TEXT_BOX_Y_SIZE = 80,
         TEXT_BOX_X_SIZE = 128
     )
@@ -68,31 +68,31 @@ localparam MOUSE_OVER_COLOUR = 12'hf_f_0;
 always @(posedge clk) begin
     if (rst) begin
         vcount_out <= 0;
-        vblnk_out <= 0;
-        vsync_out <= 0;
+        vblnk_out  <= 0;
+        vsync_out  <= 0;
         hcount_out <= 0;
-        hsync_out <= 0;
-        hblnk_out <= 0;
-        rgb_out <= 0;
+        hsync_out  <= 0;
+        hblnk_out  <= 0;
+        rgb_out    <= 0;
     end
     else begin
         vcount_out <= vcount_nxt;
-        vblnk_out <= vblnk_nxt;
-        vsync_out <= vsync_nxt;
+        vblnk_out  <= vblnk_nxt;
+        vsync_out  <= vsync_nxt;
         hcount_out <= hcount_nxt;
-        hsync_out <= hsync_nxt;
-        hblnk_out <= hblnk_nxt;
-        rgb_out <= rgb_nxt;
+        hsync_out  <= hsync_nxt;
+        hblnk_out  <= hblnk_nxt;
+        rgb_out    <= rgb_nxt;
     end 
 end 
     
 always @* begin
     vcount_nxt = vcount_in;
-    vblnk_nxt = vblnk_in;
-    vsync_nxt = vsync_in;
+    vblnk_nxt  = vblnk_in;
+    vsync_nxt  = vsync_in;
     hcount_nxt = hcount_in;
-    hsync_nxt = hsync_in;
-    hblnk_nxt = hblnk_in;
+    hsync_nxt  = hsync_in;
+    hblnk_nxt  = hblnk_in;
           
     if (display_buttons) begin   
         if (hblnk_out || vblnk_out) 
