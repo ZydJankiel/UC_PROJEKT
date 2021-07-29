@@ -91,6 +91,10 @@ always @(posedge pclk) begin
         rgb_out                 <= rgb_nxt;
         obstacle_x              <= obstacle_x_nxt;
         obstacle_y              <= obstacle_y_nxt;
+        
+        //obstacle_x              <= 0; //for testing
+        //obstacle_y              <= 0;
+        
         square_hole_top         <= square_hole_top_nxt;
         square_hole_bottom      <= square_hole_bottom_nxt;
         square_hole_left        <= square_hole_left_nxt;
