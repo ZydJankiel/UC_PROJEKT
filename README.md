@@ -28,8 +28,6 @@ For playing in multiplayer count everything times two.
 
 ## Usage
 
-This is recommended method. 
-
 Press and hold the shift key, then press the left mouse button on project folder. Choose "Open PowerShell window here" and type `vivado -mode tcl -source run.tcl -tclargs open` to open Vivado GUI. From there click "Generate Bitstream" in bottom left corner. Open Hardware Manager than Open Target and Auto Connect. When Generate Bitstream is done choose Program Device.
 
 For playing on multiplayer it is necessary to do it on both PC's and BASYS.
@@ -51,11 +49,11 @@ In multiplayer your goal is to survive longer than opponent. It is made only for
 
 In lobby BASYS is sending 'R' letter constantly via UART to other player. The game starts when both UART's receive 'R' letters. When someone loose the game he sends 'L' letter to other player and game over screen is displayed. Receiving 'L' letter is interpreted as winning over enemy so victory screen will show. It is simple but is suits our need for multiplayer purpose.
 
-**Connecting with other player**
+***Connecting with other player***
 
 UART communication between two BASYS connected to different PC can be done by connecting COM ports over TCP/IP. The easiest way is to be connected to the same network. It can by bypassed by using tools like Hamachi.
 
-For connecting COM ports from two PC we used [Serial to Ethernet connector](https://www.serial-over-ethernet.com). It have 14 days free trial with is enough to test it. Another great software for it is [VSPE](http://www.eterlogic.com/Products.VSPE.html). It have free version for 32-bit systems. Unfortunately 64-bit system application is paid only.
+For connecting COM ports from two PC we used [Serial to Ethernet connector](https://www.serial-over-ethernet.com). It has 14 days free trial with is enough to test it. Another great software for it is [VSPE](http://www.eterlogic.com/Products.VSPE.html). It has free version for 32-bit systems. Unfortunately 64-bit system application is paid only.
 
 After connecting COM ports, everything should work.
 
