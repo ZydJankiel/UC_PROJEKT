@@ -160,8 +160,8 @@ pillars_horizontal_obstacle #(.SELECT_CODE(4'b0000)) pillars_horizontal_obstacle
     .done_in(done_counter),
     
     //outputs  
-    .obstacle_x(obstacle0_x_out),
-    .obstacle_y(obstacle0_y_out),
+    //.obstacle_x(obstacle0_x_out),
+    //.obstacle_y(obstacle0_y_out),
     .rgb_out(rgb_out_obs0),
     .done(done_obs0)
 );
@@ -180,8 +180,8 @@ lasers_obstacle vertical_lasers_obstacle (
     .done_in(done_counter),
     
     //outputs  
-    .obstacle_x(obstacle1_x_out),
-    .obstacle_y(obstacle1_y_out),
+    //.obstacle_x(obstacle1_x_out),
+    //.obstacle_y(obstacle1_y_out),
     .rgb_out(rgb_out_obs1),
     .done(done_obs1) 
 );
@@ -200,8 +200,8 @@ horizontal_lasers_obstacle horizontal_lasers_obstacle (
     .done_in(done_counter),
     
     //outputs  
-    .obstacle_x(obstacle2_x_out),
-    .obstacle_y(obstacle2_y_out),
+    //.obstacle_x(obstacle2_x_out),
+    //.obstacle_y(obstacle2_y_out),
     .rgb_out(rgb_out_obs2),
     .done(done_obs2)
 );
@@ -220,8 +220,8 @@ square_follow_obstacle square_follow_obstacle (
     .done_in(done_counter),
     
     //outputs  
-    .obstacle_x(obstacle3_x_out),
-    .obstacle_y(obstacle3_y_out),
+    //.obstacle_x(obstacle3_x_out),
+    //.obstacle_y(obstacle3_y_out),
     .rgb_out(rgb_out_obs3),
     .done(done_obs3)
 );
@@ -242,18 +242,13 @@ mouse_follower_obstacle mouse_follower_obstacle(
     .mouse_ypos(ypos),
 
     //outputs  
-    .obstacle_x(obstacle4_x_out),
-    .obstacle_y(obstacle4_y_out),
+    //.obstacle_x(obstacle4_x_out),
+    //.obstacle_y(obstacle4_y_out),
     .rgb_out(rgb_out_obs4),
     .done(done_obs4) 
 );
 
-obstacle1 #( .TEST_TOP_LINE(600), 
-             .TEST_BOTTOM_LINE(500), 
-             .TEST_LEFT_LINE(520), 
-             .TEST_RIGHT_LINE(620),
-             .COLOR(12'hf_f_0),
-             .SELECT_CODE(4'b0101) ) rectangle5_obstacle (
+falling_spikes_obstacle falling_spikes_obstacle(
     //inputs
     .vcount_in(vcount_out_back),
     .hcount_in(hcount_out_back),
@@ -265,10 +260,12 @@ obstacle1 #( .TEST_TOP_LINE(600),
     .play_selected(play_selected_back),
     .selected(selected_obstacle),
     .done_in(done_counter),
+    .mouse_xpos(xpos),
+    .mouse_ypos(ypos),
     
     //outputs  
-    .obstacle_x(obstacle5_x_out),
-    .obstacle_y(obstacle5_y_out),
+    //.obstacle_x(obstacle5_x_out),
+    //.obstacle_y(obstacle5_y_out),
     .rgb_out(rgb_out_obs5),
     .done(done_obs5)
 );

@@ -147,7 +147,7 @@ always @* begin
             else
                 state_nxt = IDLE;
 
-        end
+        end//end state
         
         ENEMY_SPAWN: begin
             if (menu_on || !play_selected)
