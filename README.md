@@ -16,7 +16,9 @@ We implemented multiplayer with UART communication. Details are in [multiplayer]
 
 Project is written mostly in Verilog hardware description language. We are using Digilent's BASYS 3 FPGA board and Xilinx Vivado software 2017.3 version.
 
-**Requirements:**
+<details>
+  <summary> Requirements </summary>
+
 
 - BASYS 3 FPGA board
 - VGA monitor with at least 1024x768 resolution and VGA cable (game is written to work precisly at this resolution)
@@ -25,6 +27,7 @@ Project is written mostly in Verilog hardware description language. We are using
 - PC with Vivado on it
 
 For playing in multiplayer second set is needed.
+</details>
 
 ## Usage
 Generate Bitstream and program Your device. Game is ready to play.
