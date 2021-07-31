@@ -63,6 +63,7 @@ read_verilog {
     src/rtl/MOUSE.v
     src/rtl/CLK.v
     src/rtl/BUTTONS.v
+    src/rtl/OBSTACLES.v
 }
 
 read_vhdl {
