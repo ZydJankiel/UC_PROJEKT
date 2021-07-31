@@ -61,6 +61,7 @@ read_verilog {
     src/rtl/CORE.v
     src/rtl/UART.v
     src/rtl/MOUSE.v
+    src/rtl/CLK.v
 }
 
 read_vhdl {
