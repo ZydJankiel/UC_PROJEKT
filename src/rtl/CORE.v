@@ -437,174 +437,45 @@ hp_control #( .TOP_V_LINE(TOP_V_LINE),
     .game_over(game_over_hp)
 );
 
-//SINGLE BUTTON
+wire [11:0] hcount_out_BUTTONS, vcount_out_BUTTONS, rgb_out_BUTTONS;
+wire hsync_out_BUTTONS, vsync_out_BUTTONS, hblnk_out_BUTTONS, vblnk_out_BUTTONS;
 
-wire [11:0] hcount_out_char, vcount_out_char, rgb_out_char;
-wire [7:0] draw_rect_char_xy, play_font_rom_pixels;
-wire [6:0] play_char_code_out;
-wire [3:0] draw_rect_play_line;
-wire hsync_out_char, vsync_out_char, hblnk_out_char, vblnk_out_char;
-
-draw_rect_char #( .TEXT_BOX_X_POS(PLAY_BOX_X_POS), 
-                  .TEXT_BOX_Y_POS(PLAY_BOX_Y_POS), 
-                  .TEXT_BOX_Y_SIZE(PLAY_BOX_Y_SIZE), 
-                  .TEXT_BOX_X_SIZE(PLAY_BOX_X_SIZE) ) draw_single_button (
-    //inputs
-    .rst(rst),
+BUTTONS  #( .PLAY_BOX_X_POS(PLAY_BOX_X_POS),
+            .PLAY_BOX_Y_POS(PLAY_BOX_Y_POS),
+            .PLAY_BOX_Y_SIZE(PLAY_BOX_Y_SIZE),
+            .PLAY_BOX_X_SIZE(PLAY_BOX_X_SIZE),
+            
+            .MULTI_BOX_X_POS(MULTI_BOX_X_POS),
+            .MULTI_BOX_Y_POS(MULTI_BOX_Y_POS),
+            .MULTI_BOX_Y_SIZE(MULTI_BOX_Y_SIZE),
+            .MULTI_BOX_X_SIZE(MULTI_BOX_X_SIZE),
+             
+            .MENU_BOX_X_POS(MENU_BOX_X_POS), 
+            .MENU_BOX_Y_POS(MENU_BOX_Y_POS), 
+            .MENU_BOX_Y_SIZE(MENU_BOX_Y_SIZE), 
+            .MENU_BOX_X_SIZE(MENU_BOX_X_SIZE)) BUTTONS (
     .clk(clk),
+    .rst(rst),
     .hcount_in(hcount_out_hp),
-    .vcount_in(vcount_out_hp),
-    .hsync_in(hsync_out_hp),
-    .vsync_in(vsync_out_hp),
     .hblnk_in(hblnk_out_hp),
+    .hsync_in(hsync_out_hp),
+    .vcount_in(vcount_out_hp),
     .vblnk_in(vblnk_out_hp),
+    .vsync_in(vsync_out_hp),
     .rgb_in(rgb_out_hp),
-    .char_pixels(play_font_rom_pixels),
-    .mouse_xpos(xpos),
-    .mouse_ypos(ypos),
-    .display_buttons(display_buttons_m_and_s),
-    
-    //outputs
-    .hcount_out(hcount_out_char),
-    .vcount_out(vcount_out_char),
-    .hsync_out(hsync_out_char),
-    .vsync_out(vsync_out_char),
-    .hblnk_out(hblnk_out_char),
-    .vblnk_out(vblnk_out_char),
-    .rgb_out(rgb_out_char),
-    .char_xy(draw_rect_char_xy),
-    .char_line(draw_rect_play_line)
-);
+    .display_buttons_m_and_s(display_buttons_m_and_s),
+    .display_menu_button(display_menu_button),
+    .xpos(xpos),
+    .ypos(ypos),
 
-char_rom_16x16 single_char_rom (
-    //inputs
-    .char_xy(draw_rect_char_xy),
-    
-    //outputs
-    .char_code(play_char_code_out)
-);
+    .hcount_out(hcount_out_BUTTONS),
+    .hblnk_out(hblnk_out_BUTTONS),
+    .hsync_out(hsync_out_BUTTONS),
+    .vcount_out(vcount_out_BUTTONS),
+    .vblnk_out(vblnk_out_BUTTONS),
+    .vsync_out(vsync_out_BUTTONS),
+    .rgb_out(rgb_out_BUTTONS)
 
-font_rom single_font_rom (
-    //inputs
-    .clk(clk),
-    .addr({play_char_code_out, draw_rect_play_line}),
-    
-    //outputs
-    .char_line_pixels(play_font_rom_pixels)
-);
-
-//MULTPLAYER BUTTON
-wire [11:0] hcount_out_multi, vcount_out_multi, rgb_out_multi;
-wire [7:0] draw_rect_mutli_xy, multi_font_rom_pixels;
-wire [6:0] multi_char_code_out;
-wire [3:0] draw_rect_multi_line;
-wire hsync_out_multi, vsync_out_multi, hblnk_out_multi, vblnk_out_multi;
-
-
-
-draw_rect_char #( .TEXT_BOX_X_POS(MULTI_BOX_X_POS), 
-                  .TEXT_BOX_Y_POS(MULTI_BOX_Y_POS), 
-                  .TEXT_BOX_Y_SIZE(MULTI_BOX_Y_SIZE), 
-                  .TEXT_BOX_X_SIZE(MULTI_BOX_X_SIZE) ) draw_multiplayer_button (
-    //inputs
-    .rst(rst),
-    .clk(clk),
-    .hcount_in(hcount_out_char),
-    .vcount_in(vcount_out_char),
-    .hsync_in(hsync_out_char),
-    .vsync_in(vsync_out_char),
-    .hblnk_in(hblnk_out_char),
-    .vblnk_in(vblnk_out_char),
-    .rgb_in(rgb_out_char),
-    .char_pixels(multi_font_rom_pixels),
-    .mouse_xpos(xpos),
-    .mouse_ypos(ypos),
-    .display_buttons(display_buttons_m_and_s),
-    
-    //outputs
-    .hcount_out(hcount_out_multi),
-    .vcount_out(vcount_out_multi),
-    .hsync_out(hsync_out_multi),
-    .vsync_out(vsync_out_multi),
-    .hblnk_out(hblnk_out_multi),
-    .vblnk_out(vblnk_out_multi),
-    .rgb_out(rgb_out_multi),
-    .char_xy(draw_rect_mutli_xy),
-    .char_line(draw_rect_multi_line)
-);
-
-multi_char_rom_16x16 multi_char_rom (
-    //inputs
-    .multi_char_xy(draw_rect_mutli_xy),
-    
-    //outputs
-    .multi_char_code(multi_char_code_out)
-);
-
-font_rom multi_font_rom (
-    //inputs
-    .clk(clk),
-    .addr({multi_char_code_out, draw_rect_multi_line}),
-    
-    //outputs
-    .char_line_pixels(multi_font_rom_pixels)
-);
-
-
-//MENU BUTTON
-
-wire [11:0] hcount_out_menubut, vcount_out_menubut, rgb_out_menubut;
-wire [7:0] draw_rect_menubut_xy, menubut_font_rom_pixels;
-wire [6:0] menubut_char_code_out;
-wire [3:0] draw_rect_menubut_line;
-wire hsync_out_menubut, vsync_out_menubut, hblnk_out_menubut, vblnk_out_menubut;
-
-draw_rect_char #( .TEXT_BOX_X_POS(MENU_BOX_X_POS), 
-                  .TEXT_BOX_Y_POS(MENU_BOX_Y_POS), 
-                  .TEXT_BOX_Y_SIZE(MENU_BOX_Y_SIZE), 
-                  .TEXT_BOX_X_SIZE(MENU_BOX_X_SIZE) ) draw_menu_button (
-    //inputs
-    .rst(rst),
-    .clk(clk),
-    .hcount_in(hcount_out_multi),
-    .vcount_in(vcount_out_multi),
-    .hsync_in(hsync_out_multi),
-    .vsync_in(vsync_out_multi),
-    .hblnk_in(hblnk_out_multi),
-    .vblnk_in(vblnk_out_multi),
-    .rgb_in(rgb_out_multi),
-    .char_pixels(menubut_font_rom_pixels),
-    .mouse_xpos(xpos),
-    .mouse_ypos(ypos),
-    .display_buttons(display_menu_button),
-    
-    //outputs
-    .hcount_out(hcount_out_menubut),
-    .vcount_out(vcount_out_menubut),
-    .hsync_out(hsync_out_menubut),
-    .vsync_out(vsync_out_menubut),
-    .hblnk_out(hblnk_out_menubut),
-    .vblnk_out(vblnk_out_menubut),
-    .rgb_out(rgb_out_menubut),
-    .char_xy(draw_rect_menubut_xy),
-    .char_line(draw_rect_menubut_line)
-);
-
-menu_char_rom_16x16 menu_char_rom (
-    //inputs
-    .menu_char_xy(draw_rect_menubut_xy),
-    
-    //outputs
-    .menu_char_code(menubut_char_code_out)
-);
-
-font_rom menu_font_rom (
-    //inputs
-    .clk(clk),
-    .addr({menubut_char_code_out, draw_rect_menubut_line}),
-    
-    //outputs
-    .char_line_pixels(menubut_font_rom_pixels)
 );
 
 //MOUSE MODULES//  
@@ -614,12 +485,12 @@ MouseDisplay MouseDisplay (
     .xpos(xpos),
     .ypos(ypos),
     .pixel_clk(clk),
-    .hcount(hcount_out_menubut),
-    .vcount(vcount_out_menubut),
-    .blank(hblnk_out_menubut || vblnk_out_menubut), 
-    .red_in(rgb_out_menubut[11:8]),
-    .green_in(rgb_out_menubut[7:4]),
-    .blue_in(rgb_out_menubut[3:0]),
+    .hcount(hcount_out_BUTTONS),
+    .vcount(vcount_out_BUTTONS),
+    .blank(hblnk_out_BUTTONS || vblnk_out_BUTTONS), 
+    .red_in(rgb_out_BUTTONS[11:8]),
+    .green_in(rgb_out_BUTTONS[7:4]),
+    .blue_in(rgb_out_BUTTONS[3:0]),
     
     //outputs
     .red_out(red_out_mouse),
@@ -629,8 +500,8 @@ MouseDisplay MouseDisplay (
 );
 
 
-assign hsync = hsync_out_menubut;
-assign vsync = vsync_out_menubut;
+assign hsync = hsync_out_BUTTONS;
+assign vsync = vsync_out_BUTTONS;
 assign rgb_out = {red_out_mouse, green_out_mouse, blue_out_mouse};
 assign play_selected = play_selected_vga_control;
 assign player_ready = player_ready_vga_control;
