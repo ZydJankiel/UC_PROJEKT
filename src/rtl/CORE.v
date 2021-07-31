@@ -50,13 +50,13 @@ wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
 wire [3:0] obstacle_mux_select_bg;
 wire [3:0] selected_obstacle, mux_code;
 
-wire [2:0] mouse_mode_back; 
+wire [2:0] mouse_mode_vga_control, control_state; 
 
-wire play_selected_back, display_buttons_m_and_s, display_menu_button;
+wire play_selected_vga_control, display_buttons_m_and_s, display_menu_button;
 wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
 wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
 wire damage_out, game_over_hp;
-wire player_ready_back, multiplayer_back;
+wire player_ready_vga_control, multiplayer_vga_control;
 
 wire done_obs0, done_obs1, done_obs2, done_obs3, done_obs4, done_obs5, done_obs6, done_obs7, done_control, done_counter;
 
@@ -91,28 +91,15 @@ vga_timing vga_timing (
     .hblnk(hblnk_out_timing)
 );
 
-draw_background #( .TOP_V_LINE(TOP_V_LINE), 
-                   .BOTTOM_V_LINE(BOTTOM_V_LINE), 
-                   .LEFT_H_LINE(LEFT_H_LINE), 
-                   .RIGHT_H_LINE(RIGHT_H_LINE),
-                   .BORDER(7),
+control_unit  #( .PLAY_BOX_X_POS(PLAY_BOX_X_POS),
+                 .PLAY_BOX_Y_POS(PLAY_BOX_Y_POS),
+                 .PLAY_BOX_Y_SIZE(PLAY_BOX_Y_SIZE),
+                 .PLAY_BOX_X_SIZE(PLAY_BOX_X_SIZE),
                   
-                   .PLAY_BOX_X_POS(PLAY_BOX_X_POS),
-                   .PLAY_BOX_Y_POS(PLAY_BOX_Y_POS),
-                   .PLAY_BOX_Y_SIZE(PLAY_BOX_Y_SIZE),
-                   .PLAY_BOX_X_SIZE(PLAY_BOX_X_SIZE),
-                  
-                   .MULTI_BOX_X_POS(MULTI_BOX_X_POS),
-                   .MULTI_BOX_Y_POS(MULTI_BOX_Y_POS),
-                   .MULTI_BOX_Y_SIZE(MULTI_BOX_Y_SIZE),
-                   .MULTI_BOX_X_SIZE(MULTI_BOX_X_SIZE) ) draw_game_background (
-    //inputs
-    .vcount_in(vcount_out_timing),
-    .vsync_in(vsync_out_timing),
-    .vblnk_in(vblnk_out_timing),
-    .hcount_in(hcount_out_timing),
-    .hsync_in(hsync_out_timing),
-    .hblnk_in(hblnk_out_timing),
+                 .MULTI_BOX_X_POS(MULTI_BOX_X_POS),
+                 .MULTI_BOX_Y_POS(MULTI_BOX_Y_POS),
+                 .MULTI_BOX_Y_SIZE(MULTI_BOX_Y_SIZE),
+                 .MULTI_BOX_X_SIZE(MULTI_BOX_X_SIZE)) vga_control_unit (
     .clk(clk),
     .rst(rst),
     .game_on(game_button),
@@ -123,6 +110,32 @@ draw_background #( .TOP_V_LINE(TOP_V_LINE),
     .mouse_left(mouse_left),
     .victory(victory),
     .opponent_ready(opponent_ready),
+    
+    .state(control_state),
+    .mouse_mode(mouse_mode_vga_control),
+    .play_selected(play_selected_vga_control),
+    .display_buttons_m_and_s(display_buttons_m_and_s),
+    .player_ready(player_ready_vga_control),
+    .display_menu_button(display_menu_button),
+    .multiplayer(multiplayer_vga_control)
+                   
+);
+
+draw_background #( .TOP_V_LINE(TOP_V_LINE), 
+                   .BOTTOM_V_LINE(BOTTOM_V_LINE), 
+                   .LEFT_H_LINE(LEFT_H_LINE), 
+                   .RIGHT_H_LINE(RIGHT_H_LINE),
+                   .BORDER(7) ) draw_game_background (
+    //inputs
+    .clk(clk),
+    .rst(rst),
+    .vcount_in(vcount_out_timing),
+    .vsync_in(vsync_out_timing),
+    .vblnk_in(vblnk_out_timing),
+    .hcount_in(hcount_out_timing),
+    .hsync_in(hsync_out_timing),
+    .hblnk_in(hblnk_out_timing),
+    .control_state(control_state),
 
     //outputs  
     .hcount_out(hcount_out_back),
@@ -131,13 +144,8 @@ draw_background #( .TOP_V_LINE(TOP_V_LINE),
     .vblnk_out(vblnk_out_back),
     .hsync_out(hsync_out_back),
     .vsync_out(vsync_out_back),
-    .rgb_out(rgb_out_back),
-    .mouse_mode(mouse_mode_back),
-    .play_selected(play_selected_back),
-    .display_buttons_m_and_s(display_buttons_m_and_s),
-    .player_ready(player_ready_back),
-    .display_menu_button(display_menu_button),
-    .multiplayer(multiplayer_back)
+    .rgb_out(rgb_out_back)
+
 );
 
 delay #(.WIDTH(28), .CLK_DEL(1))  control_signals_delay(
@@ -159,7 +167,7 @@ pillars_horizontal_obstacle #(.SELECT_CODE(4'b0000)) pillars_horizontal_obstacle
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     
@@ -179,7 +187,7 @@ lasers_obstacle vertical_lasers_obstacle (
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     
@@ -199,7 +207,7 @@ horizontal_lasers_obstacle horizontal_lasers_obstacle (
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     
@@ -219,7 +227,7 @@ square_follow_obstacle square_follow_obstacle (
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     
@@ -239,7 +247,7 @@ mouse_follower_obstacle mouse_follower_obstacle(
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     .mouse_xpos(xpos),
@@ -266,7 +274,7 @@ obstacle1 #( .TEST_TOP_LINE(600),
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     
@@ -291,7 +299,7 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     
@@ -316,7 +324,7 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .game_on(game_button),
     .menu_on(menu_button),
     .rgb_in(rgb_out_back),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     .selected(selected_obstacle),
     .done_in(done_counter),
     
@@ -331,7 +339,7 @@ obstacles_counter obstacles_counter (
     //inputs
     .clk(clk),
     .rst(rst),
-    .start(play_selected_back),
+    .start(play_selected_vga_control),
     .done_in(done_control),
     
     //outputs
@@ -344,7 +352,7 @@ obstacles_control obstacles_control (
     .clk(clk),
     .rst(rst),
     .done(victory_button || done_obs0 || done_obs1 || done_obs2 || done_obs3 || done_obs4 || done_obs5 || done_obs6 || done_obs7),
-    .play_selected(play_selected_back),
+    .play_selected(play_selected_vga_control),
     
     //outputs
     .obstacle_code(selected_obstacle),
@@ -415,7 +423,7 @@ hp_control #( .TOP_V_LINE(TOP_V_LINE),
     .rgb_in_hp(mux_out[11:0]),
     .clk(clk),
     .rst(rst),
-    .game_on_hp(play_selected_back),
+    .game_on_hp(play_selected_vga_control),
     .player_hit(damage_out),
 
     //outputs
@@ -624,10 +632,10 @@ MouseDisplay MouseDisplay (
 assign hsync = hsync_out_menubut;
 assign vsync = vsync_out_menubut;
 assign rgb_out = {red_out_mouse, green_out_mouse, blue_out_mouse};
-assign play_selected = play_selected_back;
-assign player_ready = player_ready_back;
-assign mouse_mode = mouse_mode_back;
-assign multiplayer = multiplayer_back;
+assign play_selected = play_selected_vga_control;
+assign player_ready = player_ready_vga_control;
+assign mouse_mode = mouse_mode_vga_control;
+assign multiplayer = multiplayer_vga_control;
 assign game_over = game_over_hp;
 
 endmodule

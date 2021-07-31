@@ -15,22 +15,7 @@ module draw_background
         BOTTOM_V_LINE    = 617,
         LEFT_H_LINE      = 361,
         RIGHT_H_LINE     = 661,
-        BORDER           = 10,
-        
-        PLAY_BOX_X_POS   = 432,
-        PLAY_BOX_Y_POS   = 400,
-        PLAY_BOX_Y_SIZE  = 80,
-        PLAY_BOX_X_SIZE  = 128,
-        
-        MULTI_BOX_X_POS  = 432,
-        MULTI_BOX_Y_POS  = 540,
-        MULTI_BOX_Y_SIZE = 80,
-        MULTI_BOX_X_SIZE = 128,
-        
-        MENU_BOX_X_POS   = 432,
-        MENU_BOX_Y_POS   = 520,
-        MENU_BOX_Y_SIZE  = 80,
-        MENU_BOX_X_SIZE  = 128
+        BORDER           = 10
     )
     (
         input wire [11:0] vcount_in,
@@ -41,14 +26,7 @@ module draw_background
         input wire hblnk_in,
         input wire clk,
         input wire rst,
-        input wire game_on,
-        input wire menu_on,
-        input wire game_over,
-        input wire victory,
-        input wire [11:0] xpos,
-        input wire [11:0] ypos,
-        input wire mouse_left,
-        input wire opponent_ready,
+        input wire [2:0] control_state,
         
         output reg [11:0] vcount_out,
         output reg vsync_out,
@@ -56,20 +34,12 @@ module draw_background
         output reg [11:0] hcount_out,
         output reg hsync_out,
         output reg hblnk_out,
-        output reg [11:0] rgb_out,
-        output reg play_selected,
-        output reg [2:0] mouse_mode,
-        output reg display_buttons_m_and_s,
-        output reg player_ready,
-        output reg display_menu_button,
-        output reg multiplayer
+        output reg [11:0] rgb_out
     );
+    
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
-reg [2:0] state, state_nxt; 
-reg mouse_mode_nxt, play_selected_nxt, display_buttons_m_and_s_nxt, player_ready_nxt, display_menu_button_nxt;
-reg multiplayer_nxt, multi_reg, multi_reg_nxt;
 
 localparam MENU_MODE    = 3'b000,
            GAME_MODE    = 3'b001,
@@ -79,7 +49,6 @@ localparam MENU_MODE    = 3'b000,
            
 always @(posedge clk) begin
     if (rst) begin
-        state <= MENU_MODE;
         hsync_out               <= 0;
         vsync_out               <= 0;
         hblnk_out               <= 0;
@@ -87,16 +56,8 @@ always @(posedge clk) begin
         hcount_out              <= 0;
         vcount_out              <= 0;
         rgb_out                 <= 0;
-        mouse_mode              <= MENU_MODE; 
-        play_selected           <= 0;
-        display_buttons_m_and_s <= 0;  
-        player_ready            <= 0;
-        display_menu_button     <= 0;
-        multiplayer             <= 0;
-        multi_reg               <= 0;
     end
     else begin
-        state                   <= state_nxt;
         hsync_out               <= hsync_nxt;
         vsync_out               <= vsync_nxt;
         hblnk_out               <= hblnk_nxt;
@@ -104,13 +65,6 @@ always @(posedge clk) begin
         hcount_out              <= hcount_nxt;
         vcount_out              <= vcount_nxt;
         rgb_out                 <= rgb_nxt;
-        mouse_mode              <= mouse_mode_nxt;
-        play_selected           <= play_selected_nxt;
-        display_buttons_m_and_s <= display_buttons_m_and_s_nxt;
-        player_ready            <= player_ready_nxt;
-        display_menu_button     <= display_menu_button_nxt;
-        multiplayer             <= multiplayer_nxt;
-        multi_reg               <= multi_reg_nxt;
     end 
 end
 
@@ -121,45 +75,11 @@ always @* begin
     vblnk_nxt                   = vblnk_in;
     hcount_nxt                  = hcount_in;
     vcount_nxt                  = vcount_in;  
-    play_selected_nxt           = 0;  
-    mouse_mode_nxt              = MENU_MODE;
-    display_buttons_m_and_s_nxt = 0;
-    player_ready_nxt            = 0;
-    display_menu_button_nxt     = 0;
-    multiplayer_nxt             = 0;
-    multi_reg_nxt               = multi_reg;
     
-    case (state)
+    case (control_state)
         MENU_MODE: begin
-        
-            if (game_on) 
-                state_nxt = GAME_MODE;   
-            else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
-                if (mouse_left) begin
-                    state_nxt = GAME_MODE;
-                    multi_reg_nxt = 0;
-                end
-                else
-                    state_nxt = MENU_MODE;
-            end
-            else if (xpos >= MULTI_BOX_X_POS - 10 && xpos <= MULTI_BOX_X_SIZE + MULTI_BOX_X_POS -5 && ypos >= MULTI_BOX_Y_POS - 10 && ypos <= MULTI_BOX_Y_SIZE + MULTI_BOX_Y_POS) begin
-                if (mouse_left) begin
-                    state_nxt = MULTI_WAIT;
-                    multi_reg_nxt = 1;
-                end
-                else
-                    state_nxt = MENU_MODE;
-            end                 
-            else if (game_over)
-                state_nxt = GAME_OVER;
-            else if (victory)
-                state_nxt = VICTORY_MODE;
-            else
-                state_nxt = MENU_MODE;                
             
-            display_buttons_m_and_s_nxt = 1;
-            
-               // During blanking, make it it black.
+            // During blanking, make it it black.
             if (vblnk_in || hblnk_in) 
                 rgb_nxt = 12'h0_0_0; 
             else begin
@@ -204,24 +124,8 @@ always @* begin
         end
         
         GAME_MODE: begin
-        
-            if (multi_reg)
-                multiplayer_nxt = 1;
-            else
-                multiplayer_nxt = 0;
-                
-            if (menu_on) 
-                state_nxt = MENU_MODE;
-            else if (game_over)
-                state_nxt = GAME_OVER;
-            else if (victory)
-                state_nxt = VICTORY_MODE;
-            else
-                state_nxt = GAME_MODE;
-            
-            play_selected_nxt = 1;
-            mouse_mode_nxt = GAME_MODE;
-                           // During blanking, make it it black.
+
+            // During blanking, make it it black.
             if (vblnk_in || hblnk_in) rgb_nxt = 12'h0_0_0; 
             else begin
                  // Active display, top edge, make a yellow line.
@@ -243,67 +147,13 @@ always @* begin
         end
         
         VICTORY_MODE: begin
-        
-            if (game_on) 
-                state_nxt = GAME_MODE;
-            else if (menu_on)
-                state_nxt = MENU_MODE;
-            else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
-                if (mouse_left) begin
-                    state_nxt = GAME_MODE;
-                    multi_reg_nxt = 0;
-                end
-                else
-                    state_nxt = VICTORY_MODE;
-            end
-            else if (xpos >= MULTI_BOX_X_POS - 10 && xpos <= MULTI_BOX_X_SIZE + MULTI_BOX_X_POS -5 && ypos >= MULTI_BOX_Y_POS - 10 && ypos <= MULTI_BOX_Y_SIZE + MULTI_BOX_Y_POS) begin
-                if (mouse_left) begin
-                    state_nxt = MULTI_WAIT;
-                    multi_reg_nxt = 1;
-                end
-                else
-                    state_nxt = VICTORY_MODE;
-            end           
-            else if (mouse_left)
-                state_nxt = MENU_MODE;
-            else
-                state_nxt = VICTORY_MODE; 
-            
-            display_buttons_m_and_s_nxt = 1;           
+                 
             rgb_nxt = 12'h2_f_2;
             
         end
-        
-        //to go to menu from game over screen press left mouse button anywhere on the screen,  
-        //to play the game again press PLAY button on gameover screen
+
         GAME_OVER: begin  
-                 
-            if (game_on) 
-                state_nxt = GAME_MODE;
-            else if (menu_on)
-                    state_nxt = MENU_MODE;
-            else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
-                if (mouse_left) begin
-                    state_nxt = GAME_MODE;
-                    multi_reg_nxt = 0;
-                end
-                else
-                    state_nxt = GAME_OVER;
-            end
-            else if (xpos >= MULTI_BOX_X_POS - 10 && xpos <= MULTI_BOX_X_SIZE + MULTI_BOX_X_POS -5 && ypos >= MULTI_BOX_Y_POS - 10 && ypos <= MULTI_BOX_Y_SIZE + MULTI_BOX_Y_POS) begin
-                if (mouse_left) begin
-                    state_nxt = MULTI_WAIT;
-                    multi_reg_nxt = 1;
-                end
-                else
-                    state_nxt = GAME_OVER;
-            end                    
-            else if (mouse_left)
-                state_nxt = MENU_MODE;
-            else
-                state_nxt = GAME_OVER; 
-            
-            display_buttons_m_and_s_nxt = 1;    
+   
             rgb_nxt = 12'hf_2_2;    
                     
         end
@@ -311,29 +161,13 @@ always @* begin
         //wait for 2nd player if multiplayer mode selected
         MULTI_WAIT: begin
         
-            if (opponent_ready)
-                state_nxt = GAME_MODE;
-            else if (xpos >= MENU_BOX_X_POS - 10 && xpos <= MENU_BOX_X_SIZE + MENU_BOX_X_POS -5 && ypos >= MENU_BOX_Y_POS - 10 && ypos <= MENU_BOX_Y_SIZE + MENU_BOX_Y_POS) begin
-                if (mouse_left)
-                    state_nxt = MENU_MODE;
-                else
-                    state_nxt = MULTI_WAIT;
-            end
-            else
-                state_nxt = MULTI_WAIT;
-                
-            multiplayer_nxt = 1;
-            player_ready_nxt = 1;
-            display_menu_button_nxt = 1;
             rgb_nxt = 12'h2_2_f;
             
         end
                 
         default begin
         
-            state_nxt = state;
             rgb_nxt = rgb_out;
-            display_menu_button_nxt = 1;
             
         end
      
