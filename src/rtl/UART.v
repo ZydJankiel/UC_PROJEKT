@@ -13,9 +13,7 @@ module UART (
     
     output wire tx,
     output wire victory,
-    output wire opponent_ready,
-    output wire [3:0] an,
-    output wire [7:0] seg
+    output wire opponent_ready
 );
 
 wire [7:0] curr_char_out;
@@ -31,9 +29,7 @@ top uart_top(
 
     //outputs
     .tx(tx),
-    .curr_char_out(curr_char_out),
-    .an(an),
-    .seg(seg)
+    .curr_char_out(curr_char_out)
 );
 
 comparator comparator(

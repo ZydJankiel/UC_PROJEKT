@@ -30,12 +30,16 @@ module CORE
         output wire player_ready,
         output wire play_selected,
         output wire multiplayer,
-        output wire [11:0] rgb_out
+        output wire [11:0] rgb_out,
+        output wire [3:0] an,
+        output wire [7:0] seg
     );
 
 wire [35:0] mux_out;
 
 wire [27:0] delayed_signals;  
+
+wire [15:0] obstacles_counted;
 
 wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_obs0, rgb_out_obs1, rgb_out_obs2, rgb_out_obs3, rgb_out_obs4, rgb_out_obs5, rgb_out_obs6, rgb_out_obs7;
 wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp;
@@ -331,7 +335,8 @@ obstacles_counter obstacles_counter (
     .done_in(done_control),
     
     //outputs
-    .done_out(done_counter)
+    .done_out(done_counter),
+    .obstacles_counted(obstacles_counted)
 );
 
 obstacles_control obstacles_control (
@@ -344,6 +349,18 @@ obstacles_control obstacles_control (
     //outputs
     .obstacle_code(selected_obstacle),
     .done_out(done_control)
+);
+
+disp_hex_mux my_disp(
+    .clk(clk), 
+    .reset(rst),
+    .hex3(obstacles_counted[15:12]), 
+    .hex2(obstacles_counted[11:8]), 
+    .hex1(obstacles_counted[7:4]), 
+    .hex0(obstacles_counted[3:0]), 
+    .dp_in(4'b1111),
+    .an(an), 
+    .sseg(seg)
 );
 
 obstacle_mux_16_to_1 obstacle_mux_16_to_1 (
@@ -602,6 +619,7 @@ MouseDisplay MouseDisplay (
     .blue_out(blue_out_mouse),
     .enable_mouse_display_out()
 );
+
 
 assign hsync = hsync_out_menubut;
 assign vsync = vsync_out_menubut;

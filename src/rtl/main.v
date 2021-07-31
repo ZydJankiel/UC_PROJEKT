@@ -56,14 +56,14 @@ wire [11:0] xpos_out_mouse, ypos_out_mouse;
 wire mouse_left;
 
 //UART WIRES
-wire [3:0] an_out_UART;
-wire [7:0] seg_out_UART;
 wire victory_out_UART, opponent_ready_out_UART, tx_out_UART;
 
 //CORE WIRES
 wire [15:0] led_CORE;
 wire [11:0] rgb_out_CORE;
 wire [2:0] mouse_mode_out_CORE;
+wire [3:0] an_out_CORE;
+wire [7:0] seg_out_CORE;
 wire game_over_out_CORE, player_ready_out_CORE, play_selected_out_CORE, multiplayer_out_CORE;
 wire hsync_out_CORE, vsync_out_CORE;
 
@@ -91,7 +91,9 @@ CORE #( .TOP_V_LINE(TOP_V_LINE),
         .player_ready(player_ready_out_CORE),
         .play_selected(play_selected_out_CORE),
         .multiplayer(multiplayer_out_CORE),
-        .rgb_out(rgb_out_CORE)
+        .rgb_out(rgb_out_CORE),
+        .an(an_out_CORE),
+        .seg(seg_out_CORE)
     );
 
 MOUSE #( .TOP_V_LINE(TOP_V_LINE),
@@ -126,19 +128,15 @@ UART UART (
     
     .tx(tx_out_UART),
     .victory(victory_out_UART),
-    .opponent_ready(opponent_ready_out_UART),
-    .an(an_out_UART),
-    .seg(seg_out_UART)
-
+    .opponent_ready(opponent_ready_out_UART)
 );
 
 
 assign hs = hsync_out_CORE;
 assign vs = vsync_out_CORE;
 assign {r,g,b} = rgb_out_CORE;
-assign led = led_CORE;
-assign an = an_out_UART;
-assign seg = seg_out_UART;
+assign an = an_out_CORE;
+assign seg = seg_out_CORE;
 assign tx = tx_out_UART;
 
 endmodule

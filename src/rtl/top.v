@@ -16,9 +16,7 @@ module top (
     input wire multiplayer,
     
     output wire tx,
-    output wire [7:0] curr_char_out,
-    output wire [3:0] an,
-    output wire [7:0] seg
+    output wire [7:0] curr_char_out
 );
 
 reg tx_nxt;
@@ -41,19 +39,6 @@ uart_module my_uart(
     .r_data(r_data),
     .current_char(curr_char_out)
 );
-
-disp_hex_mux my_disp(
-    .clk(clk), 
-    .reset(rst),
-    .hex3(curr_char_out[7:4]), 
-    .hex2(curr_char_out[3:0]), 
-    .hex1(curr_char_out[7:4]), 
-    .hex0(curr_char_out[3:0]), 
-    .dp_in(4'b1111),
-    .an(an), 
-    .sseg(seg)
-);
-
   
 always @ (posedge clk) begin
     if (rst )begin
