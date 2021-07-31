@@ -43,7 +43,7 @@ module falling_spikes_obstacle(
 localparam COUNTER_WARNING          = 65000000,     //1 sec
            COUNTER_MOVE             = 600000,
            COUNTER_FAST_MOVE        = COUNTER_MOVE/2,
-           OBSTACLE_TIME_COUNTER    = 650000000;   //10 seconds
+           COUNTER_AFTER_FALL       = 32500000;   //0,5 sec
            
 localparam IDLE                 = 3'b000,
            SPIKE_FROM_TOP       = 3'b001,
@@ -60,6 +60,7 @@ localparam GAME_FIELD_TOP       = 317,
            WARNING_BORDER       = 10;
     
 reg [25:0] counter_move_x, counter_move_x_nxt, counter_move_y, counter_move_y_nxt, counter_growth, counter_growth_nxt;
+reg [25:0] counter_on_spike_fall, counter_on_spike_fall_nxt;
 reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [1:0] state, state_nxt;
@@ -80,6 +81,7 @@ always @(posedge clk) begin
         obstacle_y                  <= 0;
         counter_move_x              <= 0;
         counter_move_y              <= 0;
+        counter_on_spike_fall       <= 0;
         spike_center_x              <= 0;
         spike_center_y              <= 0;
         counter_growth              <= 0;
@@ -96,6 +98,7 @@ always @(posedge clk) begin
         obstacle_y                  <= obstacle_y_nxt;
         counter_move_x              <= counter_move_x_nxt;
         counter_move_y              <= counter_move_y_nxt;
+        counter_on_spike_fall       <= counter_on_spike_fall_nxt;
         spike_center_x              <= spike_center_x_nxt;
         spike_center_y              <= spike_center_y_nxt;
         counter_growth              <= counter_growth_nxt;
@@ -112,6 +115,7 @@ always @* begin
     state_nxt                       = IDLE;
     counter_move_x_nxt              = counter_move_x;
     counter_move_y_nxt              = counter_move_y;
+    counter_on_spike_fall_nxt       = counter_on_spike_fall;
     counter_growth_nxt              = counter_growth;
     obstacle_x_nxt                  = 0;
     obstacle_y_nxt                  = 0;
@@ -121,6 +125,7 @@ always @* begin
     spike_left_or_top_slope_nxt     = spike_left_or_top_slope;
     spike_right_or_bot_slope_nxt    = spike_right_or_bot_slope;
     spike_center_x_nxt              = spike_center_x;
+    spike_center_y_nxt              = spike_center_y;
     case (state)
         IDLE: begin
             if (done_in) begin
@@ -131,6 +136,7 @@ always @* begin
                 spike_center_x_nxt = 511;
                 spike_left_or_top_slope_nxt = 1170;
                 spike_right_or_bot_slope_nxt = 1890;
+                spike_center_y_nxt = GAME_FIELD_TOP;
                 warning_nxt = 1;
             end
             else
@@ -146,55 +152,275 @@ always @* begin
                 state_nxt = SPIKE_FROM_TOP; 
                 
             if (warning) begin
-                //in last 2 comps - more in <= and less in >= makes triangle bigger , multiplying hcount gives greater slope (if x>1) or smaller slope (if x<1)
-                //to move spike downwards in <= add difference and in >= subtract
-                //when moving spike sideways add (or subtract) to both <= and >= value of 3*x_difference 
-                if (hcount_in >= spike_center_x - SPIKE_WIDTH && hcount_in <= spike_center_x + SPIKE_WIDTH && vcount_in >= GAME_FIELD_TOP && (vcount_in <= GAME_FIELD_TOP + 50) && ((3 * hcount_in) + vcount_in) <= spike_right_or_bot_slope_nxt && ((3 * hcount_in) - vcount_in) >= spike_left_or_top_slope_nxt)  begin 
+                //in last 2 comps - more in spike_right... and less in spike_left... makes triangle bigger , multiplying hcount gives greater slope (if x>1) or smaller slope (if x<1)
+                //to move spike downwards in spike_right... add difference and in spike_left... subtract
+                //when moving spike sideways add (or subtract) to both spike_right... and spike_left... value of 3*x_difference 
+                if (hcount_in >= spike_center_x - SPIKE_WIDTH && hcount_in <= spike_center_x + SPIKE_WIDTH && vcount_in >= spike_center_y_nxt && (vcount_in <= spike_center_y_nxt + 50) && ((3 * hcount_in) + vcount_in) <= spike_right_or_bot_slope_nxt && ((3 * hcount_in) - vcount_in) >= spike_left_or_top_slope_nxt)  begin 
                     rgb_nxt = 12'hf_f_f;
+                    obstacle_x_nxt = hcount_in;
+                    obstacle_y_nxt = vcount_in;
                     end
                 else 
                     rgb_nxt = rgb_in;
                     
                 if (warning_counter == COUNTER_WARNING) begin
                     warning_counter_nxt = 0;
+                    warning_nxt = 0;
+                    end
+                else 
+                    warning_counter_nxt = warning_counter + 1;
+
+                //spike x axis following    
+                if (spike_center_x < mouse_xpos + (SPIKE_WIDTH/2)) begin              
+                    if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        spike_center_x_nxt = spike_center_x + 1;
+                        spike_left_or_top_slope_nxt = spike_left_or_top_slope +3;
+                        spike_right_or_bot_slope_nxt = spike_right_or_bot_slope +3;
+                        counter_move_x_nxt = 0;
+                    end
+                    else
+                        counter_move_x_nxt = counter_move_x + 1;
+                end
+                else if (spike_center_x > mouse_xpos) begin         
+                    if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        spike_left_or_top_slope_nxt = spike_left_or_top_slope -3;
+                        spike_right_or_bot_slope_nxt = spike_right_or_bot_slope -3;
+                        spike_center_x_nxt = spike_center_x - 1;  
+                        counter_move_x_nxt = 0;
+                    end
+                    else
+                        counter_move_x_nxt = counter_move_x + 1; 
+                    end
+                else begin                                          
+                    spike_center_x_nxt = spike_center_x;
+                    counter_move_x_nxt = 0;
+                end
+
+                end 
+            else begin
+                //in last 2 comps - more in spike_right... and less in spike_left... makes triangle bigger , multiplying hcount gives greater slope (if x>1) or smaller slope (if x<1)
+                //to move spike downwards in spike_right... add difference and in spike_left... subtract
+                //when moving spike sideways add (or subtract) to both spike_right... and spike_left... value of 3*x_difference 
+                if (hcount_in >= spike_center_x - SPIKE_WIDTH && hcount_in <= spike_center_x + SPIKE_WIDTH && vcount_in >= spike_center_y && (vcount_in <= spike_center_y + 50) && ((3 * hcount_in) + vcount_in) <= spike_right_or_bot_slope_nxt && ((3 * hcount_in) - vcount_in) >= spike_left_or_top_slope_nxt)  begin 
+                    rgb_nxt = 12'hf_f_f;
+                    obstacle_x_nxt = hcount_in;
+                    obstacle_y_nxt = vcount_in;
+                    end
+                else begin
+                    rgb_nxt = rgb_in;
+                    end
+
+                if (counter_move_y >= COUNTER_FAST_MOVE) begin  
+                    spike_center_y_nxt = spike_center_y + 1;
+                    spike_left_or_top_slope_nxt = spike_left_or_top_slope - 1;
+                    spike_right_or_bot_slope_nxt = spike_right_or_bot_slope + 1;
+                    counter_move_y_nxt = 0;
+                    end
+                else begin
+                    counter_move_y_nxt = counter_move_y + 1;
+                    end
+                
+                if (spike_center_y >= GAME_FIELD_BOTTOM - SPIKE_WIDTH) begin
+                    state_nxt = SPIKE_FROM_BOTTOM;
+                    spike_center_x_nxt = 511;
+                    spike_left_or_top_slope_nxt = 965;
+                    spike_right_or_bot_slope_nxt = 2100;
+                    spike_center_y_nxt = GAME_FIELD_BOTTOM;
+                    warning_nxt = 1;
+                    end
+                else
+                    state_nxt =  SPIKE_FROM_TOP;
+                end
+                
+  
+        end //end state
+        
+        SPIKE_FROM_BOTTOM: begin
+        
+            if (menu_on || !play_selected)
+                state_nxt = IDLE;
+            else 
+                state_nxt = SPIKE_FROM_BOTTOM; 
+                
+            if (warning) begin
+                //to move spike downwards in <= subtract difference and in >= add
+                //when moving spike sideways add (or subtract) to both <= and >= value of 3*x_difference  
+                if (hcount_in >= spike_center_x - SPIKE_WIDTH && hcount_in <= spike_center_x + SPIKE_WIDTH && (vcount_in >= spike_center_y - 50) && (vcount_in <= spike_center_y) && ((3 * hcount_in) + vcount_in) >= spike_right_or_bot_slope_nxt && ((3 * hcount_in) - vcount_in) <= spike_left_or_top_slope_nxt)  begin 
+                    rgb_nxt = 12'hf_f_f;
+                    obstacle_x_nxt = hcount_in;
+                    obstacle_y_nxt = vcount_in;
+                    end
+                else 
+                    rgb_nxt = rgb_in;
+                    
+                if (warning_counter == COUNTER_WARNING) begin
+                    warning_counter_nxt = 0;
+                    warning_nxt = 0;
+                    end
+                else 
+                    warning_counter_nxt = warning_counter + 1;
+
+                //spike x axis following    
+                if (spike_center_x < mouse_xpos + (SPIKE_WIDTH/2)) begin              
+                    if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        spike_center_x_nxt = spike_center_x + 1;
+                        spike_left_or_top_slope_nxt = spike_left_or_top_slope +3;
+                        spike_right_or_bot_slope_nxt = spike_right_or_bot_slope +3;
+                        counter_move_x_nxt = 0;
+                    end
+                    else
+                        counter_move_x_nxt = counter_move_x + 1;
+                end
+                else if (spike_center_x > mouse_xpos) begin         
+                    if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        spike_left_or_top_slope_nxt = spike_left_or_top_slope -3;
+                        spike_right_or_bot_slope_nxt = spike_right_or_bot_slope -3;
+                        spike_center_x_nxt = spike_center_x - 1;  
+                        counter_move_x_nxt = 0;
+                    end
+                    else
+                        counter_move_x_nxt = counter_move_x + 1; 
+                    end
+                else begin                                          
+                    spike_center_x_nxt = spike_center_x;
+                    counter_move_x_nxt = 0;
+                end
+
+                end 
+            else begin
+                //to move spike downwards in <= subtract difference and in >= add
+                //when moving spike sideways add (or subtract) to both <= and >= value of 3*x_difference 
+                if (hcount_in >= spike_center_x - SPIKE_WIDTH && hcount_in <= spike_center_x + SPIKE_WIDTH && (vcount_in >= spike_center_y - 50) && (vcount_in <= spike_center_y) && ((3 * hcount_in) + vcount_in) >= spike_right_or_bot_slope_nxt && ((3 * hcount_in) - vcount_in) <= spike_left_or_top_slope_nxt)  begin 
+                    rgb_nxt = 12'hf_f_f;
+                    obstacle_x_nxt = hcount_in;
+                    obstacle_y_nxt = vcount_in;
+                    end
+                else begin
+                    rgb_nxt = rgb_in;
+                    end
+
+                if (counter_move_y >= COUNTER_FAST_MOVE) begin  
+                    spike_center_y_nxt = spike_center_y - 1;
+                    spike_left_or_top_slope_nxt = spike_left_or_top_slope + 1;
+                    spike_right_or_bot_slope_nxt = spike_right_or_bot_slope - 1;
+                    counter_move_y_nxt = 0;
+                    end
+                else begin
+                    counter_move_y_nxt = counter_move_y + 1;
+                    end
+                
+                if (spike_center_y <= GAME_FIELD_TOP + SPIKE_WIDTH) begin
+                    spike_center_x_nxt = GAME_FIELD_LEFT;
+                    spike_left_or_top_slope_nxt = -390;
+                    spike_right_or_bot_slope_nxt = 630;
+                    spike_center_y_nxt = 511;
+                    warning_nxt = 1;
+                    state_nxt = SPIKE_FROM_LEFT;
+                    end
+                else
+                    state_nxt =  SPIKE_FROM_BOTTOM;
+                end
+                
+  
+        end //end state
+
+        SPIKE_FROM_LEFT: begin
+        
+            if (menu_on || !play_selected)
+                state_nxt = IDLE;
+            else 
+                state_nxt = SPIKE_FROM_LEFT; 
+            // else if (hcount_in >= 361 && hcount_in <= 411 && vcount_in >= 300 && vcount_in <= 340 && (((3 * hcount_in)/10) + vcount_in) <= 440 && (((3 * hcount_in)/10) - vcount_in) <= -200)
+   
+            if (warning) begin
+                //to move down add to 1st comparison and subtarct from 2nd
+                // to move right add to both comparisons 0,3*x_difference
+                if (hcount_in >= spike_center_x && hcount_in <= spike_center_x + 50 && (vcount_in >= spike_center_y - SPIKE_WIDTH) && (vcount_in <= spike_center_y + SPIKE_WIDTH) && (((3 * hcount_in)/10) + vcount_in) <= 630 && (((3 * hcount_in)/10) - vcount_in) <= -390)  begin 
+                    rgb_nxt = 12'hf_f_f;
+                    obstacle_x_nxt = hcount_in;
+                    obstacle_y_nxt = vcount_in;
+                    end
+                else 
+                    rgb_nxt = rgb_in;
+                   
+                if (warning_counter == COUNTER_WARNING) begin
+                    warning_counter_nxt = 0;
                     //warning_nxt = 0;
                     end
                 else 
                     warning_counter_nxt = warning_counter + 1;
+                /* 
+                //spike y axis following    
+                if (spike_center_y < mouse_ypos + (SPIKE_WIDTH/2)) begin              
+                    if (counter_move_y >= COUNTER_FAST_MOVE) begin
+                        spike_center_y_nxt = spike_center_y + 1;
+                        spike_left_or_top_slope_nxt = spike_left_or_top_slope - 1;
+                        spike_right_or_bot_slope_nxt = spike_right_or_bot_slope + 1;
+                        counter_move_y_nxt = 0;
+                    end
+                    else
+                        counter_move_y_nxt = counter_move_y + 1;
+                end
+                else if (spike_center_y > mouse_ypos) begin         
+                    if (counter_move_y >= COUNTER_FAST_MOVE) begin
+                        spike_center_y_nxt = spike_center_y - 1; 
+                        spike_left_or_top_slope_nxt = spike_left_or_top_slope + 1;
+                        spike_right_or_bot_slope_nxt = spike_right_or_bot_slope - 1;
+                        counter_move_y_nxt = 0;
+                    end
+                    else
+                        counter_move_y_nxt = counter_move_y + 1; 
+                    end
+                else begin                                          
+                    spike_center_y_nxt = spike_center_y;
+                    counter_move_y_nxt = 0;
+                    end
+                    */
                 end 
-            else
-                rgb_nxt = rgb_in;
+            else begin
+                //to move down add to 1st comparison and subtarct from 2nd
+                // to move right add to both comparisons 0,3*x_difference
+                if (hcount_in >= spike_center_x  && hcount_in <= spike_center_x + SPIKE_WIDTH && (vcount_in >= spike_center_y - 50) && (vcount_in <= spike_center_y) && (((3 * hcount_in)/10) + vcount_in) <= spike_right_or_bot_slope_nxt && (((3 * hcount_in)/10) - vcount_in) <= spike_left_or_top_slope_nxt)  begin 
+                    rgb_nxt = 12'hf_f_f;
+                    obstacle_x_nxt = hcount_in;
+                    obstacle_y_nxt = vcount_in;
+                    end
+                else begin
+                    rgb_nxt = rgb_in;
+                    end
 
-            //spike x axis following    
-            if (spike_center_x < mouse_xpos + (SPIKE_WIDTH/2)) begin              
-                if (counter_move_x >= COUNTER_FAST_MOVE) begin
-                    spike_center_x_nxt = spike_center_x + 1;
-                    spike_left_or_top_slope_nxt = spike_left_or_top_slope_nxt +3;
-                    spike_right_or_bot_slope_nxt = spike_right_or_bot_slope_nxt +3;
+                if (counter_move_x >= COUNTER_MOVE) begin  
+                    spike_center_x_nxt = spike_center_x + 3;
+                    spike_left_or_top_slope_nxt = spike_left_or_top_slope + 1;
+                    spike_right_or_bot_slope_nxt = spike_right_or_bot_slope + 1;
                     counter_move_x_nxt = 0;
-                end
-                else
+                    end
+                else begin
                     counter_move_x_nxt = counter_move_x + 1;
-            end
-            else if (spike_center_x > mouse_xpos) begin         
-                if (counter_move_x >= COUNTER_FAST_MOVE) begin
-                    spike_left_or_top_slope_nxt = spike_left_or_top_slope_nxt -3;
-                    spike_right_or_bot_slope_nxt = spike_right_or_bot_slope_nxt -3;
-                    spike_center_x_nxt = spike_center_x - 1;  
-                    counter_move_x_nxt = 0;
-                end
+                    end
+                
+                if (spike_center_x >= GAME_FIELD_RIGHT - SPIKE_WIDTH) begin
+                    state_nxt = SPIKE_FROM_RIGHT;
+                    spike_center_x_nxt = 511;
+                    spike_left_or_top_slope_nxt = 1170;
+                    spike_right_or_bot_slope_nxt = 1890;
+                    spike_center_y_nxt = GAME_FIELD_LEFT;
+                    warning_nxt = 1;
+                    end
                 else
-                    counter_move_x_nxt = counter_move_x + 1; 
+                    state_nxt =  SPIKE_FROM_LEFT;
                 end
-            else begin                                          
-                spike_center_x_nxt = spike_center_x;
-                counter_move_x_nxt = 0;
-            end
-
-
-                      
+                
+  
         end //end state
         
+        
+        SPIKE_FROM_RIGHT: begin
+            if (hcount_in > 170 && hcount_in <= 210 && vcount_in > 90 && vcount_in <= 250) rgb_nxt = 12'h0_f_0;
+            else rgb_nxt = rgb_in;
+            state_nxt = SPIKE_FROM_RIGHT;
+        end //end state
+
     endcase
 end
         

@@ -126,6 +126,8 @@ always @* begin
     enemy_border_nxt            = enemy_border;
     enemy2_center_x_nxt         = enemy2_center_x;
     enemy2_center_y_nxt         = enemy2_center_y;
+    counter2_move_x_nxt         = counter2_move_x;
+    counter2_move_y_nxt         = counter2_move_y;
     obstacle_time_counter_nxt   = obstacle_time_counter;
     
     case (state)

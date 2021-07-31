@@ -60,6 +60,7 @@ read_verilog {
     src/rtl/CORE.v
     src/rtl/UART.v
     src/rtl/MOUSE.v
+    src/rtl/falling_spikes_obstacle.v
 }
 
 read_vhdl {

@@ -200,10 +200,14 @@ always @* begin
                 
                 //triangle test
                   //downwards spike
-                else if (hcount_in >= 120 && hcount_in <= 160 && vcount_in >= 300 && vcount_in <= 350 && ((3 * hcount_in) + vcount_in) <= 770 && ((3 * hcount_in) - vcount_in) >= 70)   
+                //else if (hcount_in >= 120 && hcount_in <= 160 && vcount_in >= 300 && vcount_in <= 350 && ((3 * hcount_in) + vcount_in) <= 770 && ((3 * hcount_in) - vcount_in) >= 70)   
                 //in last 2 comps - more in <= and less in >= makes triangle bigger , multiplying hcount gives bigger slope     
-                    rgb_nxt = 12'h0_f_f;
-                    /*
+                    //rgb_nxt = 12'h0_f_f;
+
+                      
+                else if (hcount_in >= 120 && hcount_in <= 160 && vcount_in >= 425 && vcount_in <= 475 && ((3 * hcount_in) + vcount_in) <= 895 && ((3 * hcount_in) - vcount_in) >= -55)
+                         rgb_nxt = 12'h0_f_f;
+                                               
                 else if (hcount_in >= 120 && hcount_in <= 160 && vcount_in >= 500 && vcount_in <= 550 && ((3 * hcount_in) + vcount_in) <= 970 && ((3 * hcount_in) - vcount_in) >= -130)
                     rgb_nxt = 12'h0_f_f;  
                 else if (hcount_in >= 120 && hcount_in <= 160 && vcount_in >= 600 && vcount_in <= 650 && ((3 * hcount_in) + vcount_in) <= 1070 && ((3 * hcount_in) - vcount_in) >= -230)
@@ -214,7 +218,7 @@ always @* begin
                     rgb_nxt = 12'hf_0_f; 
                 //to move spike downwards in <= add difference and in >= subtract
                 //when moving spike sideways add (or subtract) to both <= and >= value of 3*x_difference     
-                */
+                
                 //rightwards spike
                 else if (hcount_in >= 361 && hcount_in <= 411 && vcount_in >= 300 && vcount_in <= 340 && (((3 * hcount_in)/10) + vcount_in) <= 440 && (((3 * hcount_in)/10) - vcount_in) <= -200)
                     rgb_nxt = 12'hf_0_f; 
