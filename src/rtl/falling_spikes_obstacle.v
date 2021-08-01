@@ -18,11 +18,19 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+/*
+/MO-created module. Despite knowing how to display static triangles in all 4 directions  on screen (code at the end of file) i could not 
+/ find a reasonable way to display triangles facing right and left - bec of the fact that creating slope on screen sometimes requires 
+/ comparing hcount and vcount to negative number both of them (hcount and vcount) had to be transformed into "signed" form which is two's complement
+/ in order to properly compare values. This resulted in problems of not meeting timing requirements in different wire across the whole program (even outside of "CORE")
+/ (Total Negative slack ranged from -9ns  to -250ns in warious attempts to fix this issue in this module). In the end it was decided that it is not worth the effort
+/ of rewriting code in warious modules just for the sake of this one module.
+/
+*/
 
 module falling_spikes_obstacle(
-    input wire [11:0] vcount_in,
-    input wire [11:0] hcount_in,
+    input wire  [11:0] vcount_in,
+    input wire  [11:0] hcount_in,
     input wire clk,
     input wire rst,
     input wire game_on,
@@ -40,7 +48,7 @@ module falling_spikes_obstacle(
     output reg done
     );
 
-localparam COUNTER_WARNING          = 65000000,     //1 sec
+localparam COUNTER_AIM              = 65000000,     //1 sec
            COUNTER_MOVE             = 600000,
            COUNTER_FAST_MOVE        = COUNTER_MOVE/2,
            COUNTER_AFTER_FALL       = 32500000;   //0,5 sec
@@ -48,8 +56,9 @@ localparam COUNTER_WARNING          = 65000000,     //1 sec
 localparam IDLE                 = 3'b000,
            SPIKE_FROM_TOP       = 3'b001,
            SPIKE_FROM_BOTTOM    = 3'b010,
-           SPIKE_FROM_LEFT      = 3'b011,
-           SPIKE_FROM_RIGHT     = 3'b100;
+           BARRAGE_FROM_BOTTOM  = 3'b011,
+           BARRAGE_FROM_TOP     = 3'b100;
+
            
 localparam SPIKE_WIDTH          = 20;
 
@@ -63,15 +72,15 @@ reg [25:0] counter_move_x, counter_move_x_nxt, counter_move_y, counter_move_y_nx
 reg [25:0] counter_on_spike_fall, counter_on_spike_fall_nxt;
 reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
-reg [1:0] state, state_nxt;
+reg [2:0] state, state_nxt;
 reg done_nxt;
-reg [25:0] warning_counter, warning_counter_nxt;
+reg [25:0] aim_counter, aim_counter_nxt;
 
 reg warning, warning_nxt;
-reg [11:0] spike_left_or_top_slope, spike_left_or_top_slope_nxt, spike_right_or_bot_slope, spike_right_or_bot_slope_nxt;
+reg [25:0] spike_left_or_top_slope, spike_left_or_top_slope_nxt, spike_right_or_bot_slope, spike_right_or_bot_slope_nxt;
 reg [6:0] enemy_border, enemy_border_nxt;
-reg [11:0] spike_center_x, spike_center_x_nxt, spike_center_y, spike_center_y_nxt;
-
+reg [25:0] spike_center_x, spike_center_x_nxt, spike_center_y, spike_center_y_nxt;
+reg [25:0] signed_hcount, signed_vcount;
 
 always @(posedge clk) begin
     if (rst) begin
@@ -86,10 +95,12 @@ always @(posedge clk) begin
         spike_center_y              <= 0;
         counter_growth              <= 0;
         done                        <= 0;
-        warning_counter             <= 0;
+        aim_counter                 <= 0;
         warning                     <= 0;
         spike_left_or_top_slope     <= 0;
         spike_right_or_bot_slope    <= 0;
+        signed_hcount               <= 0;
+        signed_vcount               <= 0;
     end
     else begin
         state                       <= state_nxt;
@@ -103,10 +114,12 @@ always @(posedge clk) begin
         spike_center_y              <= spike_center_y_nxt;
         counter_growth              <= counter_growth_nxt;
         done                        <= done_nxt;
-        warning_counter             <= warning_counter_nxt;
+        aim_counter                 <= aim_counter_nxt;
         warning                     <= warning_nxt;
         spike_left_or_top_slope     <= spike_left_or_top_slope_nxt;
         spike_right_or_bot_slope    <= spike_right_or_bot_slope_nxt;
+        signed_hcount               <= hcount_in;
+        signed_vcount               <= vcount_in;
     end
 end
 
@@ -120,7 +133,7 @@ always @* begin
     obstacle_x_nxt                  = 0;
     obstacle_y_nxt                  = 0;
     done_nxt                        = 0;
-    warning_counter_nxt             = warning_counter;
+    aim_counter_nxt                 = aim_counter;
     warning_nxt                     = warning;
     spike_left_or_top_slope_nxt     = spike_left_or_top_slope;
     spike_right_or_bot_slope_nxt    = spike_right_or_bot_slope;
@@ -132,7 +145,7 @@ always @* begin
                 state_nxt = ((selected == 4'b0101) && play_selected) ? SPIKE_FROM_TOP : IDLE;
                 counter_move_x_nxt = 0;
                 counter_move_y_nxt = 0;
-                warning_counter_nxt = 0;
+                aim_counter_nxt = 0;
                 spike_center_x_nxt = 511;
                 spike_left_or_top_slope_nxt = 1170;
                 spike_right_or_bot_slope_nxt = 1890;
@@ -163,12 +176,12 @@ always @* begin
                 else 
                     rgb_nxt = rgb_in;
                     
-                if (warning_counter == COUNTER_WARNING) begin
-                    warning_counter_nxt = 0;
+                if (aim_counter == COUNTER_AIM) begin
+                    aim_counter_nxt = 0;
                     warning_nxt = 0;
                     end
                 else 
-                    warning_counter_nxt = warning_counter + 1;
+                    aim_counter_nxt = aim_counter + 1;
 
                 //spike x axis following    
                 if (spike_center_x < mouse_xpos + (SPIKE_WIDTH/2)) begin              
@@ -253,12 +266,12 @@ always @* begin
                 else 
                     rgb_nxt = rgb_in;
                     
-                if (warning_counter == COUNTER_WARNING) begin
-                    warning_counter_nxt = 0;
+                if (aim_counter == COUNTER_AIM) begin
+                    aim_counter_nxt = 0;
                     warning_nxt = 0;
                     end
                 else 
-                    warning_counter_nxt = warning_counter + 1;
+                    aim_counter_nxt = aim_counter + 1;
 
                 //spike x axis following    
                 if (spike_center_x < mouse_xpos + (SPIKE_WIDTH/2)) begin              
@@ -310,12 +323,12 @@ always @* begin
                     end
                 
                 if (spike_center_y <= GAME_FIELD_TOP + SPIKE_WIDTH) begin
-                    spike_center_x_nxt = GAME_FIELD_LEFT;
-                    spike_left_or_top_slope_nxt = -390;
-                    spike_right_or_bot_slope_nxt = 630;
-                    spike_center_y_nxt = 511;
+                    spike_center_x_nxt = 511;
+                    spike_center_y_nxt = GAME_FIELD_TOP;
+                    spike_left_or_top_slope_nxt = 1170;
+                    spike_right_or_bot_slope_nxt = 1890;
                     warning_nxt = 1;
-                    state_nxt = SPIKE_FROM_LEFT;
+                    state_nxt = SPIKE_FROM_TOP;
                     end
                 else
                     state_nxt =  SPIKE_FROM_BOTTOM;
@@ -324,6 +337,24 @@ always @* begin
   
         end //end state
 
+
+    endcase
+end
+        
+
+
+
+
+
+
+
+endmodule
+
+
+
+
+// obsolete code for dispalying and moving spike from left side of game field to right, not implemented due to reasons stated before
+/*
         SPIKE_FROM_LEFT: begin
         
             if (menu_on || !play_selected)
@@ -331,11 +362,12 @@ always @* begin
             else 
                 state_nxt = SPIKE_FROM_LEFT; 
             // else if (hcount_in >= 361 && hcount_in <= 411 && vcount_in >= 300 && vcount_in <= 340 && (((3 * hcount_in)/10) + vcount_in) <= 440 && (((3 * hcount_in)/10) - vcount_in) <= -200)
-   
+            spike_left_or_top_slope_nxt = -25'sb00000000000000000110000110;
+            spike_right_or_bot_slope_nxt = 630;
             if (warning) begin
                 //to move down add to 1st comparison and subtarct from 2nd
                 // to move right add to both comparisons 0,3*x_difference
-                if (hcount_in >= spike_center_x && hcount_in <= spike_center_x + 50 && (vcount_in >= spike_center_y - SPIKE_WIDTH) && (vcount_in <= spike_center_y + SPIKE_WIDTH) && (((3 * hcount_in)/10) + vcount_in) <= 630 && (((3 * hcount_in)/10) - vcount_in) <= -390)  begin 
+                if (signed_hcount >= spike_center_x && signed_hcount <= spike_center_x + 50 && (signed_vcount >= spike_center_y - SPIKE_WIDTH) && (signed_vcount <= spike_center_y + SPIKE_WIDTH) && (((3 * signed_hcount)/10) + signed_vcount) <= spike_right_or_bot_slope_nxt && (((3 * signed_hcount)/10) - signed_vcount) <= spike_left_or_top_slope_nxt)  begin 
                     rgb_nxt = 12'hf_f_f;
                     obstacle_x_nxt = hcount_in;
                     obstacle_y_nxt = vcount_in;
@@ -349,7 +381,7 @@ always @* begin
                     end
                 else 
                     warning_counter_nxt = warning_counter + 1;
-                /* 
+                
                 //spike y axis following    
                 if (spike_center_y < mouse_ypos + (SPIKE_WIDTH/2)) begin              
                     if (counter_move_y >= COUNTER_FAST_MOVE) begin
@@ -375,7 +407,7 @@ always @* begin
                     spike_center_y_nxt = spike_center_y;
                     counter_move_y_nxt = 0;
                     end
-                    */
+                    
                 end 
             else begin
                 //to move down add to 1st comparison and subtarct from 2nd
@@ -413,21 +445,10 @@ always @* begin
                 
   
         end //end state
-        
-        
-        SPIKE_FROM_RIGHT: begin
-            if (hcount_in > 170 && hcount_in <= 210 && vcount_in > 90 && vcount_in <= 250) rgb_nxt = 12'h0_f_0;
-            else rgb_nxt = rgb_in;
-            state_nxt = SPIKE_FROM_RIGHT;
-        end //end state
-
-    endcase
-end
-        
+*/ 
 
 
-
-
+//examples of displaying static triangles in 4 directions
                 /*
                 else if (hcount_in >= 120 && hcount_in <= 160 && vcount_in >= 300 && vcount_in <= 350 && ((3 * hcount_in) + vcount_in) <= 770 && ((3 * hcount_in) - vcount_in) >= 70)   
                 //in last 2 comps - more in <= and less in >= makes triangle bigger , multiplying hcount gives bigger slope     
@@ -478,5 +499,3 @@ end
                 //when moving spike sideways add (or subtract) to both <= and >= value of 3*x_difference 
                 */
 
-
-endmodule
