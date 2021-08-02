@@ -1,3 +1,7 @@
+`timescale 1 ns / 1 ps
+
+// PWJ implemented module
+
 module obstacles_counter (
     input wire clk,
     input wire rst,

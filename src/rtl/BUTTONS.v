@@ -1,3 +1,5 @@
+`timescale 1 ns / 1 ps
+
 module BUTTONS 
     #( parameter
         PLAY_BOX_X_POS  = 432,

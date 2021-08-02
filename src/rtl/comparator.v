@@ -1,3 +1,4 @@
+`timescale 1 ns / 1 ps
 /*
  * PWJ: Added comparator for comparing messages from uart
  * this module is working only in multiplayer

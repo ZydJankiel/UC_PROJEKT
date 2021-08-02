@@ -1,8 +1,7 @@
 `timescale 1 ns / 1 ps
 /*
  * PWJ: Added state machine for switching between menu background and game background.
- * Placing mouse on PLAY text in MENU_MODE will change its color to green, and pressing
- * left mouse button will change state to GAME_MODE. Pressing btnL button on board will chnge mode back to menu.
+ * Pressing btnL button on board will chnge mode back to menu.
  * All of the letters are beeing drawn with big if elseif chunk of code.
  *
  *MO 27.06 added gameover state and behaviour (changed states to 2bit form 1bit)    

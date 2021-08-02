@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 /*
 * PWJ Added function for detecting hit and sending information to HP module.
-* When player is hit he have 1 second of immortality to correct his mistake.
+* When player is hit he has 1 second of immortality to correct his mistake.
 *
 * MO - reduced invulnerability to 0,5 sec - it had potential to skip whole obstacles during 1 sec 
 * and it is faster to test.

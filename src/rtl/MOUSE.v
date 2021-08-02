@@ -1,6 +1,6 @@
+`timescale 1 ns / 1 ps
 /*
  * PWJ: Added module for MOUSE logic
-
 */
 
 module MOUSE 

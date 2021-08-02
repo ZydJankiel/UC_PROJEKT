@@ -7,7 +7,7 @@
  * UART send letters only in multiplayer mode
 */
 
-module top (
+module uart_logic (
     input wire clk,
     input wire rst,
     input wire rx,

@@ -1,3 +1,7 @@
+`timescale 1 ns / 1 ps
+
+// PWJ added module for managing obstacles
+
 module OBSTACLES (
     input wire clk,
     input wire rst,

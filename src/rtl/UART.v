@@ -1,3 +1,4 @@
+`timescale 1 ns / 1 ps
 /*
  * PWJ: Added module for UART logic
 */
@@ -18,7 +19,7 @@ module UART (
 
 wire [7:0] curr_char_out;
 
-top uart_top(
+uart_logic uart_logic(
     //inputs
     .clk(clk),
     .rst(rst),

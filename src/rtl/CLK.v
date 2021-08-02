@@ -1,3 +1,5 @@
+`timescale 1 ns / 1 ps
+
 module CLK (
     input wire clk,
     input wire rst,

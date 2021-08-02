@@ -2,6 +2,7 @@
 /*
  * PWJ: Added module for drawing obstacle. This module sends x and y coordinates to
  * module responsible for checking colision with mouse pointer.
+ * PLACEHOLDER
  */
 module obstacle1
     #( parameter
