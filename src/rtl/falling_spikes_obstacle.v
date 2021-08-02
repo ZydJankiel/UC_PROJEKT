@@ -80,7 +80,6 @@ reg [25:0] aim_counter, aim_counter_nxt;
 reg [5:0] spike_counter, spike_counter_nxt;
 reg warning, warning_nxt;
 reg [25:0] spike_left_or_top_slope, spike_left_or_top_slope_nxt, spike_right_or_bot_slope, spike_right_or_bot_slope_nxt;
-reg [6:0] enemy_border, enemy_border_nxt;
 reg [25:0] spike_center_x, spike_center_x_nxt, spike_center_y, spike_center_y_nxt;
 
 
