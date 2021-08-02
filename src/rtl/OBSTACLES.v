@@ -134,12 +134,7 @@ mouse_follower_obstacle mouse_follower_obstacle(
     .done(done_obs4) 
 );
 
-obstacle1 #( .TEST_TOP_LINE(600), 
-             .TEST_BOTTOM_LINE(500), 
-             .TEST_LEFT_LINE(520), 
-             .TEST_RIGHT_LINE(620),
-             .COLOR(12'hf_f_0),
-             .SELECT_CODE(4'b0101) ) rectangle5_obstacle (
+falling_spikes_obstacle falling_spikes_obstacle(
     //inputs
     .vcount_in(vcount_in),
     .hcount_in(hcount_in),
@@ -151,6 +146,8 @@ obstacle1 #( .TEST_TOP_LINE(600),
     .play_selected(play_selected),
     .selected(selected_obstacle),
     .done_in(done_counter),
+    .mouse_xpos(xpos),
+    //.mouse_ypos(ypos),
     
     //outputs  
     .obstacle_x(obstacle5_x_out),
