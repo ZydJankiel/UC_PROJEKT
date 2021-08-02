@@ -57,7 +57,8 @@ localparam IDLE                 = 3'b000,
            SPIKE_FROM_TOP       = 3'b001,
            SPIKE_FROM_BOTTOM    = 3'b010,
            BARRAGE_FROM_BOTTOM  = 3'b011,
-           BARRAGE_FROM_TOP     = 3'b100;
+           BARRAGE_FROM_TOP     = 3'b100,
+           SPIKE_DISTRIBUTOR    = 3'b101;
 
            
 localparam SPIKE_WIDTH          = 20;
@@ -68,19 +69,20 @@ localparam GAME_FIELD_TOP       = 317,
            GAME_FIELD_RIGHT     = 661,
            WARNING_BORDER       = 10;
     
-reg [25:0] counter_move_x, counter_move_x_nxt, counter_move_y, counter_move_y_nxt, counter_growth, counter_growth_nxt;
-reg [25:0] counter_on_spike_fall, counter_on_spike_fall_nxt;
+reg [25:0] counter_move_x, counter_move_x_nxt, counter_move_y, counter_move_y_nxt;
+reg [25:0] counter_after_fall, counter_after_fall_nxt;
 reg [11:0] rgb_nxt;
 reg [11:0] obstacle_x_nxt, obstacle_y_nxt;
 reg [2:0] state, state_nxt;
 reg done_nxt;
 reg [25:0] aim_counter, aim_counter_nxt;
 
+reg [5:0] spike_counter, spike_counter_nxt;
 reg warning, warning_nxt;
 reg [25:0] spike_left_or_top_slope, spike_left_or_top_slope_nxt, spike_right_or_bot_slope, spike_right_or_bot_slope_nxt;
 reg [6:0] enemy_border, enemy_border_nxt;
 reg [25:0] spike_center_x, spike_center_x_nxt, spike_center_y, spike_center_y_nxt;
-reg [25:0] signed_hcount, signed_vcount;
+
 
 always @(posedge clk) begin
     if (rst) begin
@@ -90,17 +92,16 @@ always @(posedge clk) begin
         obstacle_y                  <= 0;
         counter_move_x              <= 0;
         counter_move_y              <= 0;
-        counter_on_spike_fall       <= 0;
+        counter_after_fall          <= 0;
         spike_center_x              <= 0;
         spike_center_y              <= 0;
-        counter_growth              <= 0;
+        spike_counter               <= 0;
         done                        <= 0;
         aim_counter                 <= 0;
         warning                     <= 0;
         spike_left_or_top_slope     <= 0;
         spike_right_or_bot_slope    <= 0;
-        signed_hcount               <= 0;
-        signed_vcount               <= 0;
+
     end
     else begin
         state                       <= state_nxt;
@@ -109,17 +110,16 @@ always @(posedge clk) begin
         obstacle_y                  <= obstacle_y_nxt;
         counter_move_x              <= counter_move_x_nxt;
         counter_move_y              <= counter_move_y_nxt;
-        counter_on_spike_fall       <= counter_on_spike_fall_nxt;
+        counter_after_fall          <= counter_after_fall_nxt;
         spike_center_x              <= spike_center_x_nxt;
         spike_center_y              <= spike_center_y_nxt;
-        counter_growth              <= counter_growth_nxt;
+        spike_counter               <= spike_counter_nxt;
         done                        <= done_nxt;
         aim_counter                 <= aim_counter_nxt;
         warning                     <= warning_nxt;
         spike_left_or_top_slope     <= spike_left_or_top_slope_nxt;
         spike_right_or_bot_slope    <= spike_right_or_bot_slope_nxt;
-        signed_hcount               <= hcount_in;
-        signed_vcount               <= vcount_in;
+
     end
 end
 
@@ -128,8 +128,8 @@ always @* begin
     state_nxt                       = IDLE;
     counter_move_x_nxt              = counter_move_x;
     counter_move_y_nxt              = counter_move_y;
-    counter_on_spike_fall_nxt       = counter_on_spike_fall;
-    counter_growth_nxt              = counter_growth;
+    counter_after_fall_nxt          = counter_after_fall;
+    spike_counter_nxt               = spike_counter;
     obstacle_x_nxt                  = 0;
     obstacle_y_nxt                  = 0;
     done_nxt                        = 0;
@@ -142,20 +142,72 @@ always @* begin
     case (state)
         IDLE: begin
             if (done_in) begin
-                state_nxt = ((selected == 4'b0101) && play_selected) ? SPIKE_FROM_TOP : IDLE;
-                counter_move_x_nxt = 0;
-                counter_move_y_nxt = 0;
-                aim_counter_nxt = 0;
-                spike_center_x_nxt = 511;
-                spike_left_or_top_slope_nxt = 1170;
-                spike_right_or_bot_slope_nxt = 1890;
-                spike_center_y_nxt = GAME_FIELD_TOP;
-                warning_nxt = 1;
+                state_nxt = ((selected == 4'b0101) && play_selected) ? SPIKE_DISTRIBUTOR : IDLE;
             end
             else
                 state_nxt = IDLE;
 
         end //end state
+        
+        SPIKE_DISTRIBUTOR: begin
+            //finish obstacle
+            if (spike_counter >= 20) begin
+                state_nxt = IDLE;
+                counter_move_x_nxt = 0;
+                counter_move_y_nxt = 0;
+                aim_counter_nxt = 0;
+                warning_nxt = 1;
+                done_nxt = 1;
+                end
+            //SPIKE_FROM_TOP
+            else if (spike_counter == 0 || spike_counter == 4 || spike_counter == 6 || spike_counter == 12 || spike_counter == 18 ) begin
+                state_nxt = SPIKE_FROM_TOP;
+                spike_center_y_nxt = GAME_FIELD_TOP;
+                spike_center_x_nxt = 511;
+                spike_left_or_top_slope_nxt = 1170;
+                spike_right_or_bot_slope_nxt = 1890;
+                warning_nxt = 1;
+                end
+            //BARRAGE_FROM_TOP
+            else if (spike_counter == 3 || spike_counter == 8 || spike_counter == 9 || spike_counter == 14 || spike_counter == 16 ) begin
+                state_nxt = BARRAGE_FROM_TOP;
+                spike_center_y_nxt = GAME_FIELD_TOP;
+                spike_center_x_nxt = 511;
+                spike_left_or_top_slope_nxt = 1170;
+                spike_right_or_bot_slope_nxt = 1890;
+                warning_nxt = 1;
+                end
+            //SPIKE_FROM_BOTTOM
+            else if (spike_counter == 2 || spike_counter == 5 || spike_counter == 11 || spike_counter == 15 || spike_counter == 19 ) begin
+                state_nxt = SPIKE_FROM_BOTTOM;
+                spike_center_y_nxt = GAME_FIELD_BOTTOM;
+                spike_center_x_nxt = 511;
+                spike_left_or_top_slope_nxt = 965;
+                spike_right_or_bot_slope_nxt = 2100;
+                warning_nxt = 1;
+                end
+            //BARRAGE_FROM_BOTTOM
+            else if (spike_counter == 1 || spike_counter == 7 || spike_counter == 10 || spike_counter == 13 || spike_counter == 17 ) begin
+                state_nxt = BARRAGE_FROM_BOTTOM;
+                spike_center_y_nxt = GAME_FIELD_BOTTOM;
+                spike_center_x_nxt = 511;
+                spike_left_or_top_slope_nxt = 965;
+                spike_right_or_bot_slope_nxt = 2100;
+                warning_nxt = 1;
+                end
+            //if somehow none of the above is true then end obstacle    
+            else begin
+                state_nxt = IDLE;
+                counter_move_x_nxt = 0;
+                counter_move_y_nxt = 0;
+                aim_counter_nxt = 0;
+                warning_nxt = 1;
+                done_nxt = 1;
+                end
+
+
+        end //end state
+        
         
         SPIKE_FROM_TOP: begin
         
@@ -222,27 +274,32 @@ always @* begin
                 else begin
                     rgb_nxt = rgb_in;
                     end
-
-                if (counter_move_y >= COUNTER_FAST_MOVE) begin  
-                    spike_center_y_nxt = spike_center_y + 1;
-                    spike_left_or_top_slope_nxt = spike_left_or_top_slope - 1;
-                    spike_right_or_bot_slope_nxt = spike_right_or_bot_slope + 1;
-                    counter_move_y_nxt = 0;
-                    end
-                else begin
-                    counter_move_y_nxt = counter_move_y + 1;
-                    end
                 
                 if (spike_center_y >= GAME_FIELD_BOTTOM - SPIKE_WIDTH) begin
-                    state_nxt = SPIKE_FROM_BOTTOM;
-                    spike_center_x_nxt = 511;
-                    spike_left_or_top_slope_nxt = 965;
-                    spike_right_or_bot_slope_nxt = 2100;
-                    spike_center_y_nxt = GAME_FIELD_BOTTOM;
-                    warning_nxt = 1;
+                    //if stuck in game field frame go to next state after delay
+                    if (counter_after_fall >= COUNTER_AFTER_FALL) begin  
+                        state_nxt = SPIKE_DISTRIBUTOR;
+                        spike_counter_nxt = spike_counter + 1;
+                        counter_after_fall_nxt = 0;
+                        end
+                    else begin
+                        counter_after_fall_nxt = counter_after_fall + 1;
+                        state_nxt =  SPIKE_FROM_TOP;
+                        end
                     end
-                else
+                else begin
                     state_nxt =  SPIKE_FROM_TOP;
+                    //spike falling without changing x value
+                    if (counter_move_y >= COUNTER_FAST_MOVE) begin  
+                        spike_center_y_nxt = spike_center_y + 1;
+                        spike_left_or_top_slope_nxt = spike_left_or_top_slope - 1;
+                        spike_right_or_bot_slope_nxt = spike_right_or_bot_slope + 1;
+                        counter_move_y_nxt = 0;
+                        end
+                    else begin
+                        counter_move_y_nxt = counter_move_y + 1;
+                        end
+                    end    
                 end
                 
   
@@ -323,12 +380,9 @@ always @* begin
                     end
                 
                 if (spike_center_y <= GAME_FIELD_TOP + SPIKE_WIDTH) begin
-                    spike_center_x_nxt = 511;
-                    spike_center_y_nxt = GAME_FIELD_TOP;
-                    spike_left_or_top_slope_nxt = 1170;
-                    spike_right_or_bot_slope_nxt = 1890;
-                    warning_nxt = 1;
-                    state_nxt = BARRAGE_FROM_TOP;
+                    state_nxt = SPIKE_DISTRIBUTOR;
+                    spike_counter_nxt = spike_counter + 1;
+                    counter_after_fall_nxt = 0;
                     end
                 else
                     state_nxt =  SPIKE_FROM_BOTTOM;
@@ -414,12 +468,9 @@ always @* begin
                     end
                 
                 if (spike_center_y >= GAME_FIELD_BOTTOM - SPIKE_WIDTH) begin
-                    state_nxt = BARRAGE_FROM_BOTTOM;
-                    spike_center_x_nxt = 511;
-                    spike_left_or_top_slope_nxt = 965;
-                    spike_right_or_bot_slope_nxt = 2100;
-                    spike_center_y_nxt = GAME_FIELD_BOTTOM;
-                    warning_nxt = 1;
+                    state_nxt = SPIKE_DISTRIBUTOR;
+                    spike_counter_nxt = spike_counter + 1;
+                    counter_after_fall_nxt = 0;
                     end
                 else
                     state_nxt =  BARRAGE_FROM_TOP;
@@ -502,12 +553,9 @@ always @* begin
                     end
                 
                 if (spike_center_y <= GAME_FIELD_TOP + SPIKE_WIDTH) begin
-                    spike_center_x_nxt = 511;
-                    spike_center_y_nxt = GAME_FIELD_TOP;
-                    spike_left_or_top_slope_nxt = 1170;
-                    spike_right_or_bot_slope_nxt = 1890;
-                    warning_nxt = 1;
-                    state_nxt = SPIKE_FROM_TOP;
+                    state_nxt = SPIKE_DISTRIBUTOR;
+                    spike_counter_nxt = spike_counter + 1;
+                    counter_after_fall_nxt = 0;
                     end
                 else
                     state_nxt =  BARRAGE_FROM_BOTTOM;
