@@ -116,6 +116,11 @@ always @* begin
         end
         
         DRAW_BOTTOM: begin
+            if (menu_on || !play_selected)
+                state_nxt = IDLE;
+            else 
+                state_nxt = DRAW_BOTTOM;
+    
             if (count <= MAX_COUNT) begin
                 if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
                     rgb_nxt = 12'hf_f_f;
@@ -158,6 +163,11 @@ always @* begin
         end
         
         DRAW_TOP: begin
+            if (menu_on || !play_selected)
+                state_nxt = IDLE;
+            else 
+                state_nxt = DRAW_TOP;
+        
             if (count <= MAX_COUNT) begin
                 if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
                     rgb_nxt = 12'hf_f_f;
@@ -198,6 +208,11 @@ always @* begin
         end
         
         DRAW_LEFT: begin
+            if (menu_on || !play_selected)
+                state_nxt = IDLE;
+            else 
+                state_nxt = DRAW_LEFT;
+            
             if (count <= MAX_COUNT) begin
                 if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
                     rgb_nxt = 12'hf_f_f;
@@ -235,9 +250,15 @@ always @* begin
                 else 
                     rgb_nxt = rgb_in;
             end 
+            
         end    
         
         DRAW_RIGHT: begin
+            if (menu_on || !play_selected)
+                state_nxt = IDLE;
+            else 
+                state_nxt = DRAW_RIGHT;
+                
             if (cycles_counter >= CYCLES_MAX_NUMBER) begin
                 done_nxt = 1;
                 state_nxt = IDLE;
@@ -282,7 +303,8 @@ always @* begin
                 end
                 else 
                     rgb_nxt = rgb_in;
-            end 
+            end
+             
         end
     endcase 
 end
