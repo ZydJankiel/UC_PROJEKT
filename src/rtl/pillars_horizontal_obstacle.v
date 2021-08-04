@@ -78,7 +78,7 @@ always @(posedge clk) begin
         count           <= count_nxt;
         pillar_left     <= pillar_left_nxt;
         pillar_right    <= pillar_right_nxt;
-        pillar_bottom   <=  pillar_bottom_nxt;
+        pillar_bottom   <= pillar_bottom_nxt;
         pillar_top      <= pillar_top_nxt;
         done            <= done_nxt;
         cycles_counter  <= cycles_counter_nxt;
@@ -108,10 +108,10 @@ always @* begin
             
             count_nxt = 0;
             cycles_counter_nxt = 0;
-            pillar_right_nxt = 671;
-            pillar_left_nxt = 651;
-            pillar_top_nxt = PILLAR_RIGHT_T;
-            pillar_bottom_nxt = PILLAR_RIGHT_B;
+            pillar_left_nxt     <= 651;
+            pillar_right_nxt    <= 671;
+            pillar_top_nxt      <= PILLAR_RIGHT_T;
+            pillar_bottom_nxt   <= PILLAR_RIGHT_B;
                
         end
         
@@ -131,10 +131,10 @@ always @* begin
             else begin
                 count_nxt = 0;
                 if (pillar_top <= 307) begin
-                    pillar_right_nxt = PILLAR_RIGHT_T;
-                    pillar_left_nxt = PILLAR_RIGHT_B;
-                    pillar_top_nxt = 417;
-                    pillar_bottom_nxt = 617;
+                    pillar_left_nxt = 651;
+                    pillar_right_nxt = 671;
+                    pillar_top_nxt = PILLAR_RIGHT_T;
+                    pillar_bottom_nxt = PILLAR_RIGHT_B;
                     cycles_counter_nxt = cycles_counter + 1;
                     state_nxt = DRAW_RIGHT;
                 end
@@ -148,8 +148,8 @@ always @* begin
                     rgb_nxt = 12'hf_f_f;
                     obstacle_x_nxt = hcount_in;
                     obstacle_y_nxt = vcount_in;
-                    pillar_top_nxt = pillar_top + DX;
-                    pillar_bottom_nxt = pillar_bottom + DX;   
+                    pillar_top_nxt = pillar_top - DX;
+                    pillar_bottom_nxt = pillar_bottom - DX;   
                 end
                 else 
                     rgb_nxt = rgb_in;
@@ -172,9 +172,9 @@ always @* begin
             end
             else begin
                 count_nxt = 0;
-                if (pillar_bottom <= 627) begin
-                    pillar_right_nxt = 371;
+                if (pillar_bottom >= 627) begin
                     pillar_left_nxt = 351;
+                    pillar_right_nxt = 371;
                     pillar_top_nxt = PILLAR_LEFT_T;
                     pillar_bottom_nxt = PILLAR_LEFT_B;
                     state_nxt = DRAW_LEFT;
@@ -189,8 +189,8 @@ always @* begin
                     rgb_nxt = 12'hf_f_f;
                     obstacle_x_nxt = hcount_in;
                     obstacle_y_nxt = vcount_in;
-                    pillar_top_nxt = pillar_top - DX;
-                    pillar_bottom_nxt = pillar_bottom - DX;   
+                    pillar_top_nxt = pillar_top + DX;
+                    pillar_bottom_nxt = pillar_bottom + DX;   
                 end
                 else 
                     rgb_nxt = rgb_in;
@@ -212,11 +212,11 @@ always @* begin
             end
             else begin
                 count_nxt = 0;
-                if (pillar_right <= 671) begin
+                if (pillar_right >= 671) begin
+                    pillar_left_nxt = PILLAR_BOTTOM_L;          
                     pillar_right_nxt = PILLAR_BOTTOM_R;
-                    pillar_left_nxt = PILLAR_BOTTOM_L;
-                    pillar_top_nxt = 671;
-                    pillar_bottom_nxt = 651;
+                    pillar_top_nxt = 651;
+                    pillar_bottom_nxt = 671;
                     state_nxt = DRAW_BOTTOM;
                 end
                 else begin
@@ -229,8 +229,8 @@ always @* begin
                     rgb_nxt = 12'hf_f_f;
                     obstacle_x_nxt = hcount_in;
                     obstacle_y_nxt = vcount_in;
-                    pillar_right_nxt = pillar_right + DX;
-                    pillar_left_nxt = pillar_left + DX;   
+                    pillar_left_nxt = pillar_left + DX;
+                    pillar_right_nxt = pillar_right + DX;   
                 end
                 else 
                     rgb_nxt = rgb_in;
@@ -262,24 +262,23 @@ always @* begin
             else begin
                 count_nxt = 0;
                 if (pillar_left <= 351) begin
+                    pillar_left_nxt = PILLAR_TOP_L;    
                     pillar_right_nxt = PILLAR_TOP_R;
-                    pillar_left_nxt = PILLAR_TOP_L;
                     pillar_top_nxt = 307;
-                    pillar_bottom_nxt = 327;
+                    pillar_bottom_nxt = 317;
                     state_nxt = DRAW_TOP;
                 end
                 else begin
                     pillar_right_nxt = pillar_right;
                     pillar_left_nxt = pillar_left;
-                    cycles_counter_nxt = cycles_counter;
                 end
                 
                 if (hcount_in <= pillar_right && hcount_in >= pillar_left && vcount_in >= pillar_top && vcount_in <= pillar_bottom) begin 
                     rgb_nxt = 12'hf_f_f;
                     obstacle_x_nxt = hcount_in;
                     obstacle_y_nxt = vcount_in;
+                    pillar_left_nxt = pillar_left - DX;
                     pillar_right_nxt = pillar_right - DX;
-                    pillar_left_nxt = pillar_left - DX;   
                 end
                 else 
                     rgb_nxt = rgb_in;
