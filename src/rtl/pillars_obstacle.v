@@ -4,7 +4,7 @@
 // module responsible for checking colision with mouse pointer.
 // Added moving pillars.
 
-module pillars_horizontal_obstacle 
+module pillars_obstacle 
     #( parameter
         SELECT_CODE = 4'b0000
     )

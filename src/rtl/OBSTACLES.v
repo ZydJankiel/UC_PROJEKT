@@ -36,7 +36,7 @@ wire [3:0] selected_obstacle;
 
 wire done_obs0, done_obs1, done_obs2, done_obs3, done_obs4, done_obs5, done_obs6, done_obs7, done_control, done_counter;
 
-pillars_horizontal_obstacle #(.SELECT_CODE(4'b0000)) pillars_horizontal_obstacle(
+pillars_obstacle #(.SELECT_CODE(4'b0000)) pillars_obstacle(
     //inputs
     .vcount_in(vcount_in),
     .hcount_in(hcount_in),
