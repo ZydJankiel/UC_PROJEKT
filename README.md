@@ -52,7 +52,7 @@ mechanic but with mouse instead of keyboard. The sole purpose of the game is sur
 
 ### Singleplayer
 
-As said before the only objective of this mode is to survive as long as possible. Move mouse to avoid obstacles. In both single- and multiplayer, you will be able to see number of obstacles you have managed to clear, this counter is updated after each obstacle and does not disappear until start of the next game.
+As said before the only objective of this mode is to survive as long as possible. Move mouse to avoid obstacles. In both single- and multiplayer, you will be able to see number of obstacles you have managed to clear on on-board LED display, this counter is updated after each obstacle and does not disappear until start of the next game.
 
 ### Multiplayer
 
