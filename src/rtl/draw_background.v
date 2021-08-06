@@ -98,42 +98,20 @@ always @* begin
                 //diagonals
                 (hcount_in >= 170 && hcount_in <= 270 && vcount_in >= 90 && vcount_in <= 250 && hcount_in-vcount_in >= 80 && hcount_in-vcount_in <= 120 ) ||    // "\"
                 (hcount_in >= 270 && hcount_in <= 370 && vcount_in >= 90 && vcount_in <= 250 && hcount_in + vcount_in >= 420 && hcount_in + vcount_in <= 460))  // "/"
-                    rgb_nxt <= 12'hf_f_0;
-                /*    
-                // M - old
-                else if ((hcount_in > 170 && hcount_in <= 210 && vcount_in > 90 && vcount_in <= 250) ||
-                (hcount_in > 170 && hcount_in <= 370 && vcount_in > 50 && vcount_in <= 90) ||
-                (hcount_in > 250 && hcount_in <= 290 && vcount_in > 90 && vcount_in <= 250) ||
-                (hcount_in > 330 && hcount_in <= 370 && vcount_in > 90 && vcount_in <= 250))  rgb_nxt = 12'hf_f_f;
-                */
+                    rgb_nxt <= 12'hf_f_f;
                 //E
                 else if ((hcount_in >= 410 && hcount_in <= 450 && vcount_in >= 90 && vcount_in <= 250) ||         // vertical
                 (hcount_in >= 450 && hcount_in <= 510 && vcount_in >= 90 && vcount_in <= 120) ||                  //top "-"
                 (hcount_in >= 450 && hcount_in <= 510 && vcount_in >= 155 && vcount_in <= 185) ||                 //mid "-"
                 (hcount_in >= 450 && hcount_in <= 510 && vcount_in >= 220 && vcount_in <= 250))                   //bot "-"
-                    rgb_nxt = 12'hf_f_0;
-                /*    
-                //E - old
-                else if ((hcount_in > 420 && hcount_in <= 460 && vcount_in > 50 && vcount_in <= 250) ||
-                (hcount_in > 460 && hcount_in <= 500 && vcount_in > 50 && vcount_in <= 90) ||
-                (hcount_in > 460 && hcount_in <= 500 && vcount_in > 125 && vcount_in <= 175) ||
-                (hcount_in > 460 && hcount_in <= 500 && vcount_in > 210 && vcount_in <= 250))  rgb_nxt = 12'hf_f_f;
-                */
+                    rgb_nxt = 12'hf_f_f;
                 //N
                 //verticals
                 else if ((hcount_in >= 550 && hcount_in <= 590 && vcount_in >= 90 && vcount_in <= 250) ||       // left
                 (hcount_in >= 670 && hcount_in <= 710 && vcount_in >= 90 && vcount_in <= 250) ||                //right
                 //diagonals
                 (hcount_in >= 550 && hcount_in <= 710 && vcount_in >= 90 && vcount_in <= 250 && ((4*hcount_in)/3)-vcount_in >= 643 && ((4*hcount_in)/3)-vcount_in <= 697 ))    // "\"
-                    rgb_nxt <= 12'hf_f_0;
-                    
-                /*    
-                //N - old
-                else if ((hcount_in > 550 && hcount_in <= 590 && vcount_in > 90 && vcount_in <= 250) ||
-                (hcount_in > 550 && hcount_in <= 670 && vcount_in > 50 && vcount_in <= 90) ||
-                (hcount_in > 630 && hcount_in <= 670 && vcount_in > 90 && vcount_in <= 250))  rgb_nxt = 12'hf_f_f;
-                */
-                
+                    rgb_nxt <= 12'hf_f_f;
                 //U
                 // straights
                 else if ((hcount_in >= 750 && hcount_in <= 790 && vcount_in >= 90 && vcount_in <= 210)||    //left
@@ -142,15 +120,8 @@ always @* begin
                 // diagonals
                 (hcount_in >= 750 && hcount_in <= 830 && vcount_in >= 90 && vcount_in <= 250 && hcount_in-vcount_in >= 540 && hcount_in-vcount_in <= 600) ||        //"\"
                 (hcount_in >= 830 && hcount_in <= 910 && vcount_in >= 90 && vcount_in <= 250 && hcount_in + vcount_in >= 1060 && hcount_in + vcount_in <= 1120) )   //"/"
-                    rgb_nxt <= 12'hf_f_0;
+                    rgb_nxt <= 12'hf_f_f;
 
-                /*
-                //U - old
-                else if ((hcount_in > 720 && hcount_in <= 760 && vcount_in > 50 && vcount_in <= 210) ||
-                (hcount_in > 720 && hcount_in <= 840 && vcount_in > 210 && vcount_in <= 250) ||
-                (hcount_in > 800 && hcount_in <= 840 && vcount_in > 50 && vcount_in <= 210)) rgb_nxt = 12'hf_f_f;
-                */
-                
                 //circle test
                 //else if (((hcount_in-100)*(hcount_in-100)/((10)*(10)) + (vcount_in-100)*(vcount_in-100)/((20)*(20)) >= 1 && (hcount_in-100)*(hcount_in-100)/((15)*(15)) + (vcount_in-100)*(vcount_in-100)/((25)*(25)) <= 6)) rgb_nxt = 12'h0_f_0;
                 //^ by M.Karelus
