@@ -46,38 +46,37 @@ localparam MENU_MODE    = 3'b000,
            GAME_OVER    = 3'b011,
            MULTI_WAIT   = 3'b100;
            
-//TESTPARAMS
 localparam TOPBORDER = 100,
            BOTBORDER = 300;
            
 always @(posedge clk) begin
     if (rst) begin
-        hsync_out               <= 0;
-        vsync_out               <= 0;
-        hblnk_out               <= 0;
-        vblnk_out               <= 0;
-        hcount_out              <= 0;
-        vcount_out              <= 0;
-        rgb_out                 <= 0;
+        hsync_out  <= 0;
+        vsync_out  <= 0;
+        hblnk_out  <= 0;
+        vblnk_out  <= 0;
+        hcount_out <= 0;
+        vcount_out <= 0;
+        rgb_out    <= 0;
     end
     else begin
-        hsync_out               <= hsync_nxt;
-        vsync_out               <= vsync_nxt;
-        hblnk_out               <= hblnk_nxt;
-        vblnk_out               <= vblnk_nxt;
-        hcount_out              <= hcount_nxt;
-        vcount_out              <= vcount_nxt;
-        rgb_out                 <= rgb_nxt;
+        hsync_out  <= hsync_nxt;
+        vsync_out  <= vsync_nxt;
+        hblnk_out  <= hblnk_nxt;
+        vblnk_out  <= vblnk_nxt;
+        hcount_out <= hcount_nxt;
+        vcount_out <= vcount_nxt;
+        rgb_out    <= rgb_nxt;
     end 
 end
 
 always @* begin
-    hsync_nxt                   = hsync_in;
-    vsync_nxt                   = vsync_in;
-    hblnk_nxt                   = hblnk_in;
-    vblnk_nxt                   = vblnk_in;
-    hcount_nxt                  = hcount_in;
-    vcount_nxt                  = vcount_in;  
+    hsync_nxt  = hsync_in;
+    vsync_nxt  = vsync_in;
+    hblnk_nxt  = hblnk_in;
+    vblnk_nxt  = vblnk_in;
+    hcount_nxt = hcount_in;
+    vcount_nxt = vcount_in;  
     
     case (control_state)
         MENU_MODE: begin
@@ -234,18 +233,16 @@ always @* begin
                 (hcount_in >= 66 && hcount_in <= 266 && vcount_in >= 100 && vcount_in <= 300 && (4*hcount_in)+vcount_in >=864 && (4*hcount_in)+vcount_in <=904) || 
                 (hcount_in >= 66 && hcount_in <= 266 && vcount_in >= 100 && vcount_in <= 300 && (4*hcount_in)-vcount_in >=664 && (4*hcount_in)-vcount_in <=704) ||
                 (hcount_in >= 66 && hcount_in <= 300 && vcount_in >= 100 && vcount_in <= 300 && (4*hcount_in)+vcount_in >=1264 && (4*hcount_in)+vcount_in <=1304) ) rgb_nxt = 12'hf_f_f;
-            
             // A
             else if ((hcount_in >= 0 && hcount_in <= 1000 && vcount_in >= 100 && vcount_in <= 300 && (2*hcount_in)-vcount_in >=786 && (2*hcount_in)-vcount_in <= 806) ||
                 (hcount_in >= 0 && hcount_in <= 1000 && vcount_in >= 100 && vcount_in <= 300 && (2*hcount_in)+vcount_in >=986 && (2*hcount_in)+vcount_in <=1006) ||
                 (hcount_in >= 396 && hcount_in <= 500 && vcount_in >= 196 && vcount_in <= 204)) rgb_nxt = 12'hf_f_f;
-            
             // I 
-            else if (hcount_in >= 626 && hcount_in <= 634 && vcount_in >= TOPBORDER && vcount_in <= BOTBORDER) rgb_nxt = 12'hf_f_f;
-            
+            else if (hcount_in >= 626 && hcount_in <= 634 && vcount_in >= TOPBORDER && vcount_in <= BOTBORDER) rgb_nxt = 12'hf_f_f;            
             // T
             else if ((hcount_in >= 818 && hcount_in < 826 && vcount_in >= TOPBORDER && vcount_in <= BOTBORDER) ||
                 (hcount_in >= 712 && hcount_in < 912 && vcount_in >= TOPBORDER && vcount_in <= TOPBORDER + 8)) rgb_nxt = 12'hf_f_f;
+                
             else rgb_nxt = 12'h2_2_f;
             
         end
