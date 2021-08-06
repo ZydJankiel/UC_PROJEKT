@@ -90,6 +90,14 @@ always @* begin
                 else if (hcount_in == 0) rgb_nxt = 12'h0_f_0;
                 // Active display, right edge, make a blue line.
                 else if (hcount_in == 1023) rgb_nxt = 12'h0_0_f;
+                
+                                //M test
+                else if ((hcount_in >= 170 && hcount_in <= 210 && vcount_in >= 90 && vcount_in <= 250) || 
+                (hcount_in >= 330 && hcount_in <= 370 && vcount_in >= 90 && vcount_in <= 250) ||
+                //diagonal (nie mo¿e byæ liczba ujemna i liczba>=0 jednoczeœnie - tylko obie ujemne albo obie dodatnie- nie wiem czemu)
+                (hcount_in >= 170 && hcount_in <= 270 && vcount_in >= 90 && vcount_in <= 250 && hcount_in-vcount_in >= 80 && hcount_in-vcount_in <= 120 ) ||
+                (hcount_in >= 270 && hcount_in <= 370 && vcount_in >= 90 && vcount_in <= 250 && hcount_in + vcount_in >= 420 && hcount_in + vcount_in <= 460))
+                    rgb_nxt <= 12'hf_f_0;
                 // M
                 else if ((hcount_in > 170 && hcount_in <= 210 && vcount_in > 90 && vcount_in <= 250) ||
                 (hcount_in > 170 && hcount_in <= 370 && vcount_in > 50 && vcount_in <= 90) ||
@@ -108,6 +116,25 @@ always @* begin
                 else if ((hcount_in > 720 && hcount_in <= 760 && vcount_in > 50 && vcount_in <= 210) ||
                 (hcount_in > 720 && hcount_in <= 840 && vcount_in > 210 && vcount_in <= 250) ||
                 (hcount_in > 800 && hcount_in <= 840 && vcount_in > 50 && vcount_in <= 210)) rgb_nxt = 12'hf_f_f;
+                
+
+                    
+                //'O' character
+                    //'O' straights
+                    else if ((hcount_in >= 450 && hcount_in < 500 && vcount_in >= 130 && vcount_in <= 400)||
+                    (hcount_in >= 600 && hcount_in < 650 && vcount_in >= 130 && vcount_in <= 400) ||
+                    (hcount_in >= 500 && hcount_in < 600 && vcount_in >= 80 && vcount_in <= 130) ||
+                    (hcount_in >= 500 && hcount_in < 600 && vcount_in >= 400 && vcount_in <= 450) ||
+                    //'O' diagonals
+                    (hcount_in >= 550 && hcount_in < 650 && vcount_in >= 80 && vcount_in <= 600 && hcount_in-vcount_in >=450 && hcount_in-vcount_in <=525) ||
+                    (hcount_in >= 450 && hcount_in < 550 && vcount_in >= 0 && vcount_in <= 450 && hcount_in-vcount_in >=50 && hcount_in - vcount_in <=125) ||
+                    (hcount_in >= 450 && hcount_in < 550 && vcount_in >= 80 && vcount_in <= 600 && hcount_in + vcount_in >=575 && hcount_in + vcount_in <=650) ||
+                    (hcount_in >= 550 && hcount_in < 650 && vcount_in >= 0 && vcount_in <= 450 && hcount_in + vcount_in >=975 &&hcount_in + vcount_in <=1050)) 
+                    rgb_nxt <= 12'h0_a_9;
+
+
+
+
                 
                 //circle test
                 //else if (((hcount_in-100)*(hcount_in-100)/((10)*(10)) + (vcount_in-100)*(vcount_in-100)/((20)*(20)) >= 1 && (hcount_in-100)*(hcount_in-100)/((15)*(15)) + (vcount_in-100)*(vcount_in-100)/((25)*(25)) <= 6)) rgb_nxt = 12'h0_f_0;
