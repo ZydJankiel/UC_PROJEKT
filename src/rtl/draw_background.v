@@ -213,6 +213,7 @@ always @* begin
                 (hcount_in >= 584 && hcount_in <= 704 && vcount_in >= 100 && vcount_in <= 300 && (3*hcount_in) - vcount_in >= 1519 && (3*hcount_in) - vcount_in <=1549) ||
                 (hcount_in >= 584 && hcount_in <= 704 && vcount_in >= 100 && vcount_in <= 300 && (3*hcount_in) + vcount_in >= 2315 && (3*hcount_in) + vcount_in <=2345)) rgb_nxt = 12'hf_f_f;
             
+            // R
             else if (( hcount_in >= 716 && hcount_in <= 724 && vcount_in >= TOPBORDER && vcount_in <= BOTBORDER ) ||
                 (hcount_in >= 716 && hcount_in <= 806 && vcount_in >= TOPBORDER && vcount_in <= TOPBORDER +8) ||
                 (hcount_in >= 828 && hcount_in <= 836 && vcount_in >= 130 && vcount_in <= 170) ||
@@ -220,7 +221,12 @@ always @* begin
                 (hcount_in >= 716 && hcount_in <= 836 && vcount_in >= 100 && vcount_in <= 300 && hcount_in - vcount_in >= 696 && hcount_in - vcount_in <=706) || 
                 (hcount_in >= 716 && hcount_in <= 836 && vcount_in >= 100 && vcount_in <= 198 && hcount_in + vcount_in >= 996 && hcount_in + vcount_in <=1006) ||
                 (hcount_in >= 716 && hcount_in <= 836 && vcount_in >= 100 && vcount_in <= 300 && hcount_in - vcount_in >= 520 && hcount_in - vcount_in <=530)) rgb_nxt = 12'hf_f_f;
-                                
+            
+            // Y
+            else if ((hcount_in >= 848 && hcount_in <= 968 && vcount_in >= 100 && vcount_in <= 225 && (3*hcount_in)-vcount_in >= 2476 && (3*hcount_in)-vcount_in <=2506) ||
+                (hcount_in >= 848 && hcount_in <= 968 && vcount_in >= 100 && vcount_in <= 225 && (3*hcount_in)+vcount_in >=2938 && (3*hcount_in)+vcount_in <=2968) || 
+                (hcount_in >= 902 && hcount_in < 914 && vcount_in >= 225 && vcount_in < BOTBORDER)) rgb_nxt = 12'hf_f_f;                
+            
             else rgb_nxt = 12'h2_f_2;
             
         end
