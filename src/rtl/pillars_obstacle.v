@@ -38,13 +38,13 @@ reg [3:0] cycles_counter, cycles_counter_nxt;
 
 
 localparam PILLAR_RIGHT_T    = 417,
-           PILLAR_RIGHT_B = 617,
-           PILLAR_LEFT_T    = 317,
-           PILLAR_LEFT_B = 517,
-           PILLAR_TOP_L = 361,
-           PILLAR_TOP_R = 561,
-           PILLAR_BOTTOM_L = 461,
-           PILLAR_BOTTOM_R = 661;
+           PILLAR_RIGHT_B    = 617,
+           PILLAR_LEFT_T     = 317,
+           PILLAR_LEFT_B     = 517,
+           PILLAR_TOP_L      = 361,
+           PILLAR_TOP_R      = 561,
+           PILLAR_BOTTOM_L   = 461,
+           PILLAR_BOTTOM_R   = 661;
            
 localparam DX = 1;
 localparam MAX_COUNT = 600;
