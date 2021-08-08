@@ -16,7 +16,8 @@ module comparator (
     output reg opponent_hit
 );
 reg victory_nxt;
-reg opponent_ready_nxt, opponent_hit_nxt;
+reg opponent_ready_nxt;
+reg opponent_hit_nxt;
 reg [1:0] state, state_nxt;
 
 localparam IDLE           = 2'b00,
@@ -50,10 +51,10 @@ always @* begin
             if (multiplayer) begin
                 if (curr_char == 8'h4C)
                     state_nxt = VICTORY;
+                else if (curr_char == 8'h44)
+                    state_nxt = OPPONENT_HIT;
                 else if (curr_char == 8'h52)
                     state_nxt = OPPONENT_READY;
-                else if (curr_char == 8'h48)
-                    state_nxt = OPPONENT_HIT;
                 else
                     state_nxt = IDLE;    
             end
@@ -67,7 +68,7 @@ always @* begin
             victory_nxt = 1;
         end
             
-        OPPONENT_READY: begin
+        OPPONENT_READY: begin 
             opponent_ready_nxt = 1;
             state_nxt = IDLE;
         end

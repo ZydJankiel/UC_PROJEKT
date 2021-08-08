@@ -19,7 +19,8 @@ module main (
     output wire [7:0] seg,
     output wire [3:0] r,
     output wire [3:0] g,
-    output wire [3:0] b
+    output wire [3:0] b,
+    output wire [15:0] led
 );
 
 localparam  TOP_V_LINE      = 317,
@@ -126,6 +127,15 @@ UART UART (
     .opponent_hit(opponent_hit_out_UART)
 );
 
+test test (
+
+.clk(pclk),
+.rst(reset_CLK),
+.opponent_hit(opponent_hit_out_UART || victory_button),
+
+.leds(led)
+
+);
 assign hs = hsync_out_CORE;
 assign vs = vsync_out_CORE;
 assign {r,g,b} = rgb_out_CORE;

@@ -73,7 +73,7 @@ always @* begin
             player_ready_reg_nxt = 1;
         end
         if (player_hit) begin
-            message_nxt = 8'h48;
+            message_nxt = 8'h44;
             player_hit_reg_nxt = 1;
         end
     end
