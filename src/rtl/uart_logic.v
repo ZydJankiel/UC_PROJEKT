@@ -64,8 +64,8 @@ always @* begin
             game_over_reg_nxt = 1;
         end
         if (player_ready) begin  
-                message_nxt = 8'h52;
-                player_ready_reg_nxt = 1;
+            message_nxt = 8'h52;
+            player_ready_reg_nxt = 1;
         end
     end
     

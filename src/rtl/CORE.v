@@ -211,6 +211,8 @@ hp_control #( .TOP_V_LINE(TOP_V_LINE),
     .rst(rst),
     .game_on_hp(play_selected_vga_control),
     .player_hit(damage_out),
+    //.enemy_hit(),
+    .multiplayer(multiplayer_vga_control),
 
     //outputs
     .vcount_out_hp(vcount_out_hp),
