@@ -17,7 +17,8 @@ module uart_logic (
     input wire player_hit,
     
     output wire tx,
-    output wire [7:0] curr_char_out
+    output wire [7:0] curr_char_out,
+    output wire rx_done_tick
 );
 
 reg tx_nxt;
@@ -39,7 +40,8 @@ uart_module my_uart(
     .rx_empty(), 
     .tx(tx),
     .r_data(r_data),
-    .current_char(curr_char_out)
+    .current_char(curr_char_out),
+    .rx_done_tick_out(rx_done_tick)
 );
   
 always @ (posedge clk) begin
@@ -73,7 +75,7 @@ always @* begin
             player_ready_reg_nxt = 1;
         end
         if (player_hit) begin
-            message_nxt = 8'h44;
+            message_nxt = 8'h48;
             player_hit_reg_nxt = 1;
         end
     end

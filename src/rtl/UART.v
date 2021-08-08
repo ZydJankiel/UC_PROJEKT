@@ -20,6 +20,8 @@ module UART (
 );
 
 wire [7:0] curr_char_out;
+wire opponent_hit_comp;
+wire rx_done_tick;
 
 uart_logic uart_logic(
     //inputs
@@ -33,7 +35,8 @@ uart_logic uart_logic(
 
     //outputs
     .tx(tx),
-    .curr_char_out(curr_char_out)
+    .curr_char_out(curr_char_out),
+    .rx_done_tick(rx_done_tick)
 );
 
 comparator comparator(
@@ -43,6 +46,7 @@ comparator comparator(
     .curr_char(curr_char_out),
     .play_selected(play_selected),
     .multiplayer(multiplayer),
+    .rx_done_tick(rx_done_tick),
     
     // outputs
     .victory(victory),

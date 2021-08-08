@@ -86,7 +86,7 @@ module uart_rx
                   begin
                      state_next = idle;
                      rx_done_tick =1'b1;
-                     b_next = 8'h00;  // RESET reg
+                     //b_next = 8'h00;  // RESET reg
                   end
                else
                   s_next = s_reg + 1;

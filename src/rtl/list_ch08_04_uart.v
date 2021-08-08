@@ -17,7 +17,8 @@ module uart_module
     input wire [7:0] w_data,
     output wire tx_full, rx_empty, tx,
     output wire [7:0] r_data,
-    output [7:0] current_char
+    output [7:0] current_char,
+    output wire rx_done_tick_out
    );
 
 // signal declaration
@@ -50,5 +51,6 @@ uart_tx #(.DBIT(DBIT), .SB_TICK(SB_TICK)) uart_tx_unit
 
 assign tx_fifo_not_empty = ~tx_empty;
 assign current_char = rx_data_out;
+assign rx_done_tick_out = rx_done_tick;
 
 endmodule

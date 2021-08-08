@@ -9,6 +9,7 @@ module comparator (
     input wire rst,
     input wire play_selected,
     input wire multiplayer,
+    input wire rx_done_tick,
     input wire [7:0] curr_char,
     
     output reg victory,
@@ -49,14 +50,18 @@ always @* begin
     case(state)
         IDLE: begin
             if (multiplayer) begin
-                if (curr_char == 8'h4C)
-                    state_nxt = VICTORY;
-                else if (curr_char == 8'h44)
-                    state_nxt = OPPONENT_HIT;
-                else if (curr_char == 8'h52)
-                    state_nxt = OPPONENT_READY;
+                if (rx_done_tick) begin
+                    if (curr_char == 8'h4C)
+                        state_nxt = VICTORY;
+                    else if (curr_char == 8'h48)
+                        state_nxt = OPPONENT_HIT;
+                    else if (curr_char == 8'h52)
+                        state_nxt = OPPONENT_READY;
+                    else
+                        state_nxt = IDLE;    
+                end
                 else
-                    state_nxt = IDLE;    
+                    state_nxt = IDLE;
             end
             else
                 state_nxt = IDLE;  
