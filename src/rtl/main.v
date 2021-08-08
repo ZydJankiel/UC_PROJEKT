@@ -50,7 +50,7 @@ wire victory_out_UART, opponent_ready_out_UART,opponent_hit_out_UART, tx_out_UAR
 //CORE WIRES
 wire [15:0] led_CORE;
 wire [11:0] rgb_out_CORE;
-wire [2:0] mouse_mode_out_CORE;
+wire  mouse_mode_out_CORE;
 wire [3:0] an_out_CORE;
 wire [7:0] seg_out_CORE;
 wire game_over_out_CORE, player_ready_out_CORE, play_selected_out_CORE, multiplayer_out_CORE;

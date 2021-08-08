@@ -92,7 +92,7 @@ always @(posedge clk) begin
         vcount_out_hp       <= 0;
         rgb_out_hp          <= 0;
         curr_dmg            <= 0;
-        curr_dmg_opponent      <= 0;
+        curr_dmg_opponent   <= 0;
         game_over           <= 0;
         state               <= OFF;    
         end
@@ -105,7 +105,7 @@ always @(posedge clk) begin
         vcount_out_hp       <= vcount_in_hp;
         rgb_out_hp          <= rgb_nxt;
         curr_dmg            <= curr_dmg_nxt;
-        curr_dmg_opponent      <= curr_dmg_opponent_nxt;
+        curr_dmg_opponent   <= curr_dmg_opponent_nxt;
         game_over           <= game_over_nxt;
         state               <= state_nxt;
         end

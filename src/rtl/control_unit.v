@@ -31,7 +31,7 @@ module control_unit
 
         output reg [2:0] state,
         output reg play_selected,
-        output reg [2:0] mouse_mode,
+        output reg mouse_mode,
         output reg display_buttons_m_and_s,
         output reg player_ready,
         output reg display_menu_button,
@@ -51,7 +51,7 @@ localparam MENU_MODE    = 3'b000,
 always @(posedge clk) begin
     if (rst) begin
         state <= MENU_MODE;
-        mouse_mode              <= MENU_MODE; 
+        mouse_mode              <= 0; 
         play_selected           <= 0;
         display_buttons_m_and_s <= 0;  
         player_ready            <= 0;
@@ -73,7 +73,7 @@ end
     
 always @* begin 
     play_selected_nxt           = 0;  
-    mouse_mode_nxt              = MENU_MODE;
+    mouse_mode_nxt              = 0;
     display_buttons_m_and_s_nxt = 0;
     player_ready_nxt            = 0;
     display_menu_button_nxt     = 0;
@@ -129,7 +129,7 @@ always @* begin
                 state_nxt = GAME_MODE;
             
             play_selected_nxt = 1;
-            mouse_mode_nxt = GAME_MODE;
+            mouse_mode_nxt = 1;
         end
         
         VICTORY_MODE: begin

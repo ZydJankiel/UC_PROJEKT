@@ -68,15 +68,8 @@ always @* begin
         end
             
         OPPONENT_READY: begin
-            if (~play_selected)
-                state_nxt = IDLE;
-            else if (curr_char == 8'h4C)
-                state_nxt = VICTORY;
-            else if (curr_char == 8'h48)
-                    state_nxt = OPPONENT_HIT;
-            else 
-                state_nxt = OPPONENT_READY;
             opponent_ready_nxt = 1;
+            state_nxt = IDLE;
         end
             
         OPPONENT_HIT: begin

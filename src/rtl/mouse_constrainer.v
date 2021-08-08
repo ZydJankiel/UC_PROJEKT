@@ -30,7 +30,7 @@ module mouse_constrainer
     (
         input wire clk,
         input wire rst,
-        input wire [2:0] mouse_mode,
+        input wire mouse_mode,
         
         output reg [11:0] value,
         output reg setmax_x,
@@ -92,9 +92,9 @@ always @* begin
     case(state)
         COUNTER_RESET: begin
             counter_nxt = 0;
-            if (mouse_mode == 3'b001)
+            if (mouse_mode == 1)
                 state_nxt = GAME_MODE;
-            else if (mouse_mode == 3'b000)
+            else if (mouse_mode == 0)
                 state_nxt = MENU_MODE;
             else
                 state_nxt = COUNTER_RESET;
