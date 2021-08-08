@@ -48,7 +48,7 @@ module hp_control
         input wire rst,
         input wire game_on_hp,
         input wire player_hit, //input for future uses to signal control unit that players has taken dmg, currently T17 button
-        input wire enemy_hit,
+        input wire opponent_hit,
         input wire multiplayer,
         
         output reg [11:0] vcount_out_hp,
@@ -71,16 +71,16 @@ localparam TOP_HP_MP    = TOP_V_LINE,
            LEFT_HP_MP   = LEFT_H_LINE - BORDER - 110,
            RIGHT_HP_MP  = LEFT_H_LINE - BORDER - 60;
            
-localparam OFF = 2'b00, 
-           SINGLE  = 2'b01,
-           MULTI   = 2'b10;
+localparam OFF = 1'b0, 
+           GAME  = 1'b1;
+
                
 reg [11:0] rgb_nxt;
 reg [11:0] vcount_nxt, hcount_nxt;
 reg vsync_nxt, vblnk_nxt, hsync_nxt, hblnk_nxt;
-reg [2:0] curr_dmg, curr_dmg_nxt, curr_dmg_enemy, curr_dmg_enemy_nxt;
+reg [2:0] curr_dmg, curr_dmg_nxt, curr_dmg_opponent, curr_dmg_opponent_nxt;
 reg game_over_nxt;
-reg [1:0] state, state_nxt;
+reg state, state_nxt;
 
 always @(posedge clk) begin
     if (rst) begin
@@ -92,7 +92,7 @@ always @(posedge clk) begin
         vcount_out_hp       <= 0;
         rgb_out_hp          <= 0;
         curr_dmg            <= 0;
-        curr_dmg_enemy      <= 0;
+        curr_dmg_opponent      <= 0;
         game_over           <= 0;
         state               <= OFF;    
         end
@@ -105,7 +105,7 @@ always @(posedge clk) begin
         vcount_out_hp       <= vcount_in_hp;
         rgb_out_hp          <= rgb_nxt;
         curr_dmg            <= curr_dmg_nxt;
-        curr_dmg_enemy      <= curr_dmg_enemy_nxt;
+        curr_dmg_opponent      <= curr_dmg_opponent_nxt;
         game_over           <= game_over_nxt;
         state               <= state_nxt;
         end
@@ -115,21 +115,18 @@ always @* begin
     game_over_nxt = 0;
     rgb_nxt       = rgb_in_hp;
     curr_dmg_nxt  = 0;
-    curr_dmg_enemy_nxt = 0;
+    curr_dmg_opponent_nxt = 0;
     
     case (state) 
         OFF : begin
             if (game_on_hp) 
-                if (multiplayer)
-                    state_nxt = MULTI;
-                else
-                    state_nxt = SINGLE;
+                state_nxt = GAME;
             else
                 state_nxt = OFF; 
                 
         end
 
-        SINGLE: begin
+        GAME: begin
             if (!game_on_hp)
                 state_nxt = OFF;
             else if (curr_dmg == MAX_DMG_TAKEN) begin
@@ -139,70 +136,55 @@ always @* begin
             end    
             else if (player_hit) begin
                 curr_dmg_nxt = curr_dmg + 1;
-                state_nxt = SINGLE; 
+                state_nxt = GAME; 
             end  
             else begin   
                 curr_dmg_nxt = curr_dmg;
-                state_nxt = SINGLE;
+                state_nxt = GAME;
             end  
- 
-            // HP BAR FRAME
-            if ((hcount_in_hp >= LEFT_HP - BORDER && hcount_in_hp < LEFT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER ) ||
-                (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < TOP_HP ) || 
-                (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= BOTTOM_HP && vcount_in_hp < BOTTOM_HP + BORDER) || 
-                (hcount_in_hp >= RIGHT_HP  && hcount_in_hp < RIGHT_HP + BORDER && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER) ) rgb_nxt = 12'hf_f_f;
+            
+            if (multiplayer) begin
+                if (opponent_hit)
+                    curr_dmg_opponent_nxt = curr_dmg_opponent + 1;
+                else
+                    curr_dmg_opponent_nxt = curr_dmg_opponent;
+                
+                if ((hcount_in_hp >= LEFT_HP_MP - BORDER && hcount_in_hp < LEFT_HP_MP && vcount_in_hp >= TOP_HP_MP - BORDER && vcount_in_hp < BOTTOM_HP_MP + BORDER ) ||
+                    (hcount_in_hp >= LEFT_HP_MP && hcount_in_hp < RIGHT_HP_MP && vcount_in_hp >= TOP_HP_MP - BORDER && vcount_in_hp < TOP_HP_MP ) || 
+                    (hcount_in_hp >= LEFT_HP_MP && hcount_in_hp < RIGHT_HP_MP && vcount_in_hp >= BOTTOM_HP_MP && vcount_in_hp < BOTTOM_HP_MP + BORDER) || 
+                    (hcount_in_hp >= RIGHT_HP_MP  && hcount_in_hp < RIGHT_HP_MP + BORDER && vcount_in_hp >= TOP_HP_MP - BORDER && vcount_in_hp < BOTTOM_HP_MP + BORDER) ) rgb_nxt = 12'hf_f_f;
+                
+                else if (curr_dmg_opponent < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP_MP && hcount_in_hp <= RIGHT_HP_MP && vcount_in_hp >= (TOP_HP_MP + ( curr_dmg_opponent*60 )) && vcount_in_hp <= BOTTOM_HP_MP ) )
+                    rgb_nxt = 12'hf_0_0;
+                
+                
+                else if ((hcount_in_hp >= LEFT_HP - BORDER && hcount_in_hp < LEFT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER ) ||
+                    (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < TOP_HP ) || 
+                    (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= BOTTOM_HP && vcount_in_hp < BOTTOM_HP + BORDER) || 
+                    (hcount_in_hp >= RIGHT_HP  && hcount_in_hp < RIGHT_HP + BORDER && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER) ) rgb_nxt = 12'hf_f_f;
                 // HP BAR 
                 //each HP point is 60 pixels wide - this draws green rectangle with right border calculated based on current HP
-            else if (curr_dmg < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP && hcount_in_hp <= (RIGHT_HP - ( curr_dmg*60 ) ) && vcount_in_hp >= TOP_HP && vcount_in_hp <= BOTTOM_HP ) )
-                rgb_nxt = 12'h0_f_0;
-            else
-                rgb_nxt = rgb_in_hp; 
+                else if (curr_dmg < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP && hcount_in_hp <= (RIGHT_HP - ( curr_dmg*60 ) ) && vcount_in_hp >= TOP_HP && vcount_in_hp <= BOTTOM_HP ) )
+                    rgb_nxt = 12'h0_f_0;
+                
+                else rgb_nxt = rgb_in_hp;
+            end
+            else begin
+            // HP BAR FRAME
+                if ((hcount_in_hp >= LEFT_HP - BORDER && hcount_in_hp < LEFT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER ) ||
+                    (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < TOP_HP ) || 
+                    (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= BOTTOM_HP && vcount_in_hp < BOTTOM_HP + BORDER) || 
+                    (hcount_in_hp >= RIGHT_HP  && hcount_in_hp < RIGHT_HP + BORDER && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER) ) rgb_nxt = 12'hf_f_f;
+                    // HP BAR 
+                    //each HP point is 60 pixels wide - this draws green rectangle with right border calculated based on current HP
+                else if (curr_dmg < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP && hcount_in_hp <= (RIGHT_HP - ( curr_dmg*60 ) ) && vcount_in_hp >= TOP_HP && vcount_in_hp <= BOTTOM_HP ) )
+                    rgb_nxt = 12'h0_f_0;
+                else
+                    rgb_nxt = rgb_in_hp; 
+            end
 
         end
         
-        MULTI: begin
-            if (!game_on_hp)
-                state_nxt = OFF;
-            else if (curr_dmg == MAX_DMG_TAKEN) begin
-                //You are dead, not big surprise
-                state_nxt = OFF;
-                game_over_nxt = 1;
-            end    
-            else if (player_hit) begin
-                curr_dmg_nxt = curr_dmg + 1;
-                state_nxt = MULTI; 
-            end  
-            else begin   
-                curr_dmg_nxt = curr_dmg;
-                state_nxt = MULTI;
-            end  
-
-            if (enemy_hit)
-                curr_dmg_enemy_nxt = curr_dmg_enemy + 1;
-            else
-                curr_dmg_enemy_nxt = curr_dmg_enemy;
-                
-            if ((hcount_in_hp >= LEFT_HP_MP - BORDER && hcount_in_hp < LEFT_HP_MP && vcount_in_hp >= TOP_HP_MP - BORDER && vcount_in_hp < BOTTOM_HP_MP + BORDER ) ||
-                (hcount_in_hp >= LEFT_HP_MP && hcount_in_hp < RIGHT_HP_MP && vcount_in_hp >= TOP_HP_MP - BORDER && vcount_in_hp < TOP_HP_MP ) || 
-                (hcount_in_hp >= LEFT_HP_MP && hcount_in_hp < RIGHT_HP_MP && vcount_in_hp >= BOTTOM_HP_MP && vcount_in_hp < BOTTOM_HP_MP + BORDER) || 
-                (hcount_in_hp >= RIGHT_HP_MP  && hcount_in_hp < RIGHT_HP_MP + BORDER && vcount_in_hp >= TOP_HP_MP - BORDER && vcount_in_hp < BOTTOM_HP_MP + BORDER) ) rgb_nxt = 12'hf_f_f;
-                
-            else if (curr_dmg_enemy < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP_MP && hcount_in_hp <= RIGHT_HP_MP && vcount_in_hp >= (TOP_HP_MP + ( curr_dmg_enemy*60 )) && vcount_in_hp <= BOTTOM_HP_MP ) )
-                rgb_nxt = 12'hf_0_0;
-               
-                
-            else if ((hcount_in_hp >= LEFT_HP - BORDER && hcount_in_hp < LEFT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER ) ||
-                                (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < TOP_HP ) || 
-                                (hcount_in_hp >= LEFT_HP && hcount_in_hp < RIGHT_HP && vcount_in_hp >= BOTTOM_HP && vcount_in_hp < BOTTOM_HP + BORDER) || 
-                                (hcount_in_hp >= RIGHT_HP  && hcount_in_hp < RIGHT_HP + BORDER && vcount_in_hp >= TOP_HP - BORDER && vcount_in_hp < BOTTOM_HP + BORDER) ) rgb_nxt = 12'hf_f_f;
-            // HP BAR 
-            //each HP point is 60 pixels wide - this draws green rectangle with right border calculated based on current HP
-            else if (curr_dmg < MAX_DMG_TAKEN && (hcount_in_hp >= LEFT_HP && hcount_in_hp <= (RIGHT_HP - ( curr_dmg*60 ) ) && vcount_in_hp >= TOP_HP && vcount_in_hp <= BOTTOM_HP ) )
-                rgb_nxt = 12'h0_f_0;
-                
-            else rgb_nxt = rgb_in_hp;
-
-        end
     endcase           
 end
 

@@ -14,6 +14,7 @@ module uart_logic (
     input wire game_over,
     input wire player_ready,
     input wire multiplayer,
+    input wire player_hit,
     
     output wire tx,
     output wire [7:0] curr_char_out
@@ -25,12 +26,13 @@ wire rx_done;
 reg [7:0] message, message_nxt;
 reg game_over_reg, game_over_reg_nxt;
 reg player_ready_reg, player_ready_reg_nxt;
+reg player_hit_reg, player_hit_reg_nxt;
 
 uart_module my_uart(
     .clk(clk), 
     .reset(rst),
     .rd_uart(~game_over_reg), 
-    .wr_uart(game_over_reg || player_ready_reg), 
+    .wr_uart(game_over_reg || player_ready_reg || player_hit_reg), 
     .rx(rx),
     .w_data(message),
     .tx_full(),
@@ -45,11 +47,13 @@ always @ (posedge clk) begin
         message <= 8'h00;
         game_over_reg <= 0;
         player_ready_reg <= 0;
+        player_hit_reg <= 0;
     end
     else begin
         message <= message_nxt;
         game_over_reg <= game_over_reg_nxt;
         player_ready_reg <= player_ready_reg_nxt;
+        player_hit_reg <= player_hit_reg_nxt;
     end
 end
    
@@ -57,6 +61,7 @@ always @* begin
     message_nxt = 8'h00;
     game_over_reg_nxt = 0;
     player_ready_reg_nxt = 0;
+    player_hit_reg_nxt = 0;
 
     if (multiplayer) begin
         if (game_over) begin
@@ -66,6 +71,10 @@ always @* begin
         if (player_ready) begin  
             message_nxt = 8'h52;
             player_ready_reg_nxt = 1;
+        end
+        if (player_hit) begin
+            message_nxt = 8'h48;
+            player_hit_reg_nxt = 1;
         end
     end
     

@@ -11,10 +11,12 @@ module UART (
     input wire player_ready,
     input wire play_selected,
     input wire multiplayer,
+    input wire player_hit,
     
     output wire tx,
     output wire victory,
-    output wire opponent_ready
+    output wire opponent_ready,
+    output wire opponent_hit
 );
 
 wire [7:0] curr_char_out;
@@ -27,6 +29,7 @@ uart_logic uart_logic(
     .game_over(game_over),
     .player_ready(player_ready),
     .multiplayer(multiplayer),
+    .player_hit(player_hit),
 
     //outputs
     .tx(tx),
@@ -43,7 +46,8 @@ comparator comparator(
     
     // outputs
     .victory(victory),
-    .opponent_ready(opponent_ready)
+    .opponent_ready(opponent_ready),
+    .opponent_hit(opponent_hit)
 );
 
 endmodule

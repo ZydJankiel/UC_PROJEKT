@@ -22,6 +22,7 @@ module CORE
         input wire mouse_left,
         input wire victory,
         input wire opponent_ready,
+        input wire opponent_hit,
 
         output wire hsync,
         output wire vsync,
@@ -30,6 +31,7 @@ module CORE
         output wire player_ready,
         output wire play_selected,
         output wire multiplayer,
+        output wire player_hit,
         output wire [11:0] rgb_out,
         output wire [3:0] an,
         output wire [7:0] seg
@@ -211,6 +213,7 @@ hp_control #( .TOP_V_LINE(TOP_V_LINE),
     .rst(rst),
     .game_on_hp(play_selected_vga_control),
     .player_hit(damage_out),
+    .opponent_hit(opponent_hit),
     //.enemy_hit(),
     .multiplayer(multiplayer_vga_control),
 
@@ -295,6 +298,7 @@ assign play_selected = play_selected_vga_control;
 assign player_ready = player_ready_vga_control;
 assign mouse_mode = mouse_mode_vga_control;
 assign multiplayer = multiplayer_vga_control;
+assign player_hit = damage_out;
 assign game_over = game_over_hp;
 
 endmodule
