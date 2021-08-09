@@ -53,7 +53,7 @@ wire [11:0] rgb_out_CORE;
 wire  mouse_mode_out_CORE;
 wire [3:0] an_out_CORE;
 wire [7:0] seg_out_CORE;
-wire game_over_out_CORE, player_ready_out_CORE, play_selected_out_CORE, multiplayer_out_CORE;
+wire game_over_out_CORE, player_ready_out_CORE, multiplayer_out_CORE;
 wire hsync_out_CORE, vsync_out_CORE;
 wire player_hit_out_CORE;
 
@@ -81,7 +81,6 @@ CORE #( .TOP_V_LINE(TOP_V_LINE),
     .mouse_mode(mouse_mode_out_CORE),
     .game_over(game_over_out_CORE),
     .player_ready(player_ready_out_CORE),
-    .play_selected(play_selected_out_CORE),
     .multiplayer(multiplayer_out_CORE),
     .player_hit(player_hit_out_CORE),
     .rgb_out(rgb_out_CORE),
@@ -115,7 +114,6 @@ UART UART (
     .rx(rx),
     .game_over(game_over_out_CORE),
     .player_ready(player_ready_out_CORE),
-    .play_selected(play_selected_out_CORE),
     .multiplayer(multiplayer_out_CORE),
     .player_hit(player_hit_out_CORE),
     

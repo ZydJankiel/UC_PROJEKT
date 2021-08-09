@@ -1,7 +1,7 @@
 `timescale 1 ns / 1 ps
 /*
  * Whole UART module with all its files are based on files from laboratory classes and are designed and managed by PWJ
- * Added module for UART logic
+ * Added module for transmition logic
 */
 
 module UART (
@@ -10,7 +10,6 @@ module UART (
     input wire rx,
     input wire game_over,
     input wire player_ready,
-    input wire play_selected,
     input wire multiplayer,
     input wire player_hit,
     
@@ -60,7 +59,6 @@ comparator comparator(
     .clk(clk),
     .rst(rst),
     .curr_char(curr_char_out),
-    .play_selected(play_selected),
     .multiplayer(multiplayer),
     .rx_done_tick(rx_done_tick),
     

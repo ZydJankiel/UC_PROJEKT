@@ -29,7 +29,6 @@ module CORE
         output wire mouse_mode,
         output wire game_over,
         output wire player_ready,
-        output wire play_selected,
         output wire multiplayer,
         output wire player_hit,
         output wire [11:0] rgb_out,
@@ -293,7 +292,6 @@ MouseDisplay MouseDisplay (
 assign hsync = hsync_out_BUTTONS;
 assign vsync = vsync_out_BUTTONS;
 assign rgb_out = {red_out_mouse, green_out_mouse, blue_out_mouse};
-assign play_selected = play_selected_vga_control;
 assign player_ready = player_ready_vga_control;
 assign mouse_mode = mouse_mode_vga_control;
 assign multiplayer = multiplayer_vga_control;

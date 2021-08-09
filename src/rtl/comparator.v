@@ -7,7 +7,6 @@
 module comparator (
     input wire clk,
     input wire rst,
-    input wire play_selected,
     input wire multiplayer,
     input wire rx_done_tick,
     input wire [7:0] curr_char,
