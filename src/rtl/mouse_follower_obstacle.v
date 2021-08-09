@@ -19,6 +19,10 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+/*
+*MO-created module
+*
+*/
 
 module mouse_follower_obstacle(
     input wire [11:0] vcount_in,

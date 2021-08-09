@@ -19,6 +19,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+/*
+*MO-created module, based on design from laboratory classes
+*
+*/
+
 module char_rom_16x16(
     output reg [6:0] char_code,
     

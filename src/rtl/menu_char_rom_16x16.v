@@ -1,3 +1,8 @@
+/*
+*MO-created module, based on design from laboratory classes
+*
+*/
+
 module menu_char_rom_16x16(
     output reg [6:0] menu_char_code,
 

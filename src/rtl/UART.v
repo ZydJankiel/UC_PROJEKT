@@ -1,6 +1,7 @@
 `timescale 1 ns / 1 ps
 /*
- * PWJ: Added module for UART logic
+ * Whole UART module with all its files are based on files from laboratory classes and are designed and managed by PWJ
+ * Added module for UART logic
 */
 
 module UART (

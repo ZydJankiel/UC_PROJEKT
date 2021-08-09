@@ -7,6 +7,10 @@
  *MO 27.06 added gameover state and behaviour (changed states to 2bit form 1bit)    
  *to go to menu from game over screen press left mouse button anywhere on the screen, to play 
  *the game again press PLAY button on gameover screen
+ *
+ *
+ *Common work of PWJ and MO
+ *
  */
 module draw_background 
     #( parameter

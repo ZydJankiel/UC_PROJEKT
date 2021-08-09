@@ -18,8 +18,10 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
-// implemented by MO
+/*
+*MO-created module, allows for setting boundaries for mouse movement
+*PWJ - added setting postition to center of game field after starting GAME_MODE
+*/
 module mouse_constrainer
     #( parameter
         MIN_Y     = 367,
