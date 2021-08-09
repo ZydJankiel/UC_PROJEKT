@@ -56,9 +56,11 @@ As said before the only objective of this mode is to survive as long as possible
 
 ### Multiplayer
 
-In multiplayer your goal is to survive longer than opponent. It is made only for two persons.
+In multiplayer your goal is to survive longer than opponent. It is made only for two persons. You can track opponent's health in red bar on the left sige of game area. 
 
 In lobby BASYS is sending 'R' letter constantly via UART to other player. The game starts when both UART's receive 'R' letters. When someone loose the game he sends 'L' letter to other player and game over screen is displayed. Receiving 'L' letter is interpreted as winning over enemy so victory screen will be shown to player who won. 
+
+When someone loses HP, UART is sending 'H' letter to opponent to indicate that loss. Receiving 'H' letter decrease opponent health on your screen.
 
 ***Connecting with other player***
 
