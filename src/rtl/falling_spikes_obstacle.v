@@ -22,7 +22,7 @@
 /MO-created module. Despite knowing how to display static triangles in all 4 directions  on screen (code at the end of file) i could not 
 / find a reasonable way to display triangles facing right and left - bec of the fact that creating slope on screen sometimes requires 
 / comparing hcount and vcount to negative number both of them (hcount and vcount) had to be transformed into "signed" form which is two's complement
-/ in order to properly compare values. This resulted in problems of not meeting timing requirements in different wire across the whole program (even outside of "CORE")
+/ in order to properly compare values. This resulted in problems of not meeting timing requirements in different wires across the whole program (even outside of "CORE")
 / (Total Negative slack ranged from -9ns  to -250ns in warious attempts to fix this issue in this module). In the end it was decided that it is not worth the effort
 / of rewriting code in warious modules just for the sake of this one module.
 /

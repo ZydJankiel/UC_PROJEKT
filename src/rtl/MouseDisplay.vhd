@@ -4,7 +4,7 @@
 -- Author : Ulrich Zoltán
 --          Copyright 2006 Digilent, Inc.
 ------------------------------------------------------------------------
--- Modifications : MO
+-- Modifications : MO, changed cursor
 -- This module was downloaded from our UEC2 course on UPEL platform, and has been modified 
 -- for pourpose of this game.
 -- https://upel2.cel.agh.edu.pl/weaiib/pluginfile.php/86334/mod_assign/introattachment/0/MouseCtl.vhd?forcedownload=1
@@ -91,6 +91,10 @@
 -- blue_in        - input pin, 4 bits, from effects_layer
 --                - blue channel input of the image to be displayed
 ------------------------------------------------------------------------
+
+
+
+
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;

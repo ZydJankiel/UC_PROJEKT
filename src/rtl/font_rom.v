@@ -19,6 +19,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+/*
+*MO-added module, file from laboratory classes
+*
+*/
+
 
 // ROM with synchonous read (inferring Block RAM)
 // character ROM

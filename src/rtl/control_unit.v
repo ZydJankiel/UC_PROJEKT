@@ -1,5 +1,10 @@
 `timescale 1 ns / 1 ps
 
+/*
+*PWJ-created module by splitting code from draw_background based by MO design
+*
+*/
+
 module control_unit 
     #( parameter 
         PLAY_BOX_X_POS   = 432,

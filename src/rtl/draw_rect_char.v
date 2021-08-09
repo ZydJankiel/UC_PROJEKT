@@ -19,6 +19,11 @@
 // 
 //////////////////////////////////////////////////////////////////////////////////
 
+/*
+*MO-created module, parametrized to allow using in multiple instances
+*
+*/
+
 module draw_rect_char 
     #( parameter
         //DO NOT TOUCH X POS - IT DISTORTS LETTERS SHAPE

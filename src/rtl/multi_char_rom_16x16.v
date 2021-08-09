@@ -18,7 +18,10 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+/*
+*MO-created module, based on design from laboratory classes
+*
+*/
 
 module multi_char_rom_16x16(
     input wire [7:0] multi_char_xy,

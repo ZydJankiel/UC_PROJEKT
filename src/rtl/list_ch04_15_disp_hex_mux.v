@@ -1,5 +1,5 @@
 // Listing 4.15
-// This module come from our laboratorys
+// This module comes from our laboratories
 module disp_hex_mux
    (
     input wire clk, reset,
