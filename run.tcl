@@ -49,7 +49,7 @@ read_verilog {
     src/rtl/list_ch08_03_uart_tx.v
     src/rtl/list_ch08_04_uart.v
     src/rtl/list_ch04_15_disp_hex_mux.v
-    src/rtl/uart_logic.v
+    src/rtl/transmition_logic.v
     src/rtl/comparator.v
     src/rtl/obstacles_control.v
     src/rtl/lasers_obstacle.v
