@@ -160,12 +160,7 @@ falling_spikes_obstacle falling_spikes_obstacle(
     .done(done_obs5)
 );
 
-obstacle1 #( .TEST_TOP_LINE(500),
-             .TEST_BOTTOM_LINE(400),
-             .TEST_LEFT_LINE(520), 
-             .TEST_RIGHT_LINE(620),
-             .COLOR(12'h0_f_f),
-             .SELECT_CODE(4'b0110) ) rectangle6_obstacle (
+splitting_obstacle splitting_obstacle(
     //inputs
     .vcount_in(vcount_in),
     .hcount_in(hcount_in),
@@ -177,6 +172,8 @@ obstacle1 #( .TEST_TOP_LINE(500),
     .play_selected(play_selected),
     .selected(selected_obstacle),
     .done_in(done_counter),
+    .mouse_xpos(xpos),
+    //.mouse_ypos(ypos),
     
     //outputs  
     .obstacle_x(obstacle6_x_out),

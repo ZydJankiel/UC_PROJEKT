@@ -66,8 +66,7 @@ localparam SPIKE_WIDTH          = 20;
 localparam GAME_FIELD_TOP       = 317,
            GAME_FIELD_BOTTOM    = 617,
            GAME_FIELD_LEFT      = 361,
-           GAME_FIELD_RIGHT     = 661,
-           WARNING_BORDER       = 10;
+           GAME_FIELD_RIGHT     = 661;
     
 reg [25:0] counter_move_x, counter_move_x_nxt, counter_move_y, counter_move_y_nxt;
 reg [25:0] counter_after_fall, counter_after_fall_nxt;
@@ -219,7 +218,7 @@ always @* begin
                 //in last 2 comps - more in spike_right... and less in spike_left... makes triangle bigger , multiplying hcount gives greater slope (if x>1) or smaller slope (if x<1)
                 //to move spike downwards in spike_right... add difference and in spike_left... subtract
                 //when moving spike sideways add (or subtract) to both spike_right... and spike_left... value of 3*x_difference 
-                if (hcount_in >= spike_center_x - SPIKE_WIDTH && hcount_in <= spike_center_x + SPIKE_WIDTH && vcount_in >= spike_center_y_nxt && (vcount_in <= spike_center_y_nxt + 50) && ((3 * hcount_in) + vcount_in) <= spike_right_or_bot_slope_nxt && ((3 * hcount_in) - vcount_in) >= spike_left_or_top_slope_nxt)  begin 
+                if (hcount_in >= spike_center_x - SPIKE_WIDTH && hcount_in <= spike_center_x + SPIKE_WIDTH && vcount_in >= spike_center_y && (vcount_in <= spike_center_y + 50) && ((3 * hcount_in) + vcount_in) <= spike_right_or_bot_slope && ((3 * hcount_in) - vcount_in) >= spike_left_or_top_slope)  begin 
                     rgb_nxt = 12'hf_f_f;
                     obstacle_x_nxt = hcount_in;
                     obstacle_y_nxt = vcount_in;
