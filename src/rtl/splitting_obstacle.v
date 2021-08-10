@@ -77,7 +77,7 @@ reg done_nxt;
     
 //waiting counters
 reg [25:0] aim_counter, aim_counter_nxt;
-reg [25:0] counter_move_x, counter_move_x_nxt, counter_move_y, counter_move_y_nxt;
+reg [25:0] counter_obstacle_move, counter_obstacle_move_nxt;
 reg [25:0] counter_after_fall, counter_after_fall_nxt;
 
 //dmg field of obstacle
@@ -90,7 +90,7 @@ reg [25:0] obstacle_right_x, obstacle_right_x_nxt, obstacle_right_y ,obstacle_ri
 
 //specialist regs
 reg [5:0] throw_counter, throw_counter_nxt;
-reg aiming, aiming_nxt, joined, joined_nxt;
+
 
 
 
@@ -101,14 +101,12 @@ always @(posedge clk) begin
         rgb_out                     <= 0; 
         obstacle_x                  <= 0;
         obstacle_y                  <= 0;
-        counter_move_x              <= 0;
-        counter_move_y              <= 0;
+        counter_obstacle_move       <= 0;
         counter_after_fall          <= 0;
         throw_counter               <= 0;
         done                        <= 0;
         aim_counter                 <= 0;
-        aiming                      <= 0;
-        joined                      <= 0;
+
 
 
     end
@@ -126,15 +124,11 @@ always @(posedge clk) begin
         obstacle_right_x            <= obstacle_right_x_nxt;
         obstacle_right_y            <= obstacle_right_y_nxt;
         
-        counter_move_x              <= counter_move_x_nxt;
-        counter_move_y              <= counter_move_y_nxt;
-        
+        counter_obstacle_move       <= counter_obstacle_move_nxt;
         counter_after_fall          <= counter_after_fall_nxt;
         throw_counter               <= throw_counter_nxt;
         done                        <= done_nxt;
         aim_counter                 <= aim_counter_nxt;
-        aiming                      <= aiming_nxt;
-        joined                      <= joined_nxt;
 
     end
 end
@@ -143,17 +137,14 @@ always @* begin
     rgb_nxt                         = rgb_in;
     state_nxt                       = IDLE;
     obstacle_state_nxt              = obstacle_state;
-    counter_move_x_nxt              = counter_move_x;
-    counter_move_y_nxt              = counter_move_y;
+    counter_obstacle_move_nxt       = counter_obstacle_move;
     counter_after_fall_nxt          = counter_after_fall;
     throw_counter_nxt               = throw_counter;
     obstacle_x_nxt                  = 0;
     obstacle_y_nxt                  = 0;
     done_nxt                        = 0;
     aim_counter_nxt                 = aim_counter;
-    aiming_nxt                      = aiming;
-    joined_nxt                      = joined;
-    
+
     obstacle_center_x_nxt           = obstacle_center_x;
     obstacle_center_y_nxt           = obstacle_center_y;
     
@@ -263,28 +254,28 @@ always @* begin
                     
                     //spike x axis following , all 3 squares are moving together  
                     if (obstacle_center_x < mouse_xpos + (BIG_SQUARE_WIDTH/2)) begin              
-                        if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin
                             obstacle_center_x_nxt = obstacle_center_x + 1;
                             obstacle_left_x_nxt = obstacle_left_x + 1;
                             obstacle_right_x_nxt = obstacle_right_x + 1;
-                            counter_move_x_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else
-                            counter_move_x_nxt = counter_move_x + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                         end
                     else if (obstacle_center_x > mouse_xpos) begin         
-                        if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin
                             obstacle_center_x_nxt = obstacle_center_x - 1;
                             obstacle_left_x_nxt = obstacle_left_x - 1;
                             obstacle_right_x_nxt = obstacle_right_x - 1;
-                            counter_move_x_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else
-                            counter_move_x_nxt = counter_move_x + 1; 
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1; 
                         end
                     else begin                                          
                         obstacle_center_x_nxt = obstacle_center_x;
-                        counter_move_x_nxt = 0;
+                        counter_obstacle_move_nxt = 0;
                         end
                 end //end obstacle_state
 
@@ -316,14 +307,14 @@ always @* begin
                     else begin
                         obstacle_state_nxt =  FALLING;
                         //spike falling without changing x value
-                        if (counter_move_y >= COUNTER_FAST_MOVE) begin  
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin  
                             obstacle_center_y_nxt = obstacle_center_y + 1;
                             obstacle_left_y_nxt = obstacle_left_y + 1;
                             obstacle_right_y_nxt = obstacle_right_y + 1;
-                            counter_move_y_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else begin
-                            counter_move_y_nxt = counter_move_y + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                             end
                         end    
                 end //end obstacle_state
@@ -359,16 +350,16 @@ always @* begin
                         end
                     else begin
                         state_nxt =  THROW_FROM_TOP;
-                        if (counter_move_y >= COUNTER_FAST_MOVE) begin  
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin  
                             obstacle_center_y_nxt = obstacle_center_y + 1;
                             obstacle_left_x_nxt = obstacle_left_x - 1;
                             obstacle_left_y_nxt = obstacle_left_y + 1;
                             obstacle_right_x_nxt = obstacle_right_x + 1;
                             obstacle_right_y_nxt = obstacle_right_y + 1;
-                            counter_move_y_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else begin
-                            counter_move_y_nxt = counter_move_y + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                             end
                         end   
                 end //end obstacle_state
@@ -415,28 +406,28 @@ always @* begin
                     
                     // x axis following , all 3 squares are moving together  
                     if (obstacle_center_x < mouse_xpos + (BIG_SQUARE_WIDTH/2)) begin              
-                        if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin
                             obstacle_center_x_nxt = obstacle_center_x + 1;
                             obstacle_left_x_nxt = obstacle_left_x + 1;
                             obstacle_right_x_nxt = obstacle_right_x + 1;
-                            counter_move_x_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else
-                            counter_move_x_nxt = counter_move_x + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                         end
                     else if (obstacle_center_x > mouse_xpos) begin         
-                        if (counter_move_x >= COUNTER_FAST_MOVE) begin
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin
                             obstacle_center_x_nxt = obstacle_center_x - 1;
                             obstacle_left_x_nxt = obstacle_left_x - 1;
                             obstacle_right_x_nxt = obstacle_right_x - 1;
-                            counter_move_x_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else
-                            counter_move_x_nxt = counter_move_x + 1; 
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1; 
                         end
                     else begin                                          
                         obstacle_center_x_nxt = obstacle_center_x;
-                        counter_move_x_nxt = 0;
+                        counter_obstacle_move_nxt = 0;
                         end
                 end //end obstacle_state
 
@@ -468,14 +459,14 @@ always @* begin
                     else begin
                         obstacle_state_nxt =  FALLING;
 
-                        if (counter_move_y >= COUNTER_FAST_MOVE) begin  
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin  
                             obstacle_center_y_nxt = obstacle_center_y - 1;
                             obstacle_left_y_nxt = obstacle_left_y - 1;
                             obstacle_right_y_nxt = obstacle_right_y - 1;
-                            counter_move_y_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else begin
-                            counter_move_y_nxt = counter_move_y + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                             end
                         end    
                 end //end obstacle_state
@@ -511,16 +502,16 @@ always @* begin
                         end
                     else begin
                         state_nxt =  THROW_FROM_BOTTOM;
-                        if (counter_move_y >= COUNTER_FAST_MOVE) begin  
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin  
                             obstacle_center_y_nxt = obstacle_center_y - 1;
                             obstacle_left_x_nxt = obstacle_left_x - 1;
                             obstacle_left_y_nxt = obstacle_left_y - 1;
                             obstacle_right_x_nxt = obstacle_right_x + 1;
                             obstacle_right_y_nxt = obstacle_right_y - 1;
-                            counter_move_y_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else begin
-                            counter_move_y_nxt = counter_move_y + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                             end
                         end   
                 end //end obstacle_state
@@ -567,28 +558,28 @@ always @* begin
                     
                     // x axis following , all 3 squares are moving together  
                     if (obstacle_center_y < mouse_ypos + (BIG_SQUARE_WIDTH/2)) begin              
-                        if (counter_move_y >= COUNTER_FAST_MOVE) begin
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin
                             obstacle_center_y_nxt = obstacle_center_y + 1;
                             obstacle_left_y_nxt = obstacle_left_y + 1;
                             obstacle_right_y_nxt = obstacle_right_y + 1;
-                            counter_move_y_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else
-                            counter_move_y_nxt = counter_move_y + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                         end
                     else if (obstacle_center_y > mouse_ypos) begin         
-                        if (counter_move_y >= COUNTER_FAST_MOVE) begin
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin
                             obstacle_center_y_nxt = obstacle_center_y - 1;
                             obstacle_left_y_nxt = obstacle_left_y - 1;
                             obstacle_right_y_nxt = obstacle_right_y - 1;
-                            counter_move_y_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else
-                            counter_move_y_nxt = counter_move_y + 1; 
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1; 
                         end
                     else begin                                          
                         obstacle_center_y_nxt = obstacle_center_y;
-                        counter_move_y_nxt = 0;
+                        counter_obstacle_move_nxt = 0;
                         end
                 end //end obstacle_state
 
@@ -620,14 +611,14 @@ always @* begin
                     else begin
                         obstacle_state_nxt =  FALLING;
 
-                        if (counter_move_x >= COUNTER_FAST_MOVE) begin  
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin  
                             obstacle_center_x_nxt = obstacle_center_x + 1;
                             obstacle_left_x_nxt = obstacle_left_x + 1;
                             obstacle_right_x_nxt = obstacle_right_x + 1;
-                            counter_move_x_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else begin
-                            counter_move_x_nxt = counter_move_x + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                             end
                         end    
                 end //end obstacle_state
@@ -663,16 +654,16 @@ always @* begin
                         end
                     else begin
                         state_nxt =  THROW_FROM_LEFT;
-                        if (counter_move_x >= COUNTER_FAST_MOVE) begin  
+                        if (counter_obstacle_move >= COUNTER_FAST_MOVE) begin  
                             obstacle_center_x_nxt = obstacle_center_x + 1;
                             obstacle_left_x_nxt = obstacle_left_x + 1;
                             obstacle_left_y_nxt = obstacle_left_y - 1;
                             obstacle_right_x_nxt = obstacle_right_x + 1;
                             obstacle_right_y_nxt = obstacle_right_y + 1;
-                            counter_move_x_nxt = 0;
+                            counter_obstacle_move_nxt = 0;
                             end
                         else begin
-                            counter_move_x_nxt = counter_move_x + 1;
+                            counter_obstacle_move_nxt = counter_obstacle_move + 1;
                             end
                         end   
                 end //end obstacle_state
