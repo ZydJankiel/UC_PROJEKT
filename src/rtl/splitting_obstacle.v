@@ -159,9 +159,11 @@ always @* begin
     case (state)
         IDLE: begin
             if (done_in) begin
-                //state_nxt = ((selected == 4'b0110) && play_selected) ? THROW_DISTRIBUTOR : IDLE;
-                state_nxt = ((selected == 4'b0110) && play_selected) ? THROW_DISTRIBUTOR : IDLE;
-            end
+                if ((selected == 4'b0110) && play_selected) begin
+                    state_nxt = THROW_DISTRIBUTOR;
+                    throw_counter_nxt = 0;
+                    end
+                end
             else
                 state_nxt = IDLE;
 
@@ -182,7 +184,7 @@ always @* begin
                 obstacle_left_y_nxt = GAME_FIELD_TOP + SMALL_SQUARE_WIDTH;
                 obstacle_right_x_nxt = X_AXIS_MIDDLE;
                 obstacle_right_y_nxt = GAME_FIELD_TOP + SMALL_SQUARE_WIDTH;
-                obstacle_state_nxt = FALLING;
+                obstacle_state_nxt = AIMING;
                 end
             //THROW_FROM_RIGHT
             else if (throw_counter == 3 || throw_counter == 8 || throw_counter == 9 || throw_counter == 14 || throw_counter == 16 ) begin
@@ -193,7 +195,7 @@ always @* begin
                 obstacle_left_y_nxt = Y_AXIS_MIDDLE;
                 obstacle_right_x_nxt = GAME_FIELD_RIGHT - SMALL_SQUARE_WIDTH;
                 obstacle_right_y_nxt = Y_AXIS_MIDDLE;
-                obstacle_state_nxt = FALLING;
+                obstacle_state_nxt = AIMING;
                 end
             //THROW_FROM_LEFT
             else if (throw_counter == 2 || throw_counter == 5 || throw_counter == 11 || throw_counter == 15 || throw_counter == 19 ) begin
@@ -204,7 +206,7 @@ always @* begin
                 obstacle_left_y_nxt = Y_AXIS_MIDDLE;
                 obstacle_right_x_nxt = GAME_FIELD_LEFT + SMALL_SQUARE_WIDTH;
                 obstacle_right_y_nxt = Y_AXIS_MIDDLE;
-                obstacle_state_nxt = FALLING;
+                obstacle_state_nxt = AIMING;
                 end
             //THROW_FROM_BOTTOM
             else if (throw_counter == 1 || throw_counter == 7 || throw_counter == 10 || throw_counter == 13 || throw_counter == 17 ) begin
@@ -215,7 +217,7 @@ always @* begin
                 obstacle_left_y_nxt = GAME_FIELD_BOTTOM - SMALL_SQUARE_WIDTH;
                 obstacle_right_x_nxt = X_AXIS_MIDDLE;
                 obstacle_right_y_nxt = GAME_FIELD_BOTTOM - SMALL_SQUARE_WIDTH;
-                obstacle_state_nxt = FALLING;
+                obstacle_state_nxt = AIMING;
                 end
             //if somehow none of the above is true then end obstacle    
             else begin
@@ -236,17 +238,20 @@ always @* begin
             case (obstacle_state)     
                 AIMING: begin
 
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else  if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -293,17 +298,20 @@ always @* begin
                 //all 3 of the squares falling together
                 FALLING: begin
     
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                   else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -388,17 +396,20 @@ always @* begin
             case (obstacle_state)     
                 AIMING: begin
 
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else  if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -445,17 +456,20 @@ always @* begin
                 //all 3 of the squares falling together
                 FALLING: begin
     
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                   else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -540,17 +554,20 @@ always @* begin
             case (obstacle_state)     
                 AIMING: begin
 
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else  if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -597,17 +614,20 @@ always @* begin
                 //all 3 of the squares falling together
                 FALLING: begin
     
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                   else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -692,17 +712,20 @@ always @* begin
             case (obstacle_state)     
                 AIMING: begin
 
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else  if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -749,17 +772,20 @@ always @* begin
                 //all 3 of the squares falling together
                 FALLING: begin
     
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                   else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                   else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                   (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&    //squares are visible only inside the game_field
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;

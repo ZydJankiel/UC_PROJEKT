@@ -140,8 +140,12 @@ always @* begin
     case (state)
         IDLE: begin
             if (done_in) begin
-                state_nxt = ((selected == 4'b0101) && play_selected) ? SPIKE_DISTRIBUTOR : IDLE;
-            end
+                //state_nxt = ((selected == 4'b0101) && play_selected) ? SPIKE_DISTRIBUTOR : IDLE;
+                if ((selected == 4'b0101) && play_selected) begin
+                    state_nxt = SPIKE_DISTRIBUTOR;
+                    spike_counter_nxt = 0;
+                    end
+                end
             else
                 state_nxt = IDLE;
 
