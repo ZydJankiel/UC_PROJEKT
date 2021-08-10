@@ -36,7 +36,6 @@ module splitting_obstacle(
     input wire [3:0] selected,
     input wire done_in,
     input wire [11:0] mouse_xpos,
-    //input wire [11:0] mouse_ypos, Needed in horizontal spikes but unused due to problem with them.
     
     output reg [11:0] rgb_out,
     output reg [11:0] obstacle_x,
@@ -67,7 +66,7 @@ localparam GAME_FIELD_TOP       = 317,
            GAME_FIELD_BOTTOM    = 617,
            GAME_FIELD_LEFT      = 361,
            GAME_FIELD_RIGHT     = 661,
-           MAX_DIST_FROM_BORDER = 100;
+           MAX_DIST_FROM_BORDER = 90;
 
 //basic regs           
 reg [2:0] state, state_nxt;
@@ -170,11 +169,11 @@ always @* begin
                 state_nxt = ((selected == 4'b0110) && play_selected) ? THROW_FROM_TOP : IDLE;
                 //state_nxt = THROW_FROM_TOP;
                 obstacle_center_x_nxt = 511;
-                obstacle_center_y_nxt = GAME_FIELD_TOP;
+                obstacle_center_y_nxt = GAME_FIELD_TOP + BIG_SQUARE_WIDTH;
                 obstacle_left_x_nxt = 511;
-                obstacle_left_y_nxt = GAME_FIELD_TOP;
+                obstacle_left_y_nxt = GAME_FIELD_TOP + SMALL_SQUARE_WIDTH;
                 obstacle_right_x_nxt = 511;
-                obstacle_right_y_nxt = GAME_FIELD_TOP;
+                obstacle_right_y_nxt = GAME_FIELD_TOP + SMALL_SQUARE_WIDTH;
                 obstacle_state_nxt = AIMING;
             end
             else
@@ -325,17 +324,20 @@ always @* begin
                 //"left" and "right" square are starting to go in 45 degree angle towards opposite border
                 SPLIT: begin
 
-                    if (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH )  begin 
+                    if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&
+                    (hcount_in >= obstacle_center_x - BIG_SQUARE_WIDTH && hcount_in <= obstacle_center_x + BIG_SQUARE_WIDTH && vcount_in >= obstacle_center_y - BIG_SQUARE_WIDTH && vcount_in <= obstacle_center_y + BIG_SQUARE_WIDTH ))  begin 
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ( (hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&
+                    (hcount_in >= obstacle_left_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_left_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_left_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_left_y + SMALL_SQUARE_WIDTH) ) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
                         end
-                    else if (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH ) begin
+                    else if ((hcount_in >= GAME_FIELD_LEFT && hcount_in <= GAME_FIELD_RIGHT && vcount_in >= GAME_FIELD_TOP && vcount_in <= GAME_FIELD_BOTTOM) &&
+                    (hcount_in >= obstacle_right_x - SMALL_SQUARE_WIDTH && hcount_in <= obstacle_right_x + SMALL_SQUARE_WIDTH && vcount_in >= obstacle_right_y - SMALL_SQUARE_WIDTH && vcount_in <= obstacle_right_y + SMALL_SQUARE_WIDTH )) begin
                         rgb_nxt = 12'hf_f_f;
                         obstacle_x_nxt = hcount_in;
                         obstacle_y_nxt = vcount_in;
@@ -344,7 +346,7 @@ always @* begin
                         rgb_nxt = rgb_in;
                         
                     //since all squares are movving towards opposite border with same speed, only need to check if one of them touched bottom    
-                    if (obstacle_center_y >= GAME_FIELD_BOTTOM - BIG_SQUARE_WIDTH) begin
+                    if (obstacle_center_y >= GAME_FIELD_BOTTOM + BIG_SQUARE_WIDTH) begin
                         state_nxt = THROW_DISTRIBUTOR;
                         throw_counter_nxt = throw_counter + 1;
                         end
@@ -366,9 +368,7 @@ always @* begin
             endcase //end obstacle_state case
 
         end //end state
-        //MAKE THEM SPLIT LITTLE BIT FASTER (LIKE 80 OR 90 INSTEAD OF 100), 
-        //MAKE SIDE SQUARE DISAPPEAR AFTER LEAVING GAME FIELD
-        //POSITION THEM BETTER AT THE AIMING PHASE
+
         
     endcase //end state case
 end 
