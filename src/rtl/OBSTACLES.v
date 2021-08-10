@@ -173,7 +173,7 @@ splitting_obstacle splitting_obstacle(
     .selected(selected_obstacle),
     .done_in(done_counter),
     .mouse_xpos(xpos),
-    //.mouse_ypos(ypos),
+    .mouse_ypos(ypos),
     
     //outputs  
     .obstacle_x(obstacle6_x_out),
