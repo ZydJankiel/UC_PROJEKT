@@ -10,7 +10,7 @@ module obstacle1
         TEST_BOTTOM_LINE   = 0,
         TEST_LEFT_LINE     = 0,
         TEST_RIGHT_LINE    = 0,
-        COLOR              = 12'hf_f_f,
+        COLOR              = 12'h5_5_5,
         SELECT_CODE        = 4'b0000
     )
     (
