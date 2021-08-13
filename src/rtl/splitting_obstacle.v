@@ -24,24 +24,27 @@
 /
 */
 
-module splitting_obstacle(
-    input wire  [11:0] vcount_in,
-    input wire  [11:0] hcount_in,
-    input wire clk,
-    input wire rst,
-    input wire game_on,
-    input wire menu_on,
-    input wire [11:0] rgb_in,
-    input wire play_selected,
-    input wire [3:0] selected,
-    input wire done_in,
-    input wire [11:0] mouse_xpos,
-    input wire [11:0] mouse_ypos,
-    
-    output reg [11:0] rgb_out,
-    output reg [11:0] obstacle_x,
-    output reg [11:0] obstacle_y,
-    output reg done
+module splitting_obstacle
+    #( parameter
+        SELECT_CODE = 3'b110
+    )
+    (
+        input wire  [11:0] vcount_in,
+        input wire  [11:0] hcount_in,
+        input wire clk,
+        input wire rst,
+        input wire menu_on,
+        input wire [11:0] rgb_in,
+        input wire play_selected,
+        input wire [2:0] selected,
+        input wire done_in,
+        input wire [11:0] mouse_xpos,
+        input wire [11:0] mouse_ypos,
+        
+        output reg [11:0] rgb_out,
+        output reg [11:0] obstacle_x,
+        output reg [11:0] obstacle_y,
+        output reg done
     );
 
 localparam COUNTER_AIM              = 65000000,     //1 sec
@@ -159,7 +162,7 @@ always @* begin
     case (state)
         IDLE: begin
             if (done_in) begin
-                if ((selected == 4'b0110) && play_selected) begin
+                if ((selected == SELECT_CODE) && play_selected) begin
                     state_nxt = THROW_DISTRIBUTOR;
                     throw_counter_nxt = 0;
                     end

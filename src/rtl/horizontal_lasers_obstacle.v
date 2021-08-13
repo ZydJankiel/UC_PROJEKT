@@ -23,23 +23,26 @@
 *
 */
 
-module horizontal_lasers_obstacle(
-    input wire [11:0] vcount_in,
-    input wire [11:0] hcount_in,
-    input wire clk,
-    input wire rst,
-    input wire game_on,
-    input wire menu_on,
-    input wire [11:0] rgb_in,
-    input wire play_selected,
-    input wire [3:0] selected,
-    input wire done_in,
-    
-    output reg [11:0] rgb_out,
-    output reg [11:0] obstacle_x,
-    output reg [11:0] obstacle_y,
-    output reg done
-);
+module horizontal_lasers_obstacle
+    #( parameter
+        SELECT_CODE = 3'b010
+    )
+    (
+        input wire [11:0] vcount_in,
+        input wire [11:0] hcount_in,
+        input wire clk,
+        input wire rst,
+        input wire menu_on,
+        input wire [11:0] rgb_in,
+        input wire play_selected,
+        input wire [2:0] selected,
+        input wire done_in,
+        
+        output reg [11:0] rgb_out,
+        output reg [11:0] obstacle_x,
+        output reg [11:0] obstacle_y,
+        output reg done
+    );
   
 localparam COUNTER_ON_LASER_VALUE       = 3200000,
            COUNTER_BETWEEN_LASERS_VALUE = 32000000;
@@ -114,7 +117,7 @@ always @* begin
             obstacle_counter_nxt = 0;
             
             if (done_in) begin
-                state_nxt = ((selected == 4'b0010) && play_selected) ? DRAW_TOP : IDLE;
+                state_nxt = ((selected == SELECT_CODE) && play_selected) ? DRAW_TOP : IDLE;
                 laser_top_nxt = TOP_LASER_TOP;
                 laser_bottom_nxt = TOP_LASER_BOTTOM;
             end

@@ -37,7 +37,7 @@ read_verilog {
     src/rtl/mouse_constrainer.v
     src/rtl/hp_control.v
     src/rtl/colision_detector.v
-    src/rtl/obstacle_mux_16to1.v
+    src/rtl/obstacle_mux_8to1.v
     src/rtl/font_rom.v
     src/rtl/char_rom_16x16.v
     src/rtl/multi_char_rom_16x16.v

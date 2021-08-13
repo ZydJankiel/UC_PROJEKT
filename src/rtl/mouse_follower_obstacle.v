@@ -24,25 +24,29 @@
 *
 */
 
-module mouse_follower_obstacle(
-    input wire [11:0] vcount_in,
-    input wire [11:0] hcount_in,
-    input wire clk,
-    input wire rst,
-    input wire game_on,
-    input wire menu_on,
-    input wire [11:0] rgb_in,
-    input wire play_selected,
-    input wire [3:0] selected,
-    input wire done_in,
-    input wire [11:0] mouse_xpos,
-    input wire [11:0] mouse_ypos,
-    
-    output reg [11:0] rgb_out,
-    output reg [11:0] obstacle_x,
-    output reg [11:0] obstacle_y,
-    output reg done
+module mouse_follower_obstacle
+    #( parameter
+        SELECT_CODE = 3'b100
+    )
+    (
+        input wire [11:0] vcount_in,
+        input wire [11:0] hcount_in,
+        input wire clk,
+        input wire rst,
+        input wire menu_on,
+        input wire [11:0] rgb_in,
+        input wire play_selected,
+        input wire [2:0] selected,
+        input wire done_in,
+        input wire [11:0] mouse_xpos,
+        input wire [11:0] mouse_ypos,
+        
+        output reg [11:0] rgb_out,
+        output reg [11:0] obstacle_x,
+        output reg [11:0] obstacle_y,
+        output reg done
     );
+        
 localparam COUNTER_GROWTH           = 3200000,
            COUNTER_MOVE             = 600000,
            COUNTER_FAST_MOVE        = COUNTER_MOVE/2,
@@ -138,7 +142,7 @@ always @* begin
         IDLE: begin
 
             if (done_in) begin
-                state_nxt = ((selected == 4'b0100) && play_selected) ? ENEMY_SPAWN : IDLE;
+                state_nxt = ((selected == SELECT_CODE) && play_selected) ? ENEMY_SPAWN : IDLE;
                 counter_move_x_nxt = 0;
                 counter_move_y_nxt = 0;
                 obstacle_time_counter_nxt = 0;

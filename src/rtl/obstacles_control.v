@@ -2,19 +2,17 @@
 
 // PWJ implemented module 
 
-module obstacles_control 
-    #(parameter NUM_BITS = 3)
-    (
-        input wire clk,
-        input wire rst,
-        input wire done,
-        input wire play_selected,
+module obstacles_control (
+    input wire clk,
+    input wire rst,
+    input wire done,
+    input wire play_selected,
 
-        output reg [NUM_BITS-1:0] obstacle_code,
-        output reg done_out
-    );
+    output reg [2:0] obstacle_code,
+    output reg done_out
+);
 
-reg [NUM_BITS-1:0] code_nxt;
+reg [2:0] code_nxt;
 reg done_out_nxt;
 reg state, state_nxt;
 
@@ -54,8 +52,7 @@ always @* begin
         
         CONTROL: begin
             if (done) begin
-                //if (obstacle_code == {NUM_BITS{1'b1}}) begin
-                if (obstacle_code == 4'b0111) begin
+                if (obstacle_code == 3'b111) begin
                     code_nxt = 0;
                     done_out_nxt = 1;
                 end

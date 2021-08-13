@@ -50,14 +50,14 @@ wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_ba
 
 wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
 
-wire [2:0] mouse_mode_vga_control, control_state; 
+wire [2:0] control_state; 
 
 wire play_selected_vga_control, display_buttons_m_and_s, display_menu_button;
 wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
 wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
 wire damage_out, game_over_hp;
 wire player_ready_vga_control, multiplayer_vga_control;
-
+wire mouse_mode_vga_control;
 
 
 localparam  PLAY_BOX_X_POS  = 432,
@@ -158,7 +158,6 @@ OBSTACLES OBSTACLES (
     .vblnk_in(vblnk_out_back),
     .vsync_in(vsync_out_back),
     .rgb_in(rgb_out_back),
-    .game_on(game_button),
     .menu_on(menu_button),
     .xpos(xpos),
     .ypos(ypos),

@@ -6,18 +6,17 @@
 
 module pillars_obstacle 
     #( parameter
-        SELECT_CODE = 4'b0000
+        SELECT_CODE = 3'b000
     )
     (
         input wire [11:0] vcount_in,
         input wire [11:0] hcount_in,
         input wire clk,
         input wire rst,
-        input wire game_on,
         input wire menu_on,
         input wire [11:0] rgb_in,
         input wire play_selected,
-        input wire [3:0] selected,
+        input wire [2:0] selected,
         input wire done_in,
         
         output reg [11:0] rgb_out,

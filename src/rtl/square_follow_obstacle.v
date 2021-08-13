@@ -24,24 +24,27 @@
 */
 
 
-module square_follow_obstacle(
-    input wire [11:0] vcount_in,
-    input wire [11:0] hcount_in,
-    input wire clk,
-    input wire rst,
-    input wire game_on,
-    input wire menu_on,
-    input wire [11:0] rgb_in,
-    input wire play_selected,
-    input wire [3:0] selected,
-    input wire done_in,
-    
-    output reg [11:0] rgb_out,
-    output reg [11:0] obstacle_x,
-    output reg [11:0] obstacle_y,
-    output reg done
-);
-  
+module square_follow_obstacle
+    #( parameter
+        SELECT_CODE = 3'b011
+    )
+    (
+        input wire [11:0] vcount_in,
+        input wire [11:0] hcount_in,
+        input wire clk,
+        input wire rst,
+        input wire menu_on,
+        input wire [11:0] rgb_in,
+        input wire play_selected,
+        input wire [2:0] selected,
+        input wire done_in,
+        
+        output reg [11:0] rgb_out,
+        output reg [11:0] obstacle_x,
+        output reg [11:0] obstacle_y,
+        output reg done
+    );
+      
 localparam COUNTER_MOVE             = 3200000,
            COUNTER_BETWEEN_STATES   = 32000000,
            COUNTER_FAST_MOVE        = COUNTER_MOVE/2 ;  
@@ -120,7 +123,7 @@ always @* begin
         IDLE: begin
 
             if (done_in) begin
-                state_nxt = ((selected == 4'b0011) && play_selected) ? CLOSE_IN : IDLE;
+                state_nxt = ((selected == SELECT_CODE) && play_selected) ? CLOSE_IN : IDLE;
                 square_hole_top_nxt = GAME_FIELD_TOP + 1;
                 square_hole_bottom_nxt = GAME_FIELD_BOTTOM - 1;
                 square_hole_left_nxt = GAME_FIELD_LEFT + 1;
