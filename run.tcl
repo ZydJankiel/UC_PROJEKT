@@ -65,6 +65,8 @@ read_verilog {
     src/rtl/CLK.v
     src/rtl/BUTTONS.v
     src/rtl/OBSTACLES.v
+    src/rtl/draw_sens.v
+    src/rtl/image_rom.v
 }
 
 read_vhdl {

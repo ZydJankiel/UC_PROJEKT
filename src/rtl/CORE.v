@@ -38,10 +38,10 @@ wire [35:0] obstacle_data;
 
 wire [27:0] delayed_signals;
 
-wire [15:0] obstacles_counted;
+wire [15:0] obstacles_counted, rgb_address_rom;
 
-wire [11:0] rgb_out_back, rgb_out_hp;
-wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp;
+wire [11:0] rgb_out_back, rgb_out_hp, rgb_out_sens, rgb_out_rom;
+wire [11:0] vcount_out_timing, hcount_out_timing, vcount_out_back, hcount_out_back, vcount_out_hp, hcount_out_hp, vcount_out_sens, hcount_out_sens;
 
 
 wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
@@ -49,10 +49,10 @@ wire [3:0] red_out_mouse, green_out_mouse, blue_out_mouse;
 wire [2:0] control_state; 
 
 wire play_selected_vga_control, display_buttons_m_and_s, display_menu_button;
-wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp;
-wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp;
+wire vsync_out_timing, hsync_out_timing, vsync_out_back, hsync_out_back, vsync_out_hp, hsync_out_hp, vsync_out_sens, hsync_out_sens;
+wire vblnk_out_timing, hblnk_out_timing, vblnk_out_back, hblnk_out_back, vblnk_out_hp, hblnk_out_hp, vblnk_out_sens, hblnk_out_sens;
 wire damage_out, game_over_hp;
-wire player_ready_vga_control, multiplayer_vga_control;
+wire player_ready_vga_control, multiplayer_vga_control, victory_or_defeat_vga_control;
 wire mouse_mode_vga_control;
 
 
@@ -111,6 +111,7 @@ control_unit  #( .PLAY_BOX_X_POS(PLAY_BOX_X_POS),
     .display_buttons_m_and_s(display_buttons_m_and_s),
     .player_ready(player_ready_vga_control),
     .display_menu_button(display_menu_button),
+    .victory_or_defeat(victory_or_defeat_vga_control),
     .multiplayer(multiplayer_vga_control)
                    
 );
@@ -217,6 +218,41 @@ hp_control #( .TOP_V_LINE(TOP_V_LINE),
     .game_over(game_over_hp)
 );
 
+draw_sens draw_sens(
+    //inputs
+    .vcount_in(vcount_out_hp),
+    .vsync_in(vsync_out_hp),
+    .vblnk_in(vblnk_out_hp),
+    .hcount_in(hcount_out_hp),
+    .hsync_in(hsync_out_hp),
+    .hblnk_in(hblnk_out_hp),
+    .rgb_in(rgb_out_hp),
+    .pclk(clk),
+    .rst(rst),
+    .rgb_pixel(rgb_out_rom), 
+    .game_on(play_selected_vga_control), 
+    .victory_or_defeat(victory_or_defeat_vga_control),
+    .multiplayer(multiplayer_vga_control),
+    
+    //outputs
+    .hcount_out(hcount_out_sens),
+    .vcount_out(vcount_out_sens),
+    .hblnk_out(hblnk_out_sens),
+    .vblnk_out(vblnk_out_sens),
+    .hsync_out(hsync_out_sens),
+    .vsync_out(vsync_out_sens),
+    .rgb_out(rgb_out_sens), 
+    .pixel_addr(rgb_address_rom)
+);
+
+image_rom sans_image(
+  //inputs
+    .clk(clk),
+    .address(rgb_address_rom),  
+  //outputs
+    .rgb(rgb_out_rom)
+);
+
 wire [11:0] hcount_out_BUTTONS, vcount_out_BUTTONS, rgb_out_BUTTONS;
 wire hsync_out_BUTTONS, vsync_out_BUTTONS, hblnk_out_BUTTONS, vblnk_out_BUTTONS;
 
@@ -236,13 +272,13 @@ BUTTONS  #( .PLAY_BOX_X_POS(PLAY_BOX_X_POS),
             .MENU_BOX_X_SIZE(MENU_BOX_X_SIZE)) BUTTONS (
     .clk(clk),
     .rst(rst),
-    .hcount_in(hcount_out_hp),
-    .hblnk_in(hblnk_out_hp),
-    .hsync_in(hsync_out_hp),
-    .vcount_in(vcount_out_hp),
-    .vblnk_in(vblnk_out_hp),
-    .vsync_in(vsync_out_hp),
-    .rgb_in(rgb_out_hp),
+    .hcount_in(hcount_out_sens),
+    .hblnk_in(hblnk_out_sens),
+    .hsync_in(hsync_out_sens),
+    .vcount_in(vcount_out_sens),
+    .vblnk_in(vblnk_out_sens),
+    .vsync_in(vsync_out_sens),
+    .rgb_in(rgb_out_sens),
     .display_buttons_m_and_s(display_buttons_m_and_s),
     .display_menu_button(display_menu_button),
     .xpos(xpos),
