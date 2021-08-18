@@ -25,8 +25,6 @@ module control_unit
     (
         input wire clk,
         input wire rst,
-        input wire game_on,
-        input wire menu_on,
         input wire game_over,
         input wire victory,
         input wire [11:0] xpos,
@@ -87,10 +85,8 @@ always @* begin
 
     case (state)
         MENU_MODE: begin
-        
-            if (game_on) 
-                state_nxt = GAME_MODE;   
-            else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
+ 
+            if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
                 if (mouse_left) begin
                     state_nxt = GAME_MODE;
                     multi_reg_nxt = 0;
@@ -124,9 +120,7 @@ always @* begin
             else
                 multiplayer_nxt = 0;
                 
-            if (menu_on) 
-                state_nxt = MENU_MODE;
-            else if (game_over)
+            if (game_over)
                 state_nxt = GAME_OVER;
             else if (victory)
                 state_nxt = VICTORY_MODE;
@@ -139,11 +133,7 @@ always @* begin
         
         VICTORY_MODE: begin
         
-            if (game_on) 
-                state_nxt = GAME_MODE;
-            else if (menu_on)
-                state_nxt = MENU_MODE;
-            else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
+            if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
                 if (mouse_left) begin
                     state_nxt = GAME_MODE;
                     multi_reg_nxt = 0;
@@ -171,12 +161,8 @@ always @* begin
         //to go to menu from game over screen press left mouse button anywhere on the screen,  
         //to play the game again press PLAY button on gameover screen
         GAME_OVER: begin  
-                 
-            if (game_on) 
-                state_nxt = GAME_MODE;
-            else if (menu_on)
-                    state_nxt = MENU_MODE;
-            else if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
+
+            if (xpos >= PLAY_BOX_X_POS - 10 && xpos <= PLAY_BOX_X_SIZE + PLAY_BOX_X_POS -5 && ypos >= PLAY_BOX_Y_POS - 10 && ypos <= PLAY_BOX_Y_SIZE + PLAY_BOX_Y_POS) begin
                 if (mouse_left) begin
                     state_nxt = GAME_MODE;
                     multi_reg_nxt = 0;

@@ -13,7 +13,6 @@ module pillars_obstacle
         input wire [11:0] hcount_in,
         input wire clk,
         input wire rst,
-        input wire menu_on,
         input wire [11:0] rgb_in,
         input wire play_selected,
         input wire [2:0] selected,
@@ -115,7 +114,7 @@ always @* begin
         end
         
         DRAW_BOTTOM: begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = DRAW_BOTTOM;
@@ -162,7 +161,7 @@ always @* begin
         end
         
         DRAW_TOP: begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = DRAW_TOP;
@@ -207,7 +206,7 @@ always @* begin
         end
         
         DRAW_LEFT: begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = DRAW_LEFT;
@@ -253,7 +252,7 @@ always @* begin
         end    
         
         DRAW_RIGHT: begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = DRAW_RIGHT;
@@ -263,7 +262,7 @@ always @* begin
                 state_nxt = IDLE;
             end
             else begin
-                state_nxt = (menu_on || !play_selected) ? IDLE : DRAW_RIGHT;
+                state_nxt = (!play_selected) ? IDLE : DRAW_RIGHT;
                 done_nxt = 0;
             end
 

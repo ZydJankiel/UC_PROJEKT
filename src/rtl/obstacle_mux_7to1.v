@@ -29,7 +29,7 @@
 */
 
 // in and out size to be chosen correctly
-module obstacle_mux_8_to_1(
+module obstacle_mux_7_to_1(
 
     input wire [35:0] input_0,
     input wire [35:0] input_1,
@@ -38,13 +38,12 @@ module obstacle_mux_8_to_1(
     input wire [35:0] input_4,
     input wire [35:0] input_5,
     input wire [35:0] input_6,
-    input wire [35:0] input_7,
     input wire [2:0] select,
         
     output reg [35:0] obstacle_mux_out
     );
 
-always @(input_0 or input_1 or input_2 or input_3 or input_4 or input_5 or input_6 or input_7 or select) begin
+always @(input_0 or input_1 or input_2 or input_3 or input_4 or input_5 or input_6 or select) begin
         //case select of input
         case (select)
             3'b000: obstacle_mux_out <= input_0;
@@ -54,7 +53,7 @@ always @(input_0 or input_1 or input_2 or input_3 or input_4 or input_5 or input
             3'b100: obstacle_mux_out <= input_4;
             3'b101: obstacle_mux_out <= input_5;
             3'b110: obstacle_mux_out <= input_6;
-            3'b111: obstacle_mux_out <= input_7;
+            default: obstacle_mux_out <= input_0;
 
         endcase
 end

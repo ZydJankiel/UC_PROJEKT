@@ -89,18 +89,10 @@ always @* begin
             if (vblnk_in || hblnk_in) 
                 rgb_nxt = 12'h0_0_0; 
             else begin
-                 // Active display, top edge, make a yellow line.
-                if (vcount_in == 0) rgb_nxt = 12'hf_f_0;
-                // Active display, bottom edge, make a red line.
-                else if (vcount_in == 767) rgb_nxt = 12'hf_0_0;
-                // Active display, left edge, make a green line.
-                else if (hcount_in == 0) rgb_nxt = 12'h0_f_0;
-                // Active display, right edge, make a blue line.
-                else if (hcount_in == 1023) rgb_nxt = 12'h0_0_f;
                 
                 //M 
                 //verticals
-                else if ((hcount_in >= 170 && hcount_in <= 210 && vcount_in >= 90 && vcount_in <= 250) ||       // left
+                if ((hcount_in >= 170 && hcount_in <= 210 && vcount_in >= 90 && vcount_in <= 250) ||       // left
                 (hcount_in >= 330 && hcount_in <= 370 && vcount_in >= 90 && vcount_in <= 250) ||                //right
                 //diagonals
                 (hcount_in >= 170 && hcount_in <= 270 && vcount_in >= 90 && vcount_in <= 250 && hcount_in-vcount_in >= 80 && hcount_in-vcount_in <= 120 ) ||    // "\"
@@ -147,16 +139,8 @@ always @* begin
             // During blanking, make it it black.
             if (vblnk_in || hblnk_in) rgb_nxt = 12'h0_0_0; 
             else begin
-                 // Active display, top edge, make a yellow line.
-                if (vcount_in == 0) rgb_nxt = 12'hf_f_0;
-                // Active display, bottom edge, make a red line.
-                else if (vcount_in == 767) rgb_nxt = 12'hf_0_0;
-                // Active display, left edge, make a green line.
-                else if (hcount_in == 0) rgb_nxt = 12'h0_f_0;
-                // Active display, right edge, make a blue line.
-                else if (hcount_in == 1023) rgb_nxt = 12'h0_0_f;
                 // GAME BOUNDARY
-                else if ((hcount_in >= LEFT_H_LINE - BORDER && hcount_in < LEFT_H_LINE && vcount_in >= TOP_V_LINE - BORDER && vcount_in < BOTTOM_V_LINE + BORDER) || 
+                if ((hcount_in >= LEFT_H_LINE - BORDER && hcount_in < LEFT_H_LINE && vcount_in >= TOP_V_LINE - BORDER && vcount_in < BOTTOM_V_LINE + BORDER) || 
                 (hcount_in >= LEFT_H_LINE && hcount_in < RIGHT_H_LINE && vcount_in >= TOP_V_LINE - BORDER && vcount_in < TOP_V_LINE ) || 
                 (hcount_in >= LEFT_H_LINE && hcount_in < RIGHT_H_LINE && vcount_in >= BOTTOM_V_LINE && vcount_in < BOTTOM_V_LINE + BORDER) || 
                 (hcount_in >= RIGHT_H_LINE  && hcount_in < RIGHT_H_LINE + BORDER && vcount_in >= TOP_V_LINE - BORDER && vcount_in < BOTTOM_V_LINE + BORDER) ) rgb_nxt = 12'hf_f_f;        

@@ -33,7 +33,6 @@ module splitting_obstacle
         input wire  [11:0] hcount_in,
         input wire clk,
         input wire rst,
-        input wire menu_on,
         input wire [11:0] rgb_in,
         input wire play_selected,
         input wire [2:0] selected,
@@ -233,7 +232,7 @@ always @* begin
         
         THROW_FROM_TOP: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = THROW_FROM_TOP; 
@@ -391,7 +390,7 @@ always @* begin
 
         THROW_FROM_BOTTOM: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = THROW_FROM_BOTTOM; 
@@ -549,7 +548,7 @@ always @* begin
 
         THROW_FROM_LEFT: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = THROW_FROM_LEFT; 
@@ -707,7 +706,7 @@ always @* begin
 
         THROW_FROM_RIGHT: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = THROW_FROM_RIGHT; 

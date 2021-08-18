@@ -32,7 +32,6 @@ module lasers_obstacle
         input wire [11:0] hcount_in,
         input wire clk,
         input wire rst,
-        input wire menu_on,
         input wire [11:0] rgb_in,
         input wire play_selected,
         input wire [2:0] selected,
@@ -130,7 +129,7 @@ always @* begin
         
             done_nxt = 0;
             
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = DRAW_LEFT;
@@ -192,7 +191,7 @@ always @* begin
         
         DRAW_MIDDLE: begin
             
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = DRAW_MIDDLE;
@@ -255,7 +254,7 @@ always @* begin
         
         DRAW_RIGHT: begin
             
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = DRAW_RIGHT;

@@ -33,7 +33,6 @@ module mouse_follower_obstacle
         input wire [11:0] hcount_in,
         input wire clk,
         input wire rst,
-        input wire menu_on,
         input wire [11:0] rgb_in,
         input wire play_selected,
         input wire [2:0] selected,
@@ -90,7 +89,6 @@ always @(posedge clk) begin
         counter2_move_y         <= 0;      
         counter_growth          <= 0;
         done                    <= 0;
-        //enemy_size              <= 0;
         enemy_center_x          <= 0;
         enemy_center_y          <= 0;
         enemy_border            <= 0;
@@ -109,7 +107,6 @@ always @(posedge clk) begin
         counter2_move_y         <= counter2_move_y_nxt;
         counter_growth          <= counter_growth_nxt;
         done                    <= done_nxt;
-        //enemy_size              <= enemy_size_nxt;
         enemy_center_x          <= enemy_center_x_nxt;
         enemy_center_y          <= enemy_center_y_nxt;
         enemy_border            <= enemy_border_nxt;
@@ -128,7 +125,6 @@ always @* begin
     obstacle_x_nxt              = 0;
     obstacle_y_nxt              = 0;
     done_nxt                    = 0;
-    //enemy_size_nxt              = enemy_size;
     enemy_center_x_nxt          = enemy_center_x;
     enemy_center_y_nxt          = enemy_center_y;
     enemy_border_nxt            = enemy_border;
@@ -146,7 +142,6 @@ always @* begin
                 counter_move_x_nxt = 0;
                 counter_move_y_nxt = 0;
                 obstacle_time_counter_nxt = 0;
-                //enemy_size_nxt = 0;
                 
                 enemy_center_x_nxt = 380;
                 enemy_center_y_nxt = 340;
@@ -160,7 +155,7 @@ always @* begin
         end//end state
         
         ENEMY_SPAWN: begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = ENEMY_SPAWN;
@@ -191,7 +186,7 @@ always @* begin
         end //end state
         
         ENEMY_CHASE : begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;          
             else if (obstacle_time_counter_nxt >= OBSTACLE_TIME_COUNTER)
                 state_nxt = ENEMY_DEATH;
@@ -306,7 +301,7 @@ always @* begin
         end //end state
         
         ENEMY_DEATH: begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = ENEMY_DEATH;

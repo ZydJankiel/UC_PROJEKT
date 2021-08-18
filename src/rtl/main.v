@@ -6,10 +6,6 @@ module main (
     
     input wire clk,
     input wire rst,
-    input wire game_button,
-    input wire menu_button,
-    input wire victory_button,
-    input wire game_over,
     input wire rx,
     
     output wire tx,
@@ -64,10 +60,6 @@ CORE #( .TOP_V_LINE(TOP_V_LINE),
     //inputs
     .clk(pclk),
     .rst(reset_CLK),
-    .game_button(game_button),
-    .menu_button(menu_button),
-    .victory_button(victory_button),
-    .game_over_button(game_over),
     .xpos(xpos_out_mouse),
     .ypos(ypos_out_mouse),
     .mouse_left(mouse_left),

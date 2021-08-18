@@ -52,7 +52,7 @@ always @* begin
         
         CONTROL: begin
             if (done) begin
-                if (obstacle_code == 3'b111) begin
+                if (obstacle_code == 3'b110) begin
                     code_nxt = 0;
                     done_out_nxt = 1;
                 end

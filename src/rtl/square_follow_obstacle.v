@@ -33,7 +33,6 @@ module square_follow_obstacle
         input wire [11:0] hcount_in,
         input wire clk,
         input wire rst,
-        input wire menu_on,
         input wire [11:0] rgb_in,
         input wire play_selected,
         input wire [2:0] selected,
@@ -91,11 +90,7 @@ always @(posedge clk) begin
         state                   <= state_nxt;
         rgb_out                 <= rgb_nxt;
         obstacle_x              <= obstacle_x_nxt;
-        obstacle_y              <= obstacle_y_nxt;
-        
-        //obstacle_x              <= 0; //for testing
-        //obstacle_y              <= 0;
-        
+        obstacle_y              <= obstacle_y_nxt;   
         square_hole_top         <= square_hole_top_nxt;
         square_hole_bottom      <= square_hole_bottom_nxt;
         square_hole_left        <= square_hole_left_nxt;
@@ -135,7 +130,7 @@ always @* begin
         end
         
         CLOSE_IN: begin
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = CLOSE_IN;
@@ -179,7 +174,7 @@ always @* begin
          
          MOVE_TO_RIGHT_TOP: begin
          
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = MOVE_TO_RIGHT_TOP;
@@ -224,7 +219,7 @@ always @* begin
         
         MOVE_TO_RIGHT_BOTTOM: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = MOVE_TO_RIGHT_BOTTOM;
@@ -269,7 +264,7 @@ always @* begin
         
         MOVE_TO_LEFT_TOP: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = MOVE_TO_LEFT_TOP;
@@ -314,7 +309,7 @@ always @* begin
         
         CLOSE_IN_MORE: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = CLOSE_IN_MORE;
@@ -358,7 +353,7 @@ always @* begin
         
         MOVE_TO_LEFT_MIDDLE: begin
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = MOVE_TO_LEFT_MIDDLE;
@@ -403,7 +398,7 @@ always @* begin
         
         MOVE_TO_CENTER: begin  
         
-            if (menu_on || !play_selected)
+            if (!play_selected)
                 state_nxt = IDLE;
             else 
                 state_nxt = MOVE_TO_CENTER;
