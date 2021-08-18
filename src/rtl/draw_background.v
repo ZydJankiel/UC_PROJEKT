@@ -75,13 +75,13 @@ always @(posedge clk) begin
 end
 
 always @* begin
-    hsync_nxt                   = hsync_in;
-    vsync_nxt                   = vsync_in;
-    hblnk_nxt                   = hblnk_in;
-    vblnk_nxt                   = vblnk_in;
-    hcount_nxt                  = hcount_in;
-    vcount_nxt                  = vcount_in;  
-    rgb_nxt                     = 12'h3_f_0;
+    hsync_nxt  = hsync_in;
+    vsync_nxt  = vsync_in;
+    hblnk_nxt  = hblnk_in;
+    vblnk_nxt  = vblnk_in;
+    hcount_nxt = hcount_in;
+    vcount_nxt = vcount_in;  
+    rgb_nxt    = 12'h3_f_0;
     case (control_state)
         MENU_MODE: begin
             

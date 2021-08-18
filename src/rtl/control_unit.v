@@ -38,12 +38,13 @@ module control_unit
         output reg display_buttons_m_and_s,
         output reg player_ready,
         output reg display_menu_button,
+        output reg victory_or_defeat,
         output reg multiplayer
     );
 
 reg [2:0] state_nxt; 
 reg mouse_mode_nxt, play_selected_nxt, display_buttons_m_and_s_nxt, player_ready_nxt, display_menu_button_nxt;
-reg multiplayer_nxt, multi_reg, multi_reg_nxt;
+reg multiplayer_nxt, multi_reg, multi_reg_nxt, victory_or_defeat_nxt;
 
 localparam MENU_MODE    = 3'b000,
            GAME_MODE    = 3'b001,
@@ -61,6 +62,7 @@ always @(posedge clk) begin
         display_menu_button     <= 0;
         multiplayer             <= 0;
         multi_reg               <= 0;
+        victory_or_defeat       <= 0;
     end
     else begin
         state                   <= state_nxt;
@@ -71,6 +73,7 @@ always @(posedge clk) begin
         display_menu_button     <= display_menu_button_nxt;
         multiplayer             <= multiplayer_nxt;
         multi_reg               <= multi_reg_nxt;
+        victory_or_defeat       <= victory_or_defeat_nxt;
     end 
 end
     
@@ -82,6 +85,7 @@ always @* begin
     display_menu_button_nxt     = 0;
     multiplayer_nxt             = 0;
     multi_reg_nxt               = multi_reg;
+    victory_or_defeat_nxt       = 0;
 
     case (state)
         MENU_MODE: begin
@@ -154,7 +158,8 @@ always @* begin
             else
                 state_nxt = VICTORY_MODE; 
             
-            display_buttons_m_and_s_nxt = 1;           
+            display_buttons_m_and_s_nxt = 1;
+            victory_or_defeat_nxt = 1;       
             
         end
         
@@ -183,7 +188,8 @@ always @* begin
             else
                 state_nxt = GAME_OVER; 
             
-            display_buttons_m_and_s_nxt = 1;     
+            display_buttons_m_and_s_nxt = 1;  
+            victory_or_defeat_nxt = 1;   
                     
         end
     
