@@ -1,4 +1,6 @@
 
+// PWJ: Added logic for transmiting data via UART
+
 module transmition_logic (
     input wire clk,
     input wire rst,

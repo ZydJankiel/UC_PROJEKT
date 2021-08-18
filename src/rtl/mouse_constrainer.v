@@ -43,7 +43,7 @@ module mouse_constrainer
         output reg set_y
     );
 
-reg [9:0] value_nxt = 0;
+reg [11:0] value_nxt = 0;
 reg [2:0] counter = 0, counter_nxt = 0;
 reg setmax_x_nxt, setmax_y_nxt, setmin_x_nxt, setmin_y_nxt, set_x_nxt, set_y_nxt;
 reg [2:0] state,state_nxt;

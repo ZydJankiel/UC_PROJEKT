@@ -1,6 +1,6 @@
 `timescale 1 ns / 1 ps
 /*
- * Whole UART module with all its files are based on files from laboratory classes and are designed and managed by PWJ
+ * PWJ: Whole UART module with all its files are based on files from laboratory classes and are designed and managed by PWJ
  * Added module for transmition logic
 */
 

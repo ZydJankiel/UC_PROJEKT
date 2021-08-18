@@ -1,4 +1,7 @@
 //Listing 8.4
+
+// PWJ: All modules included in this module are from our UEC laboratory class. We changed baud rate from 9600 to 19200
+
 module uart_module
    #( // Default setting:
       // 19,200 baud, 8 data bits, 1 stop bit, 2^2 FIFO
@@ -6,7 +9,7 @@ module uart_module
                 SB_TICK = 16, // # ticks for stop bits, 16/24/32
                               // for 1/1.5/2 stop bits
                 DVSR = 212,   // baud rate divisor
-                              // DVSR = 50M/(16*baud rate)
+                              // DVSR = 65M/(16*baud rate)
                 DVSR_BIT = 8, // # bits of DVSR
                 FIFO_W = 2    // # addr bits of FIFO
                               // # words in FIFO=2^FIFO_W

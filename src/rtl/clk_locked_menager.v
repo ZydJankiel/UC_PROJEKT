@@ -1,5 +1,7 @@
 `timescale 1 ns / 1 ps
 
+// PWJ: Used locke signal from clk_wiz_0 to generate correct reset
+
 module clk_locked_menager (
     input wire locked_in,
     input wire pclk,

@@ -1,5 +1,7 @@
 `timescale 1 ns / 1 ps
 
+// PWJ: Added module for organising buttons
+
 module BUTTONS 
     #( parameter
         PLAY_BOX_X_POS  = 432,

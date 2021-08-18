@@ -64,6 +64,8 @@
 //----------------------------------------------------------------------------
 // __primary_________100.000____________0.010
 
+// PWJ: Generated necessary clocks from Clocking wizard
+
 `timescale 1ps/1ps
 
 module clk_wiz_0_clk_wiz 
