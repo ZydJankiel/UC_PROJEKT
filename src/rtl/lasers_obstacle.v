@@ -54,7 +54,8 @@ localparam LEFT_LASER_LEFT      = 411,
            MIDDLE_LASER_LEFT    = 511,
            MIDDLE_LASER_RIGHT   = 512,
            RIGHT_LASER_LEFT     = 611,
-           RIGHT_LASER_RIGHT    = 612;           
+           RIGHT_LASER_RIGHT    = 612,
+           LASER_WIDTH          = 40;           
 
 localparam IDLE         = 2'b00,
            DRAW_LEFT    = 2'b01,
@@ -143,7 +144,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                             
-            if ((laser_left <= 381 ) && (laser_right >= 442)) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_left <= LEFT_LASER_LEFT - LASER_WIDTH ) && (laser_right >= LEFT_LASER_RIGHT + LASER_WIDTH)) begin         //move to next laser after delay and when reached set size
                 if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
                     if (bounce_back == 1) begin                         //direction based on whether the obstacle already reached right laser
                         state_nxt = IDLE;
@@ -205,7 +206,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_left <= 481 ) && (laser_right >= 542)) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_left <= MIDDLE_LASER_LEFT - LASER_WIDTH ) && (laser_right >= MIDDLE_LASER_RIGHT + LASER_WIDTH)) begin         //move to next laser after delay and when reached set size 
                 if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin
                     if (bounce_back == 1) begin                        //direction based on whether the obstacle already reached right laser
                         state_nxt = DRAW_LEFT;
@@ -268,7 +269,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_left <= 581 ) && (laser_right >= 642)) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_left <= RIGHT_LASER_LEFT - LASER_WIDTH ) && (laser_right >= RIGHT_LASER_RIGHT + LASER_WIDTH)) begin         //move to next laser after delay and when reached set size 
                 if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
                     if (bounce_back == 1) begin                             ////direction based on whether the obstacle already reached right laser
                         state_nxt = DRAW_MIDDLE;        //if already bounced go in reverse order                        

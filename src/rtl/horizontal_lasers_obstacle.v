@@ -54,7 +54,8 @@ localparam TOP_LASER_TOP        = 367,
            MIDDLE_LASER_TOP     = 467,
            MIDDLE_LASER_BOTTOM  = 468,
            BOTTOM_LASER_TOP     = 567,
-           BOTTOM_LASER_BOTTOM  = 568;
+           BOTTOM_LASER_BOTTOM  = 568,
+           LASER_WIDTH          = 40;
 
 localparam IDLE                 = 2'b00,
            DRAW_TOP             = 2'b01,
@@ -143,7 +144,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                             
-            if ((laser_top <= TOP_LASER_TOP - 30 ) && (laser_bottom >= TOP_LASER_BOTTOM + 30)) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_top <= TOP_LASER_TOP - LASER_WIDTH ) && (laser_bottom >= TOP_LASER_BOTTOM + LASER_WIDTH)) begin         //move to next laser after delay and when reached set size 
                 if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin 
                     //if (obstacle_counter != 0) begin            // when uncommented this obstacle will only go UP>MID>DOWN>UP and then end its work , used to speed up testing
                     if (obstacle_counter >= 15) begin                         
@@ -205,7 +206,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_top <= MIDDLE_LASER_TOP - 30 ) && (laser_bottom >= MIDDLE_LASER_BOTTOM + 30)) begin     //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_top <= MIDDLE_LASER_TOP - LASER_WIDTH ) && (laser_bottom >= MIDDLE_LASER_BOTTOM + LASER_WIDTH)) begin     //move to next laser after delay and when reached set size
                 if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin
                     if (obstacle_counter == 9) begin                        
                         state_nxt = DRAW_TOP;
@@ -274,7 +275,7 @@ always @* begin
             else
                 rgb_nxt = rgb_in;
                 
-            if ((laser_top <= BOTTOM_LASER_TOP - 30 ) && (laser_bottom >= BOTTOM_LASER_BOTTOM + 30 )) begin         //move to next laser after delay and when reached set size (border +- 30)
+            if ((laser_top <= BOTTOM_LASER_TOP - LASER_WIDTH ) && (laser_bottom >= BOTTOM_LASER_BOTTOM + LASER_WIDTH )) begin         //move to next laser after delay and when reached set size
                 if (counter_between_lasers == COUNTER_BETWEEN_LASERS_VALUE) begin               
                     if (obstacle_counter == 8) begin                             
                         state_nxt = DRAW_MIDDLE;                               
