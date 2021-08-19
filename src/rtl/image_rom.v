@@ -10,7 +10,7 @@ module image_rom (
 
 reg [11:0] rom [0:65535] ;// [0:39599];
 
-initial $readmemh("../image/sens.data", rom); 
+initial $readmemh("./sens.data", rom); 
 
 always @(posedge clk)
     rgb <= rom[address];

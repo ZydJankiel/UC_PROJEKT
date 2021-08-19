@@ -245,7 +245,7 @@ draw_sens draw_sens(
     .pixel_addr(rgb_address_rom)
 );
 
-image_rom sans_image(
+image_rom sens_image(
   //inputs
     .clk(clk),
     .address(rgb_address_rom),  
