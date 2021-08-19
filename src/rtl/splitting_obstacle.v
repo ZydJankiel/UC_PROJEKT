@@ -119,6 +119,9 @@ always @(posedge clk) begin
         obstacle_state              <= obstacle_state_nxt;
         rgb_out                     <= rgb_nxt;
         
+        obstacle_x                  <= obstacle_x_nxt;
+        obstacle_y                  <= obstacle_y_nxt;
+        
         obstacle_center_x           <= obstacle_center_x_nxt;
         obstacle_center_y           <= obstacle_center_y_nxt;
         
